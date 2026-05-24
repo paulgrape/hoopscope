@@ -1,0 +1,21 @@
+{
+  "name": "nba-hub",
+  "private": true,
+  "workspaces": [
+    "apps/frontend",
+    "apps/backend"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev -w apps/backend\" \"npm run dev -w apps/frontend\"",
+    "build": "npm run build -w apps/backend && npm run build -w apps/frontend"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@nestjs/common": "^11.1.23",
+    "@nestjs/core": "^11.1.23",
+    "concurrently": "^9.2.1"
+  }
+}
