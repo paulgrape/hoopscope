@@ -37,8 +37,7 @@ export class TeamsService {
 
   async findRoster(teamId: string) {
     const data: any = await this.espn.getRoster(teamId);
-    return data.athletes.flatMap((group: any) =>
-      group.items.map((p: any) => ({
+    return data.athletes.flatMap((p: any) => ({
         id: p.id,
         fullName: p.fullName,
         jersey: p.jersey,
@@ -46,7 +45,7 @@ export class TeamsService {
         headshot: p.headshot?.href ?? null,
         age: p.age,
         experience: p.experience?.years ?? 0,
-      })),
+      })
     );
   }
 }
