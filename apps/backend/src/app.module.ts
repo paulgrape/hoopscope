@@ -5,6 +5,7 @@ import { HealthModule } from './health/health.module';
 import { CacheModule } from './cache/cache.module';
 import { EspnModule } from './espn/espn.module';
 import { TeamsModule } from './teams/teams.module';
+import { PlayersModule } from './players/players.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { TeamsModule } from './teams/teams.module';
     CacheModule,
     EspnModule,
     TeamsModule,
+    PlayersModule,
   ],
 })
 export class AppModule {}

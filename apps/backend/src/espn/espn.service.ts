@@ -1,7 +1,38 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { CacheService } from '../cache/cache.service';
 import axios, { AxiosInstance } from 'axios';
+import { CacheService } from '../cache/cache.service';
+
+export interface EspnCoreAthlete {
+  id: string;
+  fullName?: string;
+  jersey?: string;
+  age?: number;
+  displayHeight?: string;
+  displayWeight?: string;
+  active?: boolean;
+  birthPlace?: {
+    city?: string;
+    state?: string;
+    country?: string;
+  };
+  position?: {
+    name?: string;
+    displayName?: string;
+  };
+  headshot?: {
+    href?: string;
+  };
+  experience?: {
+    years?: number;
+  };
+  college?: {
+    name?: string;
+  };
+  status?: {
+    name?: string;
+  };
+}
 
 @Injectable()
 export class EspnService {
@@ -42,8 +73,18 @@ export class EspnService {
   getRoster(teamId: string) {
     return this.get(`/teams/${teamId}/roster`, this.TTL_PLAYERS);
   }
-  getPlayer(id: string) {
-    return this.get(`/athletes/${id}`, this.TTL_PLAYERS);
+  async getPlayer(id: string): Promise<EspnCoreAthlete> {
+    const base =
+      this.config.get<string>('ESPN_CORE_BASE_URL') ??
+      'https://sports.core.api.espn.com/v2/sports/basketball/leagues/nba';
+    const url = `${base}/athletes/${id}`;
+
+    const cached = this.cache.get<EspnCoreAthlete>(url);
+    if (cached) return cached;
+
+    const { data } = await this.http.get<EspnCoreAthlete>(url);
+    this.cache.set(url, data, this.TTL_PLAYERS);
+    return data;
   }
   getScoreboard() {
     return this.get('/scoreboard', this.TTL_SCORES);
