@@ -86,8 +86,9 @@ export class EspnService {
     this.cache.set(url, data, this.TTL_PLAYERS);
     return data;
   }
-  getScoreboard() {
-    return this.get('/scoreboard', this.TTL_SCORES);
+  getScoreboard(date?: string) {
+    const path = date ? `/scoreboard?dates=${date}` : '/scoreboard';
+    return this.get(path, this.TTL_SCORES);
   }
   getGameSummary(eventId: string) {
     return this.get(`/summary?event=${eventId}`, this.TTL_SCORES);

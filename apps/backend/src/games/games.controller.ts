@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { GamesService } from './games.service';
 
@@ -11,6 +11,15 @@ export class GamesController {
   @ApiOperation({ summary: 'Real ESPN scoreboard (today)' })
   scoreboard() {
     return this.gamesService.getScoreboard();
+  }
+
+  @Get('schedule')
+  @ApiOperation({ summary: 'Real ESPN schedule for a local date' })
+  schedule(
+    @Query('date') date?: string,
+    @Query('offsetMinutes') offsetMinutes?: string,
+  ) {
+    return this.gamesService.getSchedule(date, offsetMinutes);
   }
 
   @Get('live')
