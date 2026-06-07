@@ -93,22 +93,22 @@ export function HistoricGameSimulator({initialGame, socketBaseUrl}: HistoricGame
   const plays = useMemo(() => [...game.plays].reverse(), [game.plays])
 
   return (
-    <section className='grid gap-6 lg:grid-cols-[1fr_24rem]'>
-      <div className='bg-card border-border rounded-xl border p-6'>
-        <div className='text-muted-foreground flex flex-wrap items-center justify-between gap-3 text-sm'>
+    <section className='grid min-w-0 gap-5 sm:gap-6 lg:grid-cols-[minmax(0,1fr)_24rem]'>
+      <div className='bg-card border-border rounded-xl border p-3 sm:p-6'>
+        <div className='text-muted-foreground flex flex-wrap items-center justify-between gap-2 text-sm'>
           <span>{new Date(game.date).toLocaleString()}</span>
           <span className='rounded-full border px-2 py-0.5 capitalize'>{connectionStatus}</span>
         </div>
 
-        <div className='mt-5 flex flex-wrap items-center gap-2'>
-          <span className='text-muted-foreground text-sm'>Replay pace</span>
+        <div className='mt-5 grid grid-cols-4 gap-2 sm:flex sm:flex-wrap sm:items-center'>
+          <span className='text-muted-foreground col-span-4 text-sm sm:col-span-1'>Replay pace</span>
           {PLAYBACK_PACES.map(playbackPace => (
             <button
               key={playbackPace}
               type='button'
               disabled={game.status === 'final'}
               onClick={() => handlePaceChange(playbackPace)}
-              className={`rounded-full border px-3 py-1 text-sm transition ${
+              className={`rounded-full border px-2 py-1 text-sm transition sm:px-3 ${
                 pace === playbackPace
                   ? 'bg-primary text-primary-foreground border-primary'
                   : 'border-border hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50'
@@ -119,14 +119,19 @@ export function HistoricGameSimulator({initialGame, socketBaseUrl}: HistoricGame
           ))}
         </div>
 
-        <div className='mt-8 grid grid-cols-[1fr_auto_1fr] items-center gap-4'>
+        <div className='mt-6 grid gap-3 sm:mt-8 md:grid-cols-[1fr_auto_1fr] md:items-center md:gap-4'>
+          <div className='bg-background/40 rounded-lg p-3 text-center md:hidden'>
+            <p className='text-muted-foreground text-xs uppercase tracking-wider'>Quarter {game.quarter}</p>
+            <p className='mt-1 text-3xl font-semibold sm:text-4xl'>{displayClock}</p>
+            <p className='text-muted-foreground mt-1 text-sm capitalize sm:mt-2'>{game.status}</p>
+          </div>
           <TeamScore
             name={game.awayTeam.name}
             abbreviation={game.awayTeam.abbreviation}
             logo={game.awayTeam.logo}
             score={game.awayScore}
           />
-          <div className='text-center'>
+          <div className='hidden text-center md:block'>
             <p className='text-muted-foreground text-xs uppercase tracking-wider'>Quarter {game.quarter}</p>
             <p className='mt-1 text-4xl font-semibold'>{displayClock}</p>
             <p className='text-muted-foreground mt-2 text-sm capitalize'>{game.status}</p>
@@ -140,14 +145,14 @@ export function HistoricGameSimulator({initialGame, socketBaseUrl}: HistoricGame
           />
         </div>
 
-        <div className='mt-8'>
+        <div className='mt-6 sm:mt-8'>
           <div className='bg-muted h-3 overflow-hidden rounded-full'>
             <div
               className='bg-primary h-full rounded-full transition-all'
               style={{width: `${progress}%`}}
             />
           </div>
-          <div className='text-muted-foreground mt-2 flex justify-between text-sm'>
+          <div className='text-muted-foreground mt-2 flex flex-wrap justify-between gap-2 text-sm'>
             <span>
               Play {game.playIndex.toLocaleString()} of {game.totalPlays.toLocaleString()}
             </span>
@@ -156,9 +161,9 @@ export function HistoricGameSimulator({initialGame, socketBaseUrl}: HistoricGame
         </div>
       </div>
 
-      <aside className='bg-card border-border rounded-xl border p-6'>
+      <aside className='bg-card border-border min-w-0 rounded-xl border p-3 sm:p-6'>
         <div className='flex items-start justify-between gap-4'>
-          <div>
+          <div className='min-w-0'>
             <p className='text-muted-foreground text-sm uppercase tracking-wider'>Play-by-play</p>
             <p className='text-muted-foreground mt-1 text-sm'>Newest plays appear first.</p>
           </div>
@@ -167,13 +172,13 @@ export function HistoricGameSimulator({initialGame, socketBaseUrl}: HistoricGame
           </span>
         </div>
 
-        <ol className='mt-5 flex max-h-136 flex-col gap-3 overflow-y-auto pr-2'>
+        <ol className='mt-5 flex max-h-136 flex-col gap-3 overflow-y-auto sm:pr-2'>
           {plays.map(play => (
             <li
               key={play.id}
               className='border-border bg-background/60 rounded-lg border p-3'
             >
-              <div className='text-muted-foreground flex items-center justify-between gap-3 text-xs'>
+              <div className='text-muted-foreground flex flex-wrap items-center justify-between gap-2 text-xs'>
                 <span>
                   Q{play.period} {play.clock}
                 </span>
@@ -224,23 +229,28 @@ function TeamScore({
   align?: 'left' | 'right'
 }) {
   return (
-    <div className={`flex items-center gap-4 ${align === 'right' ? 'flex-row-reverse text-right' : ''}`}>
+    <div
+      className={`bg-background/40 flex min-w-0 items-center gap-3 rounded-lg p-3 md:bg-transparent md:p-0 ${
+        align === 'right' ? 'md:flex-row-reverse md:text-right' : ''
+      }`}
+    >
       {logo ? (
         <Image
           src={logo}
           alt={`${name} logo`}
-          className='h-16 w-16 object-contain'
+          className='h-12 w-12 shrink-0 object-contain sm:h-14 sm:w-14 md:h-16 md:w-16'
           width={64}
           height={64}
         />
       ) : (
-        <div className='bg-muted h-16 w-16 rounded-full' />
+        <div className='bg-muted h-12 w-12 shrink-0 rounded-full sm:h-14 sm:w-14 md:h-16 md:w-16' />
       )}
-      <div>
+      <div className='min-w-0 flex-1'>
         <p className='text-muted-foreground text-sm'>{abbreviation}</p>
-        <h2 className='text-card-foreground text-lg font-semibold'>{name}</h2>
-        <p className='mt-2 text-5xl font-semibold'>{score}</p>
+        <h2 className='text-card-foreground truncate text-base font-semibold sm:text-lg'>{name}</h2>
+        <p className='mt-2 hidden text-5xl font-semibold md:block'>{score}</p>
       </div>
+      <p className='shrink-0 text-3xl font-semibold md:hidden'>{score}</p>
     </div>
   )
 }

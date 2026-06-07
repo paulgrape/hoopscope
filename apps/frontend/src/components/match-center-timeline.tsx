@@ -1,18 +1,20 @@
 'use client'
 
 import Image from 'next/image'
-import {useEffect, useMemo, useState} from 'react'
+import {useEffect, useMemo, useRef, useState} from 'react'
 
 import {getSchedule, type ScoreboardGame, type ScoreboardTeam} from '@/lib/games-api'
 
 const DATE_WINDOW_RADIUS = 4
 const REFRESH_INTERVAL_MS = 60_000
+const DISPLAY_LOCALE = 'en-US'
 
 export function MatchCenterTimeline() {
   const [selectedDate, setSelectedDate] = useState(getTodayDateKey)
   const [games, setGames] = useState<ScoreboardGame[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const selectedDateButtonRef = useRef<HTMLButtonElement | null>(null)
 
   const dateOptions = useMemo(
     () =>
@@ -51,36 +53,45 @@ export function MatchCenterTimeline() {
     }
   }, [selectedDate])
 
+  useEffect(() => {
+    selectedDateButtonRef.current?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'nearest',
+      inline: 'center',
+    })
+  }, [dateOptions])
+
   const selectedDateLabel = formatFullDate(selectedDate)
   const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
 
   return (
-    <section className='flex flex-col gap-6'>
-      <div className='bg-card border-border rounded-xl border p-4'>
+    <section className='flex min-w-0 flex-col gap-5 sm:gap-6'>
+      <div className='bg-card border-border rounded-xl border p-3 sm:p-4'>
         <div className='flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between'>
-          <div>
+          <div className='min-w-0'>
             <p className='text-muted-foreground text-sm uppercase tracking-wider'>Selected date</p>
-            <h2 className='mt-1 text-2xl font-semibold'>{selectedDateLabel}</h2>
+            <h2 className='mt-1 text-xl font-semibold sm:text-2xl'>{selectedDateLabel}</h2>
             <p className='text-muted-foreground mt-1 text-sm'>Times are shown in {timeZone}.</p>
           </div>
 
-          <div className='flex flex-wrap items-center gap-2'>
+          <div className='grid grid-cols-3 gap-2 sm:flex sm:flex-wrap sm:items-center'>
             <DateButton label='Previous' onClick={() => setSelectedDate(addDays(selectedDate, -1))} />
             <DateButton label='Today' onClick={() => setSelectedDate(getTodayDateKey())} />
             <DateButton label='Next' onClick={() => setSelectedDate(addDays(selectedDate, 1))} />
           </div>
         </div>
 
-        <div className='mt-5 flex gap-2 overflow-x-auto pb-1'>
+        <div className='mt-5 -mx-3 flex snap-x gap-2 overflow-x-auto scroll-px-3 px-3 pb-2 sm:mx-0 sm:scroll-px-0 sm:px-0'>
           {dateOptions.map(date => {
             const isSelected = date === selectedDate
 
             return (
               <button
                 key={date}
+                ref={isSelected ? selectedDateButtonRef : null}
                 type='button'
                 onClick={() => setSelectedDate(date)}
-                className={`min-w-24 rounded-xl border px-3 py-2 text-left transition ${
+                className={`min-w-20 snap-start rounded-xl border px-3 py-2 text-left transition sm:min-w-24 ${
                   isSelected
                     ? 'bg-primary text-primary-foreground border-primary'
                     : 'border-border hover:bg-muted'
@@ -94,7 +105,7 @@ export function MatchCenterTimeline() {
         </div>
       </div>
 
-      <div className='relative flex flex-col gap-4'>
+      <div className='relative flex min-w-0 flex-col gap-3 sm:gap-4'>
         <div className='bg-border absolute top-2 bottom-2 left-4 hidden w-px md:block' />
 
         {isLoading ? (
@@ -124,7 +135,7 @@ function DateButton({label, onClick}: {label: string; onClick: () => void}) {
     <button
       type='button'
       onClick={onClick}
-      className='border-border hover:bg-muted rounded-lg border px-3 py-2 text-sm font-medium transition'
+      className='border-border hover:bg-muted rounded-lg border px-2 py-2 text-sm font-medium transition sm:px-3'
     >
       {label}
     </button>
@@ -138,19 +149,19 @@ function GameTimelineCard({game}: {game: ScoreboardGame}) {
   return (
     <article className='relative md:pl-12'>
       <div className='bg-background border-primary absolute top-7 left-2 hidden h-5 w-5 rounded-full border-4 md:block' />
-      <div className='bg-card border-border rounded-xl border p-5'>
+      <div className='bg-card border-border rounded-xl border p-3 sm:p-5'>
         <div className='flex flex-col gap-3 md:flex-row md:items-center md:justify-between'>
-          <div>
+          <div className='min-w-0'>
             <p className='text-muted-foreground text-sm'>{formatGameTime(startsAt)}</p>
-            <h3 className='mt-1 text-lg font-semibold'>{game.shortName ?? game.name}</h3>
+            <h3 className='mt-1 truncate text-base font-semibold sm:text-lg'>{game.shortName ?? game.name}</h3>
             {game.venue ? <p className='text-muted-foreground mt-1 text-sm'>{game.venue}</p> : null}
           </div>
           <StatusBadge game={game} />
         </div>
 
-        <div className='mt-5 grid gap-4 md:grid-cols-[1fr_auto_1fr] md:items-center'>
+        <div className='mt-4 grid gap-2 sm:mt-5 md:grid-cols-[1fr_auto_1fr] md:items-center md:gap-4'>
           <TeamPanel team={game.awayTeam} score={showScore ? game.awayScore : null} />
-          <div className='text-muted-foreground text-center text-sm font-semibold uppercase tracking-wider'>
+          <div className='text-muted-foreground py-1 text-center text-xs font-semibold uppercase tracking-wider md:text-sm'>
             {showScore ? 'at' : 'vs'}
           </div>
           <TeamPanel team={game.homeTeam} score={showScore ? game.homeScore : null} align='right' />
@@ -185,23 +196,28 @@ function TeamPanel({
   align?: 'left' | 'right'
 }) {
   return (
-    <div className={`flex items-center gap-3 ${align === 'right' ? 'flex-row-reverse text-right' : ''}`}>
+    <div
+      className={`bg-background/40 flex min-w-0 items-center gap-3 rounded-lg p-3 md:bg-transparent md:p-0 ${
+        align === 'right' ? 'md:flex-row-reverse md:text-right' : ''
+      }`}
+    >
       {team?.logo ? (
         <Image
           src={team.logo}
           alt={`${team.displayName} logo`}
-          className='h-12 w-12 object-contain'
+          className='h-10 w-10 shrink-0 object-contain sm:h-12 sm:w-12'
           width={48}
           height={48}
         />
       ) : (
-        <div className='bg-muted h-12 w-12 rounded-full' />
+        <div className='bg-muted h-10 w-10 shrink-0 rounded-full sm:h-12 sm:w-12' />
       )}
-      <div>
+      <div className='min-w-0 flex-1'>
         <p className='text-card-foreground font-semibold'>{team?.abbreviation ?? 'TBD'}</p>
-        <p className='text-muted-foreground text-sm'>{team?.displayName ?? 'To be determined'}</p>
-        {score !== null ? <p className='mt-2 text-3xl font-semibold'>{score}</p> : null}
+        <p className='text-muted-foreground truncate text-sm'>{team?.displayName ?? 'To be determined'}</p>
+        {score !== null ? <p className='mt-2 hidden text-3xl font-semibold md:block'>{score}</p> : null}
       </div>
+      {score !== null ? <p className='shrink-0 text-2xl font-semibold md:hidden'>{score}</p> : null}
     </div>
   )
 }
@@ -239,15 +255,15 @@ function formatDateKey(date: Date) {
 }
 
 function formatWeekday(dateKey: string) {
-  return new Intl.DateTimeFormat(undefined, {weekday: 'short'}).format(parseLocalDateKey(dateKey))
+  return new Intl.DateTimeFormat(DISPLAY_LOCALE, {weekday: 'short'}).format(parseLocalDateKey(dateKey))
 }
 
 function formatShortDate(dateKey: string) {
-  return new Intl.DateTimeFormat(undefined, {month: 'short', day: 'numeric'}).format(parseLocalDateKey(dateKey))
+  return new Intl.DateTimeFormat(DISPLAY_LOCALE, {month: 'short', day: 'numeric'}).format(parseLocalDateKey(dateKey))
 }
 
 function formatFullDate(dateKey: string) {
-  return new Intl.DateTimeFormat(undefined, {
+  return new Intl.DateTimeFormat(DISPLAY_LOCALE, {
     weekday: 'long',
     month: 'long',
     day: 'numeric',
@@ -256,7 +272,7 @@ function formatFullDate(dateKey: string) {
 }
 
 function formatGameTime(date: Date) {
-  return new Intl.DateTimeFormat(undefined, {
+  return new Intl.DateTimeFormat(DISPLAY_LOCALE, {
     hour: 'numeric',
     minute: '2-digit',
     timeZoneName: 'short',

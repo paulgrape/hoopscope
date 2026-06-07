@@ -1,64 +1,169 @@
 'use client'
 
-import {Moon, Sun} from 'lucide-react'
+import {Menu, Moon, Sun, X} from 'lucide-react'
 import {useTheme} from 'next-themes'
 import Link from 'next/link'
+import {usePathname} from 'next/navigation'
+import {useEffect, useRef, useState} from 'react'
 
 import {Button} from '@/components/ui/button'
+import {cn} from '@/lib/utils'
+
+const navLinks = [
+  {href: '/', label: 'Home'},
+  {href: '/match-center', label: 'Match Center'},
+  {href: '/historic-games', label: 'Historic Games'},
+  {href: '/teams', label: 'Teams'},
+  {href: '/standings', label: 'Standings'},
+]
+
+const isActivePath = (pathname: string, href: string) =>
+  href === '/' ? pathname === href : pathname === href || pathname.startsWith(`${href}/`)
 
 export const Navbar = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [activeIndicator, setActiveIndicator] = useState<{left: number; width: number} | null>(null)
+  const pathname = usePathname()
+  const desktopNavRef = useRef<HTMLDivElement>(null)
+  const desktopLinkRefs = useRef<Record<string, HTMLAnchorElement | null>>({})
   const {resolvedTheme, setTheme} = useTheme()
+  const activeHref = navLinks.find((link) => isActivePath(pathname, link.href))?.href ?? '/'
+
+  useEffect(() => {
+    const updateIndicator = () => {
+      const activeLink = desktopLinkRefs.current[activeHref]
+      const nav = desktopNavRef.current
+
+      if (!activeLink || !nav) {
+        setActiveIndicator(null)
+        return
+      }
+
+      const linkRect = activeLink.getBoundingClientRect()
+      const navRect = nav.getBoundingClientRect()
+
+      setActiveIndicator({
+        left: linkRect.left - navRect.left,
+        width: linkRect.width,
+      })
+    }
+
+    updateIndicator()
+
+    if (typeof ResizeObserver === 'undefined') {
+      window.addEventListener('resize', updateIndicator)
+      return () => window.removeEventListener('resize', updateIndicator)
+    }
+
+    const resizeObserver = new ResizeObserver(updateIndicator)
+
+    if (desktopNavRef.current) {
+      resizeObserver.observe(desktopNavRef.current)
+    }
+
+    for (const link of Object.values(desktopLinkRefs.current)) {
+      if (link) {
+        resizeObserver.observe(link)
+      }
+    }
+
+    return () => resizeObserver.disconnect()
+  }, [activeHref])
 
   return (
-    <nav className='bg-card text-card-foreground sticky top-0 z-10 flex h-12 w-full items-center justify-center border-b'>
-      <Link
-        href='/'
-        className='text-muted-foreground hover:text-foreground absolute left-4 transition-colors'
-      >
-        NBA Hub
-      </Link>
-      <div className='flex items-center gap-6'>
+    <nav className='bg-card text-card-foreground sticky top-0 z-10 w-full border-b'>
+      <div className='mx-auto flex min-h-14 w-full max-w-7xl items-center justify-between gap-3 px-4 sm:px-6'>
         <Link
-          className='text-muted-foreground hover:text-foreground transition-colors'
           href='/'
+          className='text-foreground shrink-0 font-semibold transition-colors hover:text-foreground/80'
+          onClick={() => setIsMenuOpen(false)}
         >
-          Home
+          NBA Hub
         </Link>
-        <Link
-          className='text-muted-foreground hover:text-foreground transition-colors'
-          href='/match-center'
-        >
-          Match Center
-        </Link>
-        <Link
-          className='text-muted-foreground hover:text-foreground transition-colors'
-          href='/historic-games'
-        >
-          Historic Games
-        </Link>
-        <Link
-          className='text-muted-foreground hover:text-foreground transition-colors'
-          href='/teams'
-        >
-          Teams
-        </Link>
-        <Link
-          className='text-muted-foreground hover:text-foreground transition-colors'
-          href='/standings'
-        >
-          Standings
-        </Link>
+
+        <div ref={desktopNavRef} className='relative hidden items-center gap-6 md:flex'>
+          {navLinks.map((link) => (
+            <Link
+              key={link.href}
+              ref={(node) => {
+                desktopLinkRefs.current[link.href] = node
+              }}
+              className={cn(
+                'relative z-10 whitespace-nowrap py-4 text-sm transition-colors duration-200',
+                activeHref === link.href
+                  ? 'text-foreground'
+                  : 'text-muted-foreground hover:text-foreground',
+              )}
+              href={link.href}
+            >
+              {link.label}
+            </Link>
+          ))}
+          <span
+            aria-hidden='true'
+            className='bg-primary absolute bottom-2 h-0.5 rounded-full transition-all duration-300 ease-out'
+            style={{
+              opacity: activeIndicator ? 1 : 0,
+              transform: `translateX(${activeIndicator?.left ?? 0}px)`,
+              width: activeIndicator?.width ?? 0,
+            }}
+          />
+        </div>
+
+        <div className='flex shrink-0 items-center gap-1'>
+          <Button
+            variant='ghost'
+            size='icon'
+            className='relative cursor-pointer'
+            onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
+            aria-label='Toggle theme'
+          >
+            <Sun className='h-4 w-4 scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90' />
+            <Moon className='absolute h-4 w-4 scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0' />
+          </Button>
+          <Button
+            variant='ghost'
+            size='icon'
+            className='cursor-pointer md:hidden'
+            onClick={() => setIsMenuOpen((isOpen) => !isOpen)}
+            aria-label={isMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+            aria-expanded={isMenuOpen}
+            aria-controls='mobile-navigation'
+          >
+            {isMenuOpen ? <X className='h-4 w-4' /> : <Menu className='h-4 w-4' />}
+          </Button>
+        </div>
       </div>
-      <Button
-        variant='ghost'
-        size='icon'
-        className='absolute right-4 cursor-pointer'
-        onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
-        aria-label='Toggle theme'
+
+      <div
+        id='mobile-navigation'
+        className={cn(
+          'grid overflow-hidden border-t transition-[grid-template-rows] duration-300 ease-out md:hidden',
+          isMenuOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]',
+        )}
+        aria-hidden={!isMenuOpen}
       >
-        <Sun className='h-4 w-4 scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90' />
-        <Moon className='absolute h-4 w-4 scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0' />
-      </Button>
+        <div className='min-h-0 overflow-hidden'>
+          <div className='mx-auto flex w-full max-w-7xl flex-col gap-1 px-4 py-3'>
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                className={cn(
+                  'rounded-md px-2 py-2 text-sm transition-colors duration-200',
+                  activeHref === link.href
+                    ? 'bg-muted text-foreground'
+                    : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+                )}
+                href={link.href}
+                onClick={() => setIsMenuOpen(false)}
+                tabIndex={isMenuOpen ? undefined : -1}
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
+        </div>
+      </div>
     </nav>
   )
 }

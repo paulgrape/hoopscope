@@ -19,7 +19,7 @@ export default async function HistoricGamePage({params}: HistoricGamePageProps) 
   }
 
   return (
-    <main className='mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 px-6 py-8'>
+    <main className='mx-auto flex w-full max-w-7xl flex-1 flex-col gap-5 px-4 py-5 sm:gap-6 sm:px-6 sm:py-8'>
       <Link
         href='/historic-games'
         className='text-muted-foreground hover:text-foreground text-sm underline-offset-4 hover:underline'
@@ -29,8 +29,8 @@ export default async function HistoricGamePage({params}: HistoricGamePageProps) 
 
       <header className='flex flex-col gap-2'>
         <p className='text-muted-foreground text-sm uppercase tracking-wider'>Live replay</p>
-        <h1 className='text-3xl font-semibold'>{game.name}</h1>
-        <p className='text-muted-foreground max-w-2xl'>
+        <h1 className='text-2xl font-semibold sm:text-3xl'>{game.name}</h1>
+        <p className='text-muted-foreground max-w-2xl text-sm sm:text-base'>
           This replay follows the saved ESPN play-by-play feed and updates as websocket ticks arrive.
         </p>
       </header>
