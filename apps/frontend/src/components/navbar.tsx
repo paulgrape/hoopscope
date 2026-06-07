@@ -32,6 +32,12 @@ export const Navbar = () => {
         </Link>
         <Link
           className='text-muted-foreground hover:text-foreground transition-colors'
+          href='/historic-games'
+        >
+          Historic Games
+        </Link>
+        <Link
+          className='text-muted-foreground hover:text-foreground transition-colors'
           href='/teams'
         >
           Teams
