@@ -63,7 +63,7 @@ export const SOCKET_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localh
 
 async function request<T>(path: string): Promise<T> {
   const response = await fetch(`${API_BASE_URL}${path}`, {
-    cache: 'no-store',
+    cache: 'no-store'
   })
 
   if (!response.ok) {
@@ -84,8 +84,16 @@ export async function getHistoricGame(gameId: string): Promise<LiveGameState | n
 export async function getSchedule(date: string, offsetMinutes: number): Promise<ScoreboardGame[]> {
   const params = new URLSearchParams({
     date,
-    offsetMinutes: String(offsetMinutes),
+    offsetMinutes: String(offsetMinutes)
   })
 
-  return request<ScoreboardGame[]>(`/games/schedule?${params.toString()}`)
+  const response = await fetch(`/api/games/schedule?${params.toString()}`, {
+    cache: 'no-store'
+  })
+
+  if (!response.ok) {
+    throw new Error(`Failed to load /games/schedule: ${response.status}`)
+  }
+
+  return response.json() as Promise<ScoreboardGame[]>
 }
