@@ -2,6 +2,7 @@ import { Logger } from '@nestjs/common';
 import {
   ConnectedSocket,
   MessageBody,
+  OnGatewayDisconnect,
   OnGatewayInit,
   SubscribeMessage,
   WebSocketGateway,
@@ -10,41 +11,80 @@ import {
 import { Server, Socket } from 'socket.io';
 import { SimulationService } from './simulation.service';
 
+type ReplaySubscriptionPayload =
+  | string
+  | {
+      gameId: string;
+      pace?: number;
+    };
+
 @WebSocketGateway({
   cors: { origin: process.env.FRONTEND_URL ?? 'http://localhost:3001' },
   namespace: '/live',
 })
-export class LiveGamesGateway implements OnGatewayInit {
+export class LiveGamesGateway implements OnGatewayInit, OnGatewayDisconnect {
   @WebSocketServer() server: Server;
   private readonly logger = new Logger(LiveGamesGateway.name);
 
   constructor(private readonly simulation: SimulationService) {}
 
   afterInit() {
-    // Start simulation — emit to each game's room on every tick
-    this.simulation.startAll((gameId, state) => {
-      this.server.to(gameId).emit('game:update', state);
-    });
-    this.logger.log('LiveGamesGateway initialized, simulation started');
+    this.simulation.startAll();
+    this.logger.log('LiveGamesGateway initialized, replays ready');
+  }
+
+  handleDisconnect(client: Socket) {
+    this.simulation.stopClient(client.id);
   }
 
   @SubscribeMessage('game:subscribe')
   handleSubscribe(
-    @MessageBody() gameId: string,
+    @MessageBody() payload: ReplaySubscriptionPayload,
     @ConnectedSocket() client: Socket,
   ) {
-    client.join(gameId);
-    const state = this.simulation.getGame(gameId);
-    if (state) client.emit('game:update', state); // send current state immediately
+    const { gameId, pace } = this.parsePayload(payload);
+    const state = this.simulation.startReplay(
+      client.id,
+      gameId,
+      pace,
+      (state) => {
+        client.emit('game:update', state);
+      },
+    );
+
+    if (!state) client.emit('game:not-found', gameId);
     this.logger.log(`Client ${client.id} subscribed to game ${gameId}`);
+  }
+
+  @SubscribeMessage('game:setPace')
+  handleSetPace(
+    @MessageBody() payload: ReplaySubscriptionPayload,
+    @ConnectedSocket() client: Socket,
+  ) {
+    const { gameId, pace } = this.parsePayload(payload);
+    this.simulation.setReplayPace(client.id, gameId, pace, (state) => {
+      client.emit('game:update', state);
+    });
   }
 
   @SubscribeMessage('game:unsubscribe')
   handleUnsubscribe(
-    @MessageBody() gameId: string,
+    @MessageBody() payload: ReplaySubscriptionPayload,
     @ConnectedSocket() client: Socket,
   ) {
-    client.leave(gameId);
+    const { gameId } = this.parsePayload(payload);
+    this.simulation.stopReplay(client.id, gameId);
     this.logger.log(`Client ${client.id} unsubscribed from game ${gameId}`);
+  }
+
+  private parsePayload(payload: ReplaySubscriptionPayload) {
+    if (typeof payload === 'string') {
+      return { gameId: payload, pace: 1 };
+    }
+
+    return {
+      gameId: payload.gameId,
+      pace: payload.pace ?? 1,
+    };
   }
 }
