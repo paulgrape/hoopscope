@@ -34,6 +34,32 @@ export interface EspnCoreAthlete {
   };
 }
 
+export type EspnSeasonType = 'regular' | 'playoffs';
+
+export interface EspnAthleteOverview {
+  statistics?: {
+    labels?: string[];
+    names?: string[];
+    splits?: Array<{
+      displayName?: string;
+      stats?: string[];
+    }>;
+  };
+}
+
+export interface EspnRosterResponse {
+  season?: { year?: number; displayName?: string };
+  athletes?: Array<{
+    id: string;
+    fullName?: string;
+    jersey?: string;
+    age?: number;
+    position?: { abbreviation?: string };
+    headshot?: { href?: string };
+    experience?: { years?: number };
+  }>;
+}
+
 @Injectable()
 export class EspnService {
   private readonly http: AxiosInstance;
@@ -45,6 +71,11 @@ export class EspnService {
   private readonly TTL_SCORES = 60 * 1000; // 60s
   private readonly TTL_NEWS = 10 * 60 * 1000; // 10m
   private readonly TTL_STANDINGS = 30 * 60 * 1000; // 30m
+  readonly TTL_SEASON_STATS_CURRENT = 30 * 60 * 1000; // 30m
+  readonly TTL_SEASON_STATS_HISTORIC = 24 * 60 * 60 * 1000; // 24h
+
+  private readonly webApiBase =
+    'https://site.web.api.espn.com/apis/common/v3/sports/basketball/nba';
 
   constructor(
     private readonly config: ConfigService,
@@ -72,8 +103,78 @@ export class EspnService {
   getTeam(id: string) {
     return this.get(`/teams/${id}`, this.TTL_TEAMS);
   }
-  getRoster(teamId: string) {
-    return this.get(`/teams/${teamId}/roster`, this.TTL_PLAYERS);
+  getRoster(teamId: string, season?: number) {
+    const path =
+      season != null
+        ? `/teams/${teamId}/roster?season=${season}`
+        : `/teams/${teamId}/roster`;
+    return this.get<EspnRosterResponse>(path, this.TTL_PLAYERS);
+  }
+
+  toEspnSeasonType(seasonType: EspnSeasonType): number {
+    return seasonType === 'playoffs' ? 3 : 2;
+  }
+
+  seasonStatsTtl(season: number, currentSeason: number): number {
+    return season >= currentSeason
+      ? this.TTL_SEASON_STATS_CURRENT
+      : this.TTL_SEASON_STATS_HISTORIC;
+  }
+
+  async resolveCurrentSeasonYear(): Promise<number> {
+    const cacheKey = 'nba-current-season-year';
+    const cached = this.cache.get<number>(cacheKey);
+    if (cached) return cached;
+
+    const data = await this.getRoster('1');
+    const year = data.season?.year ?? new Date().getFullYear();
+    this.cache.set(cacheKey, year, this.TTL_PLAYERS);
+    return year;
+  }
+
+  async getAthleteOverview(
+    athleteId: string,
+    season: number,
+    seasonType: EspnSeasonType,
+    ttlMs: number,
+  ): Promise<EspnAthleteOverview> {
+    const seasontype = this.toEspnSeasonType(seasonType);
+    const url = `${this.webApiBase}/athletes/${athleteId}/overview`;
+    const cacheKey = `athlete-overview:${athleteId}:${season}:${seasontype}`;
+
+    const cached = this.cache.get<EspnAthleteOverview>(cacheKey);
+    if (cached) return cached;
+
+    this.logger.log(`ESPN fetch: ${url}?season=${season}&seasontype=${seasontype}`);
+    const { data } = await this.http.get<EspnAthleteOverview>(url, {
+      params: { season, seasontype },
+      timeout: 12_000,
+    });
+    this.cache.set(cacheKey, data, ttlMs);
+    return data;
+  }
+
+  async getTeamAthleteStatsFallback(
+    teamId: string,
+    season: number,
+    seasonType: EspnSeasonType,
+  ): Promise<unknown> {
+    const seasontype = this.toEspnSeasonType(seasonType);
+    const url = `${this.webApiBase}/statistics/byathlete`;
+    const cacheKey = `byathlete:${teamId}:${season}:${seasontype}`;
+
+    const cached = this.cache.get<unknown>(cacheKey);
+    if (cached) return cached;
+
+    this.logger.log(
+      `ESPN fetch: ${url}?team=${teamId}&season=${season}&seasontype=${seasontype}`,
+    );
+    const { data } = await this.http.get<unknown>(url, {
+      params: { team: teamId, season, seasontype, limit: 200 },
+      timeout: 20_000,
+    });
+    this.cache.set(cacheKey, data, this.TTL_PLAYERS);
+    return data;
   }
   async getPlayer(id: string): Promise<EspnCoreAthlete> {
     const base =
@@ -108,7 +209,7 @@ export class EspnService {
     if (cached) return cached;
 
     this.logger.log(`ESPN fetch: ${url}`);
-    const { data } = await this.http.get<unknown>(url);
+    const { data } = await this.http.get<unknown>(url, { timeout: 20_000 });
     this.cache.set(url, data, this.TTL_STANDINGS);
     return data;
   }

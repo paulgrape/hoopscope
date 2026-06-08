@@ -1,6 +1,12 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import {
+  BadRequestException,
+  Controller,
+  Get,
+  Param,
+  Query,
+} from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
-import { TeamsService } from './teams.service';
+import { TeamSeasonType, TeamsService } from './teams.service';
 
 @ApiTags('teams')
 @Controller('teams')
@@ -23,5 +29,31 @@ export class TeamsController {
   @ApiOperation({ summary: 'Get team roster' })
   findRoster(@Param('id') id: string) {
     return this.teamsService.findRoster(id);
+  }
+
+  @Get(':id/stats')
+  @ApiOperation({
+    summary: 'Team player averages (regular season or playoffs)',
+  })
+  findSeasonStats(
+    @Param('id') id: string,
+    @Query('season') season?: string,
+    @Query('seasonType') seasonType?: string,
+  ) {
+    const parsedSeason = season ? Number(season) : undefined;
+    if (season && !Number.isFinite(parsedSeason)) {
+      throw new BadRequestException('season must be a number');
+    }
+
+    const resolvedSeasonType = (seasonType ?? 'regular') as TeamSeasonType;
+    if (resolvedSeasonType !== 'regular' && resolvedSeasonType !== 'playoffs') {
+      throw new BadRequestException('seasonType must be regular or playoffs');
+    }
+
+    return this.teamsService.findSeasonStats(
+      id,
+      parsedSeason,
+      resolvedSeasonType,
+    );
   }
 }

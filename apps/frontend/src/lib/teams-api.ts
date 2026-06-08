@@ -25,6 +25,51 @@ export type TeamRosterPlayer = {
   experience: number
 }
 
+export type SeasonType = 'regular' | 'playoffs'
+
+export type TeamSeasonStatPlayer = {
+  id: string
+  fullName: string
+  jersey: string | null
+  position: string | null
+  headshot: string | null
+  gp: number
+  min: number
+  pts: number
+  reb: number
+  ast: number
+  stl: number
+  blk: number
+  tov: number
+  fgPct: number
+}
+
+export type TeamSeasonStatsResponse = {
+  season: number
+  seasonLabel: string
+  seasonType: SeasonType
+  participated: boolean
+  players: TeamSeasonStatPlayer[]
+}
+
+export type SeasonOption = {
+  value: number
+  label: string
+}
+
+const SEASON_HISTORY_COUNT = 10
+
+export function formatSeasonLabel(season: number): string {
+  return `${season - 1}–${String(season).slice(-2)}`
+}
+
+export function buildSeasonOptions(currentSeason: number): SeasonOption[] {
+  return Array.from({length: SEASON_HISTORY_COUNT}, (_, index) => {
+    const value = currentSeason - index
+    return {value, label: formatSeasonLabel(value)}
+  })
+}
+
 async function request<T>(path: string): Promise<T> {
   const response = await fetch(`${API_BASE_URL}${path}`, {
     cache: 'no-store',
@@ -47,4 +92,22 @@ export async function getTeam(teamId: string): Promise<TeamDetails> {
 
 export async function getTeamRoster(teamId: string): Promise<TeamRosterPlayer[]> {
   return request<TeamRosterPlayer[]>(`/teams/${teamId}/roster`)
+}
+
+type TeamSeasonStatsOptions = {
+  season?: number
+  seasonType?: SeasonType
+}
+
+export async function getTeamSeasonStats(
+  teamId: string,
+  options: TeamSeasonStatsOptions = {},
+): Promise<TeamSeasonStatsResponse> {
+  const params = new URLSearchParams()
+  if (options.season != null) params.set('season', String(options.season))
+  if (options.seasonType) params.set('seasonType', options.seasonType)
+
+  const query = params.toString()
+  const path = query ? `/teams/${teamId}/stats?${query}` : `/teams/${teamId}/stats`
+  return request<TeamSeasonStatsResponse>(path)
 }

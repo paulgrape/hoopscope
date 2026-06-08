@@ -2,6 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 import type { NewsArticle } from '@/lib/news-api'
+import { SITE_DAILY_EDITION, SITE_DAILY_TITLE } from '@/lib/site'
 import { cn } from '@/lib/utils'
 
 type NewsNewspaperProps = {
@@ -88,10 +89,10 @@ export function NewsNewspaper({ articles }: NewsNewspaperProps) {
     <section className='bg-card border-border overflow-hidden rounded-xl border'>
       <header className='border-border border-b px-4 py-5 text-center sm:px-8 sm:py-6'>
         <p className='text-muted-foreground text-[10px] font-medium uppercase tracking-[0.35em] sm:text-xs'>
-          The Association Edition
+          {SITE_DAILY_EDITION}
         </p>
         <h2 className='font-serif mt-2 text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl'>
-          NBA Hub Daily
+          {SITE_DAILY_TITLE}
         </h2>
         <div className='border-border mx-auto mt-4 flex max-w-xl flex-wrap items-center justify-center gap-x-4 gap-y-1 border-y py-2 text-[11px] uppercase tracking-[0.2em] sm:text-xs'>
           <span>{formatEditionDate(new Date())}</span>

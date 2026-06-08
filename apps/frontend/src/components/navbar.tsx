@@ -2,11 +2,13 @@
 
 import {Menu, Moon, Sun, X} from 'lucide-react'
 import {useTheme} from 'next-themes'
+import Image from 'next/image'
 import Link from 'next/link'
 import {usePathname} from 'next/navigation'
 import {useEffect, useRef, useState} from 'react'
 
 import {Button} from '@/components/ui/button'
+import {SITE_NAME} from '@/lib/site'
 import {cn} from '@/lib/utils'
 
 const navLinks = [
@@ -14,7 +16,7 @@ const navLinks = [
   {href: '/match-center', label: 'Match Center'},
   {href: '/historic-games', label: 'Historic Games'},
   {href: '/teams', label: 'Teams'},
-  {href: '/standings', label: 'Standings'},
+  {href: '/standings', label: 'Standings'}
 ]
 
 const isActivePath = (pathname: string, href: string) =>
@@ -27,7 +29,7 @@ export const Navbar = () => {
   const desktopNavRef = useRef<HTMLDivElement>(null)
   const desktopLinkRefs = useRef<Record<string, HTMLAnchorElement | null>>({})
   const {resolvedTheme, setTheme} = useTheme()
-  const activeHref = navLinks.find((link) => isActivePath(pathname, link.href))?.href ?? '/'
+  const activeHref = navLinks.find(link => isActivePath(pathname, link.href))?.href ?? '/'
 
   useEffect(() => {
     const updateIndicator = () => {
@@ -44,7 +46,7 @@ export const Navbar = () => {
 
       setActiveIndicator({
         left: linkRect.left - navRect.left,
-        width: linkRect.width,
+        width: linkRect.width
       })
     }
 
@@ -75,24 +77,32 @@ export const Navbar = () => {
       <div className='mx-auto flex min-h-14 w-full max-w-7xl items-center justify-between gap-3 px-4 sm:px-6'>
         <Link
           href='/'
-          className='text-foreground shrink-0 font-semibold transition-colors hover:text-foreground/80'
+          className='text-foreground group hover:text-foreground/80 flex shrink-0 items-center gap-2 font-semibold transition-all duration-200'
           onClick={() => setIsMenuOpen(false)}
         >
-          NBA Hub
+          <Image
+            src='/icon1.png'
+            alt=''
+            width={36}
+            height={36}
+            className='h-9 w-9 shrink-0 rounded-full object-contain transition-all duration-200 group-hover:opacity-80'
+          />
+          {SITE_NAME}
         </Link>
 
-        <div ref={desktopNavRef} className='relative hidden items-center gap-6 md:flex'>
-          {navLinks.map((link) => (
+        <div
+          ref={desktopNavRef}
+          className='relative hidden items-center gap-6 md:flex'
+        >
+          {navLinks.map(link => (
             <Link
               key={link.href}
-              ref={(node) => {
+              ref={node => {
                 desktopLinkRefs.current[link.href] = node
               }}
               className={cn(
-                'relative z-10 whitespace-nowrap py-4 text-sm transition-colors duration-200',
-                activeHref === link.href
-                  ? 'text-foreground'
-                  : 'text-muted-foreground hover:text-foreground',
+                'relative z-10 py-4 text-sm whitespace-nowrap transition-colors duration-200',
+                activeHref === link.href ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
               )}
               href={link.href}
             >
@@ -105,7 +115,7 @@ export const Navbar = () => {
             style={{
               opacity: activeIndicator ? 1 : 0,
               transform: `translateX(${activeIndicator?.left ?? 0}px)`,
-              width: activeIndicator?.width ?? 0,
+              width: activeIndicator?.width ?? 0
             }}
           />
         </div>
@@ -125,7 +135,7 @@ export const Navbar = () => {
             variant='ghost'
             size='icon'
             className='cursor-pointer md:hidden'
-            onClick={() => setIsMenuOpen((isOpen) => !isOpen)}
+            onClick={() => setIsMenuOpen(isOpen => !isOpen)}
             aria-label={isMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
             aria-expanded={isMenuOpen}
             aria-controls='mobile-navigation'
@@ -139,20 +149,20 @@ export const Navbar = () => {
         id='mobile-navigation'
         className={cn(
           'grid overflow-hidden border-t transition-[grid-template-rows] duration-300 ease-out md:hidden',
-          isMenuOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]',
+          isMenuOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
         )}
         aria-hidden={!isMenuOpen}
       >
         <div className='min-h-0 overflow-hidden'>
           <div className='mx-auto flex w-full max-w-7xl flex-col gap-1 px-4 py-3'>
-            {navLinks.map((link) => (
+            {navLinks.map(link => (
               <Link
                 key={link.href}
                 className={cn(
                   'rounded-md px-2 py-2 text-sm transition-colors duration-200',
                   activeHref === link.href
                     ? 'bg-muted text-foreground'
-                    : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+                    : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                 )}
                 href={link.href}
                 onClick={() => setIsMenuOpen(false)}

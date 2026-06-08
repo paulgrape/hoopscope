@@ -1,7 +1,13 @@
 import Image from 'next/image'
 import Link from 'next/link'
 
+import {createPageMetadata} from '@/lib/site'
 import {getTeams} from '@/lib/teams-api'
+
+export const metadata = createPageMetadata({
+  title: 'Teams',
+  description: 'All 30 pro basketball franchises with rosters and team details.',
+})
 
 export default async function TeamsPage() {
   const teams = await getTeams()

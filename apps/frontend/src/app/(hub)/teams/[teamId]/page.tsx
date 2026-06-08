@@ -1,7 +1,10 @@
 import Image from 'next/image'
 import Link from 'next/link'
 
-import {getTeam, getTeamRoster, type TeamRosterPlayer} from '@/lib/teams-api'
+import {TeamSeasonStats} from '@/components/team-season-stats'
+import {SITE_NAME, createPageMetadata} from '@/lib/site'
+import {buildSeasonOptions, getTeam, getTeamRoster, getTeamSeasonStats, type TeamRosterPlayer} from '@/lib/teams-api'
+import type {Metadata} from 'next'
 
 type TeamDetailsPageProps = {
   params: Promise<{
@@ -9,9 +12,23 @@ type TeamDetailsPageProps = {
   }>
 }
 
+export async function generateMetadata({params}: TeamDetailsPageProps): Promise<Metadata> {
+  const {teamId} = await params
+  const team = await getTeam(teamId)
+
+  return createPageMetadata({
+    title: team.displayName,
+    description: `${team.displayName} roster, record, and team details on ${SITE_NAME}.`
+  })
+}
+
 export default async function TeamDetailsPage({params}: TeamDetailsPageProps) {
   const {teamId} = await params
-  const [team, roster] = await Promise.all([getTeam(teamId), getTeamRoster(teamId)])
+  const [team, roster, seasonStats] = await Promise.all([
+    getTeam(teamId),
+    getTeamRoster(teamId),
+    getTeamSeasonStats(teamId)
+  ])
 
   return (
     <main className='mx-auto flex w-full max-w-7xl flex-1 flex-col gap-5 px-4 py-5 sm:gap-6 sm:px-6 sm:py-8'>
@@ -31,7 +48,7 @@ export default async function TeamDetailsPage({params}: TeamDetailsPageProps) {
           height={100}
         />
         <div className='min-w-0'>
-          <p className='text-muted-foreground text-xs uppercase tracking-wider'>{team.abbreviation}</p>
+          <p className='text-muted-foreground text-xs tracking-wider uppercase'>{team.abbreviation}</p>
           <h1 className='text-card-foreground mt-1 text-2xl font-semibold sm:text-3xl'>{team.displayName}</h1>
           <div className='text-muted-foreground mt-3 flex flex-col gap-1 text-sm sm:flex-row sm:flex-wrap sm:gap-4'>
             <p>
@@ -44,7 +61,7 @@ export default async function TeamDetailsPage({params}: TeamDetailsPageProps) {
         </div>
       </header>
 
-      <section className='bg-card border-border min-w-0 rounded-xl border p-3 sm:p-5'>
+      {/* <section className='bg-card border-border min-w-0 rounded-xl border p-3 sm:p-5'>
         <h2 className='text-card-foreground text-lg font-semibold sm:text-xl'>Current Roster</h2>
 
         <div className='mt-4 grid gap-3 md:hidden'>
@@ -89,7 +106,13 @@ export default async function TeamDetailsPage({params}: TeamDetailsPageProps) {
             </tbody>
           </table>
         </div>
-      </section>
+      </section> */}
+
+      <TeamSeasonStats
+        teamId={teamId}
+        initialStats={seasonStats}
+        seasonOptions={buildSeasonOptions(seasonStats.season)}
+      />
     </main>
   )
 }

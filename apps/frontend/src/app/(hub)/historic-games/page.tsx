@@ -2,6 +2,12 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 import {getHistoricGames} from '@/lib/games-api'
+import {createPageMetadata} from '@/lib/site'
+
+export const metadata = createPageMetadata({
+  title: 'Historic Games',
+  description: 'Replay classic matchups with saved play-by-play feeds.',
+})
 
 export default async function HistoricGamesPage() {
   const games = await getHistoricGames()

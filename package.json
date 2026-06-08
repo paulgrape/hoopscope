@@ -1,5 +1,5 @@
 {
-  "name": "nba-hub",
+  "name": "hoopscope",
   "private": true,
   "workspaces": [
     "apps/frontend",

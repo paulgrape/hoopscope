@@ -3,11 +3,30 @@ import {notFound} from 'next/navigation'
 
 import {HistoricGameSimulator} from '@/components/historic-game-simulator'
 import {SOCKET_BASE_URL, getHistoricGame} from '@/lib/games-api'
+import {createPageMetadata} from '@/lib/site'
+import type {Metadata} from 'next'
 
 type HistoricGamePageProps = {
   params: Promise<{
     gameId: string
   }>
+}
+
+export async function generateMetadata({params}: HistoricGamePageProps): Promise<Metadata> {
+  const {gameId} = await params
+  const game = await getHistoricGame(gameId)
+
+  if (!game) {
+    return createPageMetadata({
+      title: 'Historic Game',
+      description: 'Replay a classic pro basketball matchup.',
+    })
+  }
+
+  return createPageMetadata({
+    title: game.name,
+    description: `Replay ${game.name} with live play-by-play ticks.`,
+  })
 }
 
 export default async function HistoricGamePage({params}: HistoricGamePageProps) {

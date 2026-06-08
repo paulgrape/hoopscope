@@ -1,9 +1,57 @@
 import { Injectable } from '@nestjs/common';
-import { EspnService } from '../espn/espn.service';
+import { CacheService } from '../cache/cache.service';
+import {
+  EspnAthleteOverview,
+  EspnSeasonType,
+  EspnService,
+} from '../espn/espn.service';
+
+export type TeamSeasonType = EspnSeasonType;
+
+export type TeamSeasonStatPlayer = {
+  id: string;
+  fullName: string;
+  jersey: string | null;
+  position: string | null;
+  headshot: string | null;
+  gp: number;
+  min: number;
+  pts: number;
+  reb: number;
+  ast: number;
+  stl: number;
+  blk: number;
+  tov: number;
+  fgPct: number;
+};
+
+export type TeamSeasonStatsResponse = {
+  season: number;
+  seasonLabel: string;
+  seasonType: TeamSeasonType;
+  participated: boolean;
+  players: TeamSeasonStatPlayer[];
+};
+
+type RosterPlayer = {
+  id: string;
+  fullName: string;
+  jersey: string | null;
+  position: string | null;
+  headshot: string | null;
+};
+
+const SPLIT_BY_SEASON_TYPE: Record<TeamSeasonType, string> = {
+  regular: 'Regular Season',
+  playoffs: 'Postseason',
+};
 
 @Injectable()
 export class TeamsService {
-  constructor(private readonly espn: EspnService) {}
+  constructor(
+    private readonly espn: EspnService,
+    private readonly cache: CacheService,
+  ) {}
 
   async findAll() {
     const data: any = await this.espn.getTeams();
@@ -36,16 +84,201 @@ export class TeamsService {
   }
 
   async findRoster(teamId: string) {
-    const data: any = await this.espn.getRoster(teamId);
-    return data.athletes.flatMap((p: any) => ({
+    const data = await this.espn.getRoster(teamId);
+    return (data.athletes ?? []).map((p) => ({
+      id: p.id,
+      fullName: p.fullName ?? 'Unknown',
+      jersey: p.jersey ?? null,
+      position: p.position?.abbreviation ?? null,
+      headshot: p.headshot?.href ?? null,
+      age: p.age,
+      experience: p.experience?.years ?? 0,
+    }));
+  }
+
+  async findSeasonStats(
+    teamId: string,
+    season?: number,
+    seasonType: TeamSeasonType = 'regular',
+  ): Promise<TeamSeasonStatsResponse> {
+    const currentSeason = await this.espn.resolveCurrentSeasonYear();
+    const resolvedSeason = season ?? currentSeason;
+    const cacheKey = `team-stats:${teamId}:${resolvedSeason}:${seasonType}`;
+
+    const cached = this.cache.get<TeamSeasonStatsResponse>(cacheKey);
+    if (cached) return cached;
+
+    const ttl = this.espn.seasonStatsTtl(resolvedSeason, currentSeason);
+    const roster = await this.resolveSeasonRoster(
+      teamId,
+      resolvedSeason,
+      seasonType,
+    );
+
+    const players = (
+      await this.mapWithConcurrency(
+        roster,
+        async (player) => {
+          const overview = await this.espn.getAthleteOverview(
+            player.id,
+            resolvedSeason,
+            seasonType,
+            ttl,
+          );
+          return this.parseOverviewStats(player, overview, seasonType);
+        },
+        8,
+      )
+    ).filter((player): player is TeamSeasonStatPlayer => player != null);
+
+    players.sort((a, b) => b.pts - a.pts);
+
+    const participated =
+      seasonType === 'regular' ? players.length > 0 : players.length > 0;
+
+    const result: TeamSeasonStatsResponse = {
+      season: resolvedSeason,
+      seasonLabel: this.formatSeasonLabel(resolvedSeason),
+      seasonType,
+      participated,
+      players: seasonType === 'playoffs' && !participated ? [] : players,
+    };
+
+    this.cache.set(cacheKey, result, ttl);
+    return result;
+  }
+
+  private async resolveSeasonRoster(
+    teamId: string,
+    season: number,
+    seasonType: TeamSeasonType,
+  ): Promise<RosterPlayer[]> {
+    const data = await this.espn.getRoster(teamId, season);
+    const athletes = data.athletes ?? [];
+
+    if (athletes.length > 0) {
+      return athletes.map((p) => ({
         id: p.id,
-        fullName: p.fullName,
-        jersey: p.jersey,
+        fullName: p.fullName ?? 'Unknown',
+        jersey: p.jersey ?? null,
         position: p.position?.abbreviation ?? null,
         headshot: p.headshot?.href ?? null,
-        age: p.age,
-        experience: p.experience?.years ?? 0,
-      })
+      }));
+    }
+
+    return this.rosterFromByAthleteFallback(teamId, season, seasonType);
+  }
+
+  private async rosterFromByAthleteFallback(
+    teamId: string,
+    season: number,
+    seasonType: TeamSeasonType,
+  ): Promise<RosterPlayer[]> {
+    const data: any = await this.espn.getTeamAthleteStatsFallback(
+      teamId,
+      season,
+      seasonType,
     );
+
+    const athletes: any[] =
+      data?.athletes ??
+      data?.items ??
+      data?.leaders ??
+      data?.categories?.[0]?.leaders ??
+      [];
+
+    return athletes
+      .map((entry: any) => {
+        const athlete = entry.athlete ?? entry;
+        const id = String(athlete?.id ?? entry?.id ?? '');
+        if (!id) return null;
+
+        return {
+          id,
+          fullName:
+            athlete?.displayName ??
+            athlete?.fullName ??
+            athlete?.shortName ??
+            'Unknown',
+          jersey: athlete?.jersey ?? null,
+          position:
+            athlete?.position?.abbreviation ??
+            athlete?.position?.displayName ??
+            null,
+          headshot: athlete?.headshot?.href ?? athlete?.headshot ?? null,
+        } satisfies RosterPlayer;
+      })
+      .filter((player): player is RosterPlayer => player != null);
+  }
+
+  private parseOverviewStats(
+    player: RosterPlayer,
+    overview: EspnAthleteOverview,
+    seasonType: TeamSeasonType,
+  ): TeamSeasonStatPlayer | null {
+    const statistics = overview.statistics;
+    if (!statistics?.names || !statistics.splits) return null;
+
+    const splitName = SPLIT_BY_SEASON_TYPE[seasonType];
+    const split = statistics.splits.find((s) => s.displayName === splitName);
+    if (!split?.stats) return null;
+
+    const values = Object.fromEntries(
+      statistics.names.map((name, index) => [name, split.stats![index]]),
+    );
+
+    const gp = Number(values.gamesPlayed ?? 0);
+    if (!Number.isFinite(gp) || gp <= 0) return null;
+
+    return {
+      id: player.id,
+      fullName: player.fullName,
+      jersey: player.jersey,
+      position: player.position,
+      headshot: player.headshot,
+      gp,
+      min: this.toNumber(values.avgMinutes),
+      pts: this.toNumber(values.avgPoints),
+      reb: this.toNumber(values.avgRebounds),
+      ast: this.toNumber(values.avgAssists),
+      stl: this.toNumber(values.avgSteals),
+      blk: this.toNumber(values.avgBlocks),
+      tov: this.toNumber(values.avgTurnovers),
+      fgPct: this.toNumber(values.fieldGoalPct),
+    };
+  }
+
+  private formatSeasonLabel(season: number): string {
+    const start = season - 1;
+    return `${start}–${String(season).slice(-2)}`;
+  }
+
+  private toNumber(value: string | undefined): number {
+    const parsed = Number(value ?? 0);
+    return Number.isFinite(parsed) ? parsed : 0;
+  }
+
+  private async mapWithConcurrency<T, R>(
+    items: T[],
+    mapper: (item: T, index: number) => Promise<R>,
+    limit: number,
+  ): Promise<R[]> {
+    if (items.length === 0) return [];
+
+    const results = new Array<R>(items.length);
+    let nextIndex = 0;
+
+    const workers = Array.from(
+      { length: Math.min(limit, items.length) },
+      async () => {
+        while (nextIndex < items.length) {
+          const index = nextIndex++;
+          results[index] = await mapper(items[index], index);
+        }
+      },
+    );
+
+    await Promise.all(workers);
+    return results;
   }
 }

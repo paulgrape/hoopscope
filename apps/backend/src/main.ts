@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { API_TITLE, API_VERSION } from './site';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -16,8 +17,8 @@ async function bootstrap() {
   );
 
   const swaggerConfig = new DocumentBuilder()
-    .setTitle('NBA Hub API')
-    .setVersion('1.0')
+    .setTitle(API_TITLE)
+    .setVersion(API_VERSION)
     .build();
   SwaggerModule.setup(
     'api/docs',

@@ -1,4 +1,11 @@
 import {MatchCenterTimeline} from '@/components/match-center-timeline'
+import {createPageMetadata} from '@/lib/site'
+
+export const metadata = createPageMetadata({
+  title: 'Match Center',
+  description:
+    'Browse pro basketball games by your local calendar date, including live scoreboards and upcoming tip-offs.',
+})
 
 export default function MatchCenterPage() {
   return (

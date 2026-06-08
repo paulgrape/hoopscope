@@ -1,5 +1,11 @@
 import {StandingsTables} from '@/components/standings-tables'
 import {getStandings} from '@/lib/standings-api'
+import {createPageMetadata} from '@/lib/site'
+
+export const metadata = createPageMetadata({
+  title: 'Standings',
+  description: 'Conference standings with playoff and play-in positions highlighted.',
+})
 
 export default async function StandingsPage() {
   const standings = await getStandings()
