@@ -1,16 +1,10 @@
 'use client'
 
 import Image from 'next/image'
-import {useEffect, useMemo, useRef, useState} from 'react'
+import {useMemo, useState} from 'react'
 
 import {Button} from '@/components/ui/button'
-import {
-  getTeamSeasonStats,
-  type SeasonOption,
-  type SeasonType,
-  type TeamSeasonStatPlayer,
-  type TeamSeasonStatsResponse
-} from '@/lib/teams-api'
+import {type SeasonType, type TeamSeasonStatPlayer, type TeamSeasonStatsResponse} from '@/lib/teams-api'
 import {cn} from '@/lib/utils'
 
 type SortColumn = keyof Pick<
@@ -34,55 +28,16 @@ const COLUMNS: Array<{key: SortColumn; label: string; numeric: boolean; classNam
 ]
 
 type TeamSeasonStatsProps = {
-  teamId: string
-  initialStats: TeamSeasonStatsResponse
-  seasonOptions: SeasonOption[]
+  regularStats: TeamSeasonStatsResponse
+  playoffStats: TeamSeasonStatsResponse
 }
 
-export function TeamSeasonStats({teamId, initialStats, seasonOptions}: TeamSeasonStatsProps) {
-  const [stats, setStats] = useState(initialStats)
-  const [selectedSeason, setSelectedSeason] = useState(initialStats.season)
-  const [seasonType, setSeasonType] = useState<SeasonType>(initialStats.seasonType)
+export function TeamSeasonStats({regularStats, playoffStats}: TeamSeasonStatsProps) {
+  const [seasonType, setSeasonType] = useState<SeasonType>('regular')
   const [sortColumn, setSortColumn] = useState<SortColumn>('pts')
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc')
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const skipInitialFetch = useRef(true)
 
-  useEffect(() => {
-    if (skipInitialFetch.current && selectedSeason === initialStats.season && seasonType === initialStats.seasonType) {
-      skipInitialFetch.current = false
-      return
-    }
-
-    skipInitialFetch.current = false
-    let isActive = true
-
-    async function loadStats() {
-      setIsLoading(true)
-      setError(null)
-
-      try {
-        const nextStats = await getTeamSeasonStats(teamId, {
-          season: selectedSeason,
-          seasonType
-        })
-        if (isActive) setStats(nextStats)
-      } catch (caughtError) {
-        if (isActive) {
-          setError(caughtError instanceof Error ? caughtError.message : 'Failed to load season stats')
-        }
-      } finally {
-        if (isActive) setIsLoading(false)
-      }
-    }
-
-    void loadStats()
-
-    return () => {
-      isActive = false
-    }
-  }, [teamId, selectedSeason, seasonType, initialStats.season, initialStats.seasonType])
+  const stats = seasonType === 'regular' ? regularStats : playoffStats
 
   const sortedPlayers = useMemo(() => {
     const players = [...stats.players]
@@ -114,8 +69,8 @@ export function TeamSeasonStats({teamId, initialStats, seasonOptions}: TeamSeaso
     setSortDirection(column === 'fullName' ? 'asc' : 'desc')
   }
 
-  const showEmptyPlayoffs = seasonType === 'playoffs' && !stats.participated
-  const showStats = !isLoading && !showEmptyPlayoffs && !error
+  const showEmptyPlayoffs = seasonType === 'playoffs' && !playoffStats.participated
+  const showStats = !showEmptyPlayoffs
 
   return (
     <section className='bg-card border-border min-w-0 rounded-xl border p-3 sm:p-5'>
@@ -146,13 +101,9 @@ export function TeamSeasonStats({teamId, initialStats, seasonOptions}: TeamSeaso
         </div>
       </div>
 
-      {isLoading ? <p className='text-muted-foreground mt-4 text-sm'>Loading stats...</p> : null}
-
-      {error ? <p className='text-destructive mt-4 text-sm'>{error}</p> : null}
-
-      {!isLoading && showEmptyPlayoffs ? (
+      {showEmptyPlayoffs ? (
         <p className='text-muted-foreground mt-4 rounded-lg border border-dashed px-4 py-6 text-sm'>
-          This team did not qualify for the playoffs in {stats.seasonLabel}.
+          This team did not qualify for the playoffs in {playoffStats.seasonLabel}.
         </p>
       ) : null}
 

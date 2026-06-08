@@ -3,7 +3,7 @@ import Link from 'next/link'
 
 import {TeamSeasonStats} from '@/components/team-season-stats'
 import {SITE_NAME, createPageMetadata} from '@/lib/site'
-import {buildSeasonOptions, getTeam, getTeamRoster, getTeamSeasonStats, type TeamRosterPlayer} from '@/lib/teams-api'
+import {getTeam, getTeamRoster, getTeamSeasonStats, type TeamRosterPlayer} from '@/lib/teams-api'
 import type {Metadata} from 'next'
 
 type TeamDetailsPageProps = {
@@ -24,10 +24,11 @@ export async function generateMetadata({params}: TeamDetailsPageProps): Promise<
 
 export default async function TeamDetailsPage({params}: TeamDetailsPageProps) {
   const {teamId} = await params
-  const [team, roster, seasonStats] = await Promise.all([
+  const [team, roster, regularStats, playoffStats] = await Promise.all([
     getTeam(teamId),
     getTeamRoster(teamId),
-    getTeamSeasonStats(teamId)
+    getTeamSeasonStats(teamId, {seasonType: 'regular'}),
+    getTeamSeasonStats(teamId, {seasonType: 'playoffs'})
   ])
 
   return (
@@ -61,57 +62,9 @@ export default async function TeamDetailsPage({params}: TeamDetailsPageProps) {
         </div>
       </header>
 
-      {/* <section className='bg-card border-border min-w-0 rounded-xl border p-3 sm:p-5'>
-        <h2 className='text-card-foreground text-lg font-semibold sm:text-xl'>Current Roster</h2>
-
-        <div className='mt-4 grid gap-3 md:hidden'>
-          {roster.map(player => (
-            <RosterPlayerCard key={player.id} player={player} />
-          ))}
-        </div>
-
-        <div className='mt-4 hidden overflow-x-auto md:block'>
-          <table className='w-full min-w-155 text-left text-sm'>
-            <thead className='text-muted-foreground border-b'>
-              <tr>
-                <th className='py-2 pr-4 font-medium'>Player</th>
-                <th className='py-2 pr-4 font-medium'>#</th>
-                <th className='py-2 pr-4 font-medium'>Pos</th>
-                <th className='py-2 pr-4 font-medium'>Age</th>
-                <th className='py-2 pr-4 font-medium'>Experience</th>
-              </tr>
-            </thead>
-            <tbody>
-              {roster.map(player => (
-                <tr
-                  key={player.id}
-                  className='border-border/70 text-card-foreground border-b'
-                >
-                  <td className='flex items-center gap-2 py-2 pr-4'>
-                    <Image
-                      src={player.headshot ?? ''}
-                      alt={player.fullName}
-                      width={60}
-                      height={60}
-                      className='h-auto w-15 shrink-0'
-                    />
-                    <div>{player.fullName}</div>
-                  </td>
-                  <td className='py-2 pr-4'>{player.jersey ?? '-'}</td>
-                  <td className='py-2 pr-4'>{player.position ?? '-'}</td>
-                  <td className='py-2 pr-4'>{player.age ?? '-'}</td>
-                  <td className='py-2 pr-4'>{player.experience}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </section> */}
-
       <TeamSeasonStats
-        teamId={teamId}
-        initialStats={seasonStats}
-        seasonOptions={buildSeasonOptions(seasonStats.season)}
+        regularStats={regularStats}
+        playoffStats={playoffStats}
       />
     </main>
   )
