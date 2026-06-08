@@ -7,13 +7,13 @@ import {cn} from '@/lib/utils'
 const playoffRowClass: Record<PlayoffStatus, string> = {
   playoff: 'border-l-emerald-500 bg-emerald-500/10',
   'play-in': 'border-l-amber-500 bg-amber-500/10',
-  out: 'border-l-transparent',
+  out: 'border-l-transparent'
 }
 
 const legendItems: Array<{status: PlayoffStatus; label: string; className: string}> = [
   {status: 'playoff', label: 'Playoff (seeds 1–6)', className: 'bg-emerald-500'},
   {status: 'play-in', label: 'Play-In (seeds 7–10)', className: 'bg-amber-500'},
-  {status: 'out', label: 'Out of postseason', className: 'bg-muted-foreground/30'},
+  {status: 'out', label: 'Out of postseason', className: 'bg-muted-foreground/30'}
 ]
 
 function StandingRow({team}: {team: StandingTeam}) {
@@ -65,7 +65,7 @@ function ConferenceTable({conference}: {conference: ConferenceStandings}) {
       <div className='overflow-x-auto'>
         <table className='w-full min-w-xl text-left'>
           <thead>
-            <tr className='bg-muted/40 text-muted-foreground border-border border-b text-xs uppercase tracking-wide'>
+            <tr className='bg-muted/40 text-muted-foreground border-border border-b text-xs tracking-wide uppercase'>
               <th className='px-2 py-2.5 text-center font-medium sm:px-3'>#</th>
               <th className='px-2 py-2.5 font-medium sm:px-3'>Team</th>
               <th className='px-2 py-2.5 text-center font-medium sm:px-3'>W</th>
@@ -79,8 +79,11 @@ function ConferenceTable({conference}: {conference: ConferenceStandings}) {
             </tr>
           </thead>
           <tbody>
-            {conference.teams.map((team) => (
-              <StandingRow key={team.id} team={team} />
+            {conference.teams.map(team => (
+              <StandingRow
+                key={team.id}
+                team={team}
+              />
             ))}
           </tbody>
         </table>
@@ -93,17 +96,26 @@ export function StandingsTables({conferences}: {conferences: ConferenceStandings
   return (
     <div className='flex flex-col gap-5 sm:gap-6'>
       <div className='flex flex-wrap items-center gap-4 text-sm'>
-        {legendItems.map((item) => (
-          <div key={item.status} className='flex items-center gap-2'>
-            <span className={cn('h-3 w-3 rounded-sm', item.className)} aria-hidden='true' />
+        {legendItems.map(item => (
+          <div
+            key={item.status}
+            className='flex items-center gap-2'
+          >
+            <span
+              className={cn('size-3 rounded-sm', item.className)}
+              aria-hidden='true'
+            />
             <span className='text-muted-foreground'>{item.label}</span>
           </div>
         ))}
       </div>
 
       <div className='grid min-w-0 gap-5 lg:grid-cols-2 lg:gap-6'>
-        {conferences.map((conference) => (
-          <ConferenceTable key={conference.id} conference={conference} />
+        {conferences.map(conference => (
+          <ConferenceTable
+            key={conference.id}
+            conference={conference}
+          />
         ))}
       </div>
     </div>
