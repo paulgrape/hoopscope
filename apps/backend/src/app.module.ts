@@ -6,6 +6,8 @@ import { EspnModule } from './espn/espn.module';
 import { GamesModule } from './games/games.module';
 import { HealthModule } from './health/health.module';
 import { PlayersModule } from './players/players.module';
+import { NewsModule } from './news/news.module';
+import { StandingsModule } from './standings/standings.module';
 import { TeamsModule } from './teams/teams.module';
 
 @Module({
@@ -18,6 +20,8 @@ import { TeamsModule } from './teams/teams.module';
     TeamsModule,
     PlayersModule,
     GamesModule,
+    NewsModule,
+    StandingsModule,
   ],
 })
 export class AppModule {}

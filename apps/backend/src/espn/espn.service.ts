@@ -43,6 +43,8 @@ export class EspnService {
   private readonly TTL_TEAMS = 24 * 60 * 60 * 1000; // 24h
   private readonly TTL_PLAYERS = 24 * 60 * 60 * 1000;
   private readonly TTL_SCORES = 60 * 1000; // 60s
+  private readonly TTL_NEWS = 10 * 60 * 1000; // 10m
+  private readonly TTL_STANDINGS = 30 * 60 * 1000; // 30m
 
   constructor(
     private readonly config: ConfigService,
@@ -92,5 +94,22 @@ export class EspnService {
   }
   getGameSummary(eventId: string) {
     return this.get(`/summary?event=${eventId}`, this.TTL_SCORES);
+  }
+  getNews() {
+    return this.get('/news', this.TTL_NEWS);
+  }
+  async getStandings(league = 'nba') {
+    const base =
+      this.config.get<string>('ESPN_STANDINGS_BASE_URL') ??
+      'https://site.api.espn.com/apis/v2/sports/basketball';
+    const url = `${base}/${league}/standings`;
+
+    const cached = this.cache.get<unknown>(url);
+    if (cached) return cached;
+
+    this.logger.log(`ESPN fetch: ${url}`);
+    const { data } = await this.http.get<unknown>(url);
+    this.cache.set(url, data, this.TTL_STANDINGS);
+    return data;
   }
 }
