@@ -65,7 +65,29 @@ export default async function TeamDetailsPage({params}: TeamDetailsPageProps) {
       <TeamSeasonStats
         regularStats={regularStats}
         playoffStats={playoffStats}
+        teamId={teamId}
       />
+
+      {/* <section className='bg-card border-border rounded-xl border p-3 sm:p-5'>
+        <h2 className='text-card-foreground text-lg font-semibold sm:text-xl'>Roster</h2>
+        {roster.length === 0 ? (
+          <p className='text-muted-foreground mt-4 rounded-lg border border-dashed px-4 py-6 text-sm'>
+            No roster data available.
+          </p>
+        ) : (
+          <div className='mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3'>
+            {roster.map((player) => (
+              <Link
+                key={player.id}
+                href={getPlayerHref(player.id, teamId)}
+                className='hover:bg-background/60 block transition-colors'
+              >
+                <RosterPlayerCard player={player} />
+              </Link>
+            ))}
+          </div>
+        )}
+      </section> */}
     </main>
   )
 }

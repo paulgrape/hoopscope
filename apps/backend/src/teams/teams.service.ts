@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { CacheService } from '../cache/cache.service';
 import {
-  EspnAthleteOverview,
-  EspnSeasonType,
-  EspnService,
-} from '../espn/espn.service';
+  formatSeasonLabel,
+  parseOverviewStats,
+} from '../espn/athlete-stats.parser';
+import { EspnSeasonType, EspnService } from '../espn/espn.service';
 
 export type TeamSeasonType = EspnSeasonType;
 
@@ -39,11 +39,6 @@ type RosterPlayer = {
   jersey: string | null;
   position: string | null;
   headshot: string | null;
-};
-
-const SPLIT_BY_SEASON_TYPE: Record<TeamSeasonType, string> = {
-  regular: 'Regular Season',
-  playoffs: 'Postseason',
 };
 
 @Injectable()
@@ -125,7 +120,7 @@ export class TeamsService {
             seasonType,
             ttl,
           );
-          return this.parseOverviewStats(player, overview, seasonType);
+          return parseOverviewStats(player, overview, seasonType);
         },
         8,
       )
@@ -138,7 +133,7 @@ export class TeamsService {
 
     const result: TeamSeasonStatsResponse = {
       season: resolvedSeason,
-      seasonLabel: this.formatSeasonLabel(resolvedSeason),
+      seasonLabel: formatSeasonLabel(resolvedSeason),
       seasonType,
       participated,
       players: seasonType === 'playoffs' && !participated ? [] : players,
@@ -209,53 +204,6 @@ export class TeamsService {
         } satisfies RosterPlayer;
       })
       .filter((player): player is RosterPlayer => player != null);
-  }
-
-  private parseOverviewStats(
-    player: RosterPlayer,
-    overview: EspnAthleteOverview,
-    seasonType: TeamSeasonType,
-  ): TeamSeasonStatPlayer | null {
-    const statistics = overview.statistics;
-    if (!statistics?.names || !statistics.splits) return null;
-
-    const splitName = SPLIT_BY_SEASON_TYPE[seasonType];
-    const split = statistics.splits.find((s) => s.displayName === splitName);
-    if (!split?.stats) return null;
-
-    const values = Object.fromEntries(
-      statistics.names.map((name, index) => [name, split.stats![index]]),
-    );
-
-    const gp = Number(values.gamesPlayed ?? 0);
-    if (!Number.isFinite(gp) || gp <= 0) return null;
-
-    return {
-      id: player.id,
-      fullName: player.fullName,
-      jersey: player.jersey,
-      position: player.position,
-      headshot: player.headshot,
-      gp,
-      min: this.toNumber(values.avgMinutes),
-      pts: this.toNumber(values.avgPoints),
-      reb: this.toNumber(values.avgRebounds),
-      ast: this.toNumber(values.avgAssists),
-      stl: this.toNumber(values.avgSteals),
-      blk: this.toNumber(values.avgBlocks),
-      tov: this.toNumber(values.avgTurnovers),
-      fgPct: this.toNumber(values.fieldGoalPct),
-    };
-  }
-
-  private formatSeasonLabel(season: number): string {
-    const start = season - 1;
-    return `${start}–${String(season).slice(-2)}`;
-  }
-
-  private toNumber(value: string | undefined): number {
-    const parsed = Number(value ?? 0);
-    return Number.isFinite(parsed) ? parsed : 0;
   }
 
   private async mapWithConcurrency<T, R>(
