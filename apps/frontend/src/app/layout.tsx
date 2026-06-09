@@ -1,4 +1,8 @@
+import {ConsentDefaultsScript} from '@/components/consent-defaults-script'
+import {CookieConsentBanner} from '@/components/cookie-consent-banner-loader'
+import {GoogleTagManagerScript} from '@/components/google-tag-manager'
 import {ThemeProvider} from '@/components/theme-provider'
+import {isAnalyticsEnabled} from '@/lib/analytics'
 import {rootMetadata} from '@/lib/site'
 import {Fraunces, IBM_Plex_Mono, Urbanist} from 'next/font/google'
 import './globals.css'
@@ -26,13 +30,17 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const analyticsEnabled = isAnalyticsEnabled()
+
   return (
     <html
       lang='en'
       className={`${urbanist.variable} ${fraunces.variable} ${ibmPlexMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
+      <GoogleTagManagerScript />
       <head>
+        <ConsentDefaultsScript />
         <meta
           name='apple-mobile-web-app-title'
           content='Hoopscope'
@@ -47,6 +55,7 @@ export default function RootLayout({
         >
           {children}
         </ThemeProvider>
+        <CookieConsentBanner enabled={analyticsEnabled} />
       </body>
     </html>
   )
