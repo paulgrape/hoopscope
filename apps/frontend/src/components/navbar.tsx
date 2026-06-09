@@ -73,7 +73,7 @@ export const Navbar = () => {
   }, [activeHref])
 
   return (
-    <nav className='bg-card text-card-foreground sticky top-0 z-10 w-full border-b'>
+    <nav className='bg-card text-card-foreground sticky top-0 z-20 w-full border-b'>
       <div className='mx-auto flex min-h-14 w-full max-w-7xl items-center justify-between gap-3 px-4 sm:px-6'>
         <Link
           href='/'
