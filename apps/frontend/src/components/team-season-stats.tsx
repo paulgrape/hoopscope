@@ -1,9 +1,11 @@
 'use client'
 
 import Image from 'next/image'
+import Link from 'next/link'
 import {useMemo, useState} from 'react'
 
 import {Button} from '@/components/ui/button'
+import {getPlayerHref} from '@/lib/players-api'
 import {type SeasonType, type TeamSeasonStatPlayer, type TeamSeasonStatsResponse} from '@/lib/teams-api'
 import {cn} from '@/lib/utils'
 
@@ -30,9 +32,10 @@ const COLUMNS: Array<{key: SortColumn; label: string; numeric: boolean; classNam
 type TeamSeasonStatsProps = {
   regularStats: TeamSeasonStatsResponse
   playoffStats: TeamSeasonStatsResponse
+  teamId?: string
 }
 
-export function TeamSeasonStats({regularStats, playoffStats}: TeamSeasonStatsProps) {
+export function TeamSeasonStats({regularStats, playoffStats, teamId}: TeamSeasonStatsProps) {
   const [seasonType, setSeasonType] = useState<SeasonType>('regular')
   const [sortColumn, setSortColumn] = useState<SortColumn>('pts')
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc')
@@ -149,6 +152,7 @@ export function TeamSeasonStats({regularStats, playoffStats}: TeamSeasonStatsPro
               <PlayerStatCard
                 key={player.id}
                 player={player}
+                teamId={teamId}
               />
             ))}
           </div>
@@ -199,7 +203,10 @@ export function TeamSeasonStats({regularStats, playoffStats}: TeamSeasonStatsPro
                         )}
                       >
                         {column.key === 'fullName' ? (
-                          <PlayerCell player={player} />
+                          <PlayerCell
+                            player={player}
+                            teamId={teamId}
+                          />
                         ) : column.key === 'fgPct' ? (
                           formatPct(player.fgPct)
                         ) : (
@@ -218,9 +225,9 @@ export function TeamSeasonStats({regularStats, playoffStats}: TeamSeasonStatsPro
   )
 }
 
-function PlayerCell({player}: {player: TeamSeasonStatPlayer}) {
-  return (
-    <div className='flex min-w-0 items-center gap-2 sm:gap-3'>
+function PlayerCell({player, teamId}: {player: TeamSeasonStatPlayer; teamId?: string}) {
+  const content = (
+    <>
       {player.headshot ? (
         <Image
           src={player.headshot}
@@ -239,14 +246,34 @@ function PlayerCell({player}: {player: TeamSeasonStatPlayer}) {
           {player.jersey ? ` · #${player.jersey}` : ''}
         </p>
       </div>
-    </div>
+    </>
+  )
+
+  if (!teamId) {
+    return <div className='flex min-w-0 items-center gap-2 sm:gap-3'>{content}</div>
+  }
+
+  return (
+    <Link
+      href={getPlayerHref(player.id, teamId)}
+      className='hover:text-foreground flex min-w-0 items-center gap-2 transition-colors sm:gap-3'
+    >
+      {content}
+    </Link>
   )
 }
 
-function PlayerStatCard({player}: {player: TeamSeasonStatPlayer}) {
+function PlayerStatCard({player, teamId}: {player: TeamSeasonStatPlayer; teamId?: string}) {
+  const header = (
+    <PlayerCell
+      player={player}
+      teamId={teamId}
+    />
+  )
+
   return (
     <article className='bg-background/40 border-border rounded-lg border p-3'>
-      <PlayerCell player={player} />
+      {header}
 
       <dl className='mt-3 grid grid-cols-3 gap-2'>
         <StatHighlight

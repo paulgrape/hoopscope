@@ -60,6 +60,73 @@ export interface EspnRosterResponse {
   }>;
 }
 
+export interface EspnAthleteStatsResponse {
+  teams?: Record<
+    string,
+    {
+      id?: string;
+      abbreviation?: string;
+      displayName?: string;
+    }
+  >;
+  categories?: Array<{
+    name?: string;
+    displayName?: string;
+    names?: string[];
+    statistics?: Array<{
+      teamId?: string;
+      teamSlug?: string;
+      season?: { year?: number; displayName?: string };
+      stats?: string[];
+    }>;
+  }>;
+}
+
+export type EspnNewsArticle = {
+  id: number;
+  type?: string;
+  headline: string;
+  description?: string;
+  published?: string;
+  lastModified?: string;
+  byline?: string;
+  images?: Array<{
+    type?: string;
+    url?: string;
+    caption?: string;
+    width?: number;
+    height?: number;
+  }>;
+  categories?: Array<{
+    type?: string;
+    description?: string;
+  }>;
+  links?: {
+    web?: { href?: string };
+  };
+};
+
+export interface EspnInjuryReport {
+  items?: Array<{
+    id?: string;
+    displayName?: string;
+    injuries?: Array<{
+      status?: string;
+      shortComment?: string;
+      longComment?: string;
+      date?: string;
+      athlete?: {
+        id?: string;
+        displayName?: string;
+      };
+      type?: {
+        name?: string;
+        description?: string;
+      };
+    }>;
+  }>;
+}
+
 @Injectable()
 export class EspnService {
   private readonly http: AxiosInstance;
@@ -70,6 +137,7 @@ export class EspnService {
   private readonly TTL_PLAYERS = 24 * 60 * 60 * 1000;
   private readonly TTL_SCORES = 60 * 1000; // 60s
   private readonly TTL_NEWS = 10 * 60 * 1000; // 10m
+  private readonly TTL_INJURIES = 10 * 60 * 1000; // 10m
   private readonly TTL_STANDINGS = 30 * 60 * 1000; // 30m
   readonly TTL_SEASON_STATS_CURRENT = 30 * 60 * 1000; // 30m
   readonly TTL_SEASON_STATS_HISTORIC = 24 * 60 * 60 * 1000; // 24h
@@ -185,7 +253,9 @@ export class EspnService {
     const cached = this.cache.get<EspnCoreAthlete>(url);
     if (cached) return cached;
 
-    const { data } = await this.http.get<EspnCoreAthlete>(url);
+    const { data } = await this.http.get<EspnCoreAthlete>(url, {
+      timeout: 15_000,
+    });
     this.cache.set(url, data, this.TTL_PLAYERS);
     return data;
   }
@@ -199,6 +269,55 @@ export class EspnService {
   getNews() {
     return this.get('/news', this.TTL_NEWS);
   }
+
+  async getAthleteStats(
+    athleteId: string,
+    seasonType: EspnSeasonType = 'regular',
+  ): Promise<EspnAthleteStatsResponse> {
+    const seasontype = this.toEspnSeasonType(seasonType);
+    const url = `${this.webApiBase}/athletes/${athleteId}/stats`;
+    const cacheKey = `athlete-stats:${athleteId}:${seasontype}`;
+
+    const cached = this.cache.get<EspnAthleteStatsResponse>(cacheKey);
+    if (cached) return cached;
+
+    this.logger.log(`ESPN fetch: ${url}?seasontype=${seasontype}`);
+    const { data } = await this.http.get<EspnAthleteStatsResponse>(url, {
+      params: { seasontype },
+      timeout: 15_000,
+    });
+    this.cache.set(cacheKey, data, this.TTL_PLAYERS);
+    return data;
+  }
+
+  async getAthleteNews(athleteId: string): Promise<{ articles?: EspnNewsArticle[] }> {
+    const path = `/athletes/${athleteId}/news`;
+    const cacheKey = `athlete-news:${athleteId}`;
+
+    const cached = this.cache.get<{ articles?: EspnNewsArticle[] }>(cacheKey);
+    if (cached) return cached;
+
+    this.logger.log(`ESPN fetch: ${path}`);
+    const { data } = await this.http.get<{ articles?: EspnNewsArticle[] }>(path);
+    this.cache.set(cacheKey, data, this.TTL_NEWS);
+    return data;
+  }
+
+  async getLeagueInjuries(): Promise<EspnInjuryReport> {
+    const path = '/injuries';
+    const cacheKey = 'league-injuries';
+
+    const cached = this.cache.get<EspnInjuryReport>(cacheKey);
+    if (cached) return cached;
+
+    this.logger.log(`ESPN fetch: ${path}`);
+    const { data } = await this.http.get<EspnInjuryReport>(path, {
+      timeout: 15_000,
+    });
+    this.cache.set(cacheKey, data, this.TTL_INJURIES);
+    return data;
+  }
+
   async getStandings(league = 'nba') {
     const base =
       this.config.get<string>('ESPN_STANDINGS_BASE_URL') ??
