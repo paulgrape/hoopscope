@@ -25,6 +25,11 @@ async function request<T>(path: string): Promise<T> {
   return response.json() as Promise<T>
 }
 
-export async function getNews(limit = 12): Promise<NewsArticle[]> {
-  return request<NewsArticle[]>(`/news?limit=${limit}`)
+export type NewsPage = {
+  articles: NewsArticle[]
+  total: number
+}
+
+export async function getNews(limit = 12, offset = 0): Promise<NewsPage> {
+  return request<NewsPage>(`/news?limit=${limit}&offset=${offset}`)
 }

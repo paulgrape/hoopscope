@@ -267,7 +267,7 @@ export class EspnService {
     return this.get(`/summary?event=${eventId}`, this.TTL_SCORES);
   }
   getNews() {
-    return this.get('/news', this.TTL_NEWS);
+    return this.get('/news?limit=50', this.TTL_NEWS);
   }
 
   async getAthleteStats(
