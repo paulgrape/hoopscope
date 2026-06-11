@@ -9,10 +9,13 @@ export class NewsController {
 
   @Get()
   @ApiOperation({ summary: 'Get latest NBA news from ESPN' })
-  findAll(@Query('limit') limit?: string) {
+  findAll(@Query('limit') limit?: string, @Query('offset') offset?: string) {
     const parsedLimit = limit
       ? Math.min(Math.max(Number.isFinite(Number(limit)) ? Number(limit) : 12, 1), 30)
       : 12;
-    return this.newsService.findAll(parsedLimit);
+    const parsedOffset = offset
+      ? Math.max(Number.isFinite(Number(offset)) ? Number(offset) : 0, 0)
+      : 0;
+    return this.newsService.findAll(parsedLimit, parsedOffset);
   }
 }
