@@ -82,14 +82,19 @@ export function parseCareerStats(
     if (!Number.isFinite(gp) || gp <= 0) continue;
 
     const teamId = entry.teamId ? String(entry.teamId) : null;
+    const isSeasonTotal = teamId == null;
 
     seasons.push({
       season: seasonYear,
       seasonLabel: entry.season?.displayName ?? formatSeasonLabel(seasonYear),
       seasonType,
       teamId,
-      teamAbbr: resolveTeamAbbr(data, teamId, entry.teamSlug),
-      teamDisplayName: resolveTeamDisplayName(data, teamId, entry.teamSlug),
+      teamAbbr: isSeasonTotal
+        ? 'TOT'
+        : resolveTeamAbbr(data, teamId, entry.teamSlug),
+      teamDisplayName: isSeasonTotal
+        ? 'Total'
+        : resolveTeamDisplayName(data, teamId, entry.teamSlug),
       gp,
       min: toNumber(values.avgMinutes),
       pts: toNumber(values.avgPoints),
@@ -123,12 +128,19 @@ export function getLatestTeamFromCareerStats(
   );
   if (!latestRegular?.teamId) return null;
 
+  const splits = seasons.filter(
+    (season) =>
+      season.seasonType === 'regular' &&
+      season.season === latestRegular.season &&
+      season.teamId,
+  );
+  const latestSplit = splits[splits.length - 1] ?? latestRegular;
+  if (!latestSplit.teamId) return null;
+
   return {
-    id: latestRegular.teamId,
-    abbreviation: latestRegular.teamAbbr ?? latestRegular.teamId,
+    id: latestSplit.teamId,
+    abbreviation: latestSplit.teamAbbr ?? latestSplit.teamId,
     displayName:
-      latestRegular.teamDisplayName ??
-      latestRegular.teamAbbr ??
-      latestRegular.teamId,
+      latestSplit.teamDisplayName ?? latestSplit.teamAbbr ?? latestSplit.teamId,
   };
 }

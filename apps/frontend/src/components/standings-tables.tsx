@@ -19,10 +19,10 @@ const legendItems: Array<{status: PlayoffStatus; label: string; className: strin
 function StandingRow({team}: {team: StandingTeam}) {
   return (
     <tr className={cn('border-border border-b border-l-4 transition-colors', playoffRowClass[team.playoffStatus])}>
-      <td className='text-muted-foreground px-2 py-2.5 text-center text-sm font-medium tabular-nums sm:px-3'>
+      <td className='text-muted-foreground px-2 py-2.5 text-center text-sm font-medium whitespace-nowrap tabular-nums sm:px-3'>
         {team.seed}
       </td>
-      <td className='px-2 py-2.5 sm:px-3'>
+      <td className='w-full max-w-0 px-2 py-2.5 sm:px-3'>
         <Link
           href={`/teams/${team.id}`}
           className='hover:text-primary flex min-w-0 items-center gap-2 transition-colors sm:gap-3'
@@ -38,19 +38,27 @@ function StandingRow({team}: {team: StandingTeam}) {
           ) : (
             <div className='bg-muted h-7 w-7 shrink-0 rounded-full' />
           )}
-          <span className='truncate text-sm font-medium sm:text-base'>{team.displayName}</span>
+          <span className='truncate text-sm font-medium sm:text-base'>{team.shortName}</span>
         </Link>
       </td>
-      <td className='px-2 py-2.5 text-center text-sm tabular-nums sm:px-3'>{team.wins}</td>
-      <td className='px-2 py-2.5 text-center text-sm tabular-nums sm:px-3'>{team.losses}</td>
-      <td className='px-2 py-2.5 text-center text-sm tabular-nums sm:px-3'>{team.winPct}</td>
-      <td className='text-muted-foreground hidden px-2 py-2.5 text-center text-sm tabular-nums sm:table-cell sm:px-3'>
+      <td className='px-2 py-2.5 text-center text-sm whitespace-nowrap tabular-nums sm:px-3'>{team.wins}</td>
+      <td className='px-2 py-2.5 text-center text-sm whitespace-nowrap tabular-nums sm:px-3'>{team.losses}</td>
+      <td className='px-2 py-2.5 text-center text-sm whitespace-nowrap tabular-nums sm:px-3'>{team.winPct}</td>
+      <td className='text-muted-foreground hidden px-2 py-2.5 text-center text-sm whitespace-nowrap tabular-nums sm:table-cell sm:px-3'>
         {team.gamesBehind}
       </td>
-      <td className='hidden px-2 py-2.5 text-center text-sm tabular-nums md:table-cell md:px-3'>{team.home}</td>
-      <td className='hidden px-2 py-2.5 text-center text-sm tabular-nums md:table-cell md:px-3'>{team.road}</td>
-      <td className='hidden px-2 py-2.5 text-center text-sm tabular-nums lg:table-cell lg:px-3'>{team.lastTen}</td>
-      <td className='hidden px-2 py-2.5 text-center text-sm tabular-nums lg:table-cell lg:px-3'>{team.streak}</td>
+      <td className='hidden px-2 py-2.5 text-center text-sm whitespace-nowrap tabular-nums md:table-cell md:px-3'>
+        {team.home}
+      </td>
+      <td className='hidden px-2 py-2.5 text-center text-sm whitespace-nowrap tabular-nums md:table-cell md:px-3'>
+        {team.road}
+      </td>
+      <td className='hidden px-2 py-2.5 text-center text-sm whitespace-nowrap tabular-nums lg:table-cell lg:px-3'>
+        {team.lastTen}
+      </td>
+      <td className='hidden px-2 py-2.5 text-center text-sm whitespace-nowrap tabular-nums lg:table-cell lg:px-3'>
+        {team.streak}
+      </td>
     </tr>
   )
 }
@@ -62,20 +70,28 @@ function ConferenceTable({conference}: {conference: ConferenceStandings}) {
         <h2 className='text-lg font-semibold sm:text-xl'>{conference.name}</h2>
       </header>
 
-      <div className='overflow-x-auto'>
-        <table className='w-full min-w-xl text-left'>
+      <div className='min-w-0'>
+        <table className='w-full text-left'>
           <thead>
             <tr className='bg-muted/40 text-muted-foreground border-border border-b text-xs tracking-wide uppercase'>
-              <th className='px-2 py-2.5 text-center font-medium sm:px-3'>#</th>
-              <th className='px-2 py-2.5 font-medium sm:px-3'>Team</th>
-              <th className='px-2 py-2.5 text-center font-medium sm:px-3'>W</th>
-              <th className='px-2 py-2.5 text-center font-medium sm:px-3'>L</th>
-              <th className='px-2 py-2.5 text-center font-medium sm:px-3'>PCT</th>
-              <th className='hidden px-2 py-2.5 text-center font-medium sm:table-cell sm:px-3'>GB</th>
-              <th className='hidden px-2 py-2.5 text-center font-medium md:table-cell md:px-3'>Home</th>
-              <th className='hidden px-2 py-2.5 text-center font-medium md:table-cell md:px-3'>Road</th>
-              <th className='hidden px-2 py-2.5 text-center font-medium lg:table-cell lg:px-3'>L10</th>
-              <th className='hidden px-2 py-2.5 text-center font-medium lg:table-cell lg:px-3'>STRK</th>
+              <th className='px-2 py-2.5 text-center font-medium whitespace-nowrap sm:px-3'>#</th>
+              <th className='w-full px-2 py-2.5 font-medium whitespace-nowrap sm:px-3'>Team</th>
+              <th className='px-2 py-2.5 text-center font-medium whitespace-nowrap sm:px-3'>W</th>
+              <th className='px-2 py-2.5 text-center font-medium whitespace-nowrap sm:px-3'>L</th>
+              <th className='px-2 py-2.5 text-center font-medium whitespace-nowrap sm:px-3'>PCT</th>
+              <th className='hidden px-2 py-2.5 text-center font-medium whitespace-nowrap sm:table-cell sm:px-3'>GB</th>
+              <th className='hidden px-2 py-2.5 text-center font-medium whitespace-nowrap md:table-cell md:px-3'>
+                Home
+              </th>
+              <th className='hidden px-2 py-2.5 text-center font-medium whitespace-nowrap md:table-cell md:px-3'>
+                Road
+              </th>
+              <th className='hidden px-2 py-2.5 text-center font-medium whitespace-nowrap lg:table-cell lg:px-3'>
+                L10
+              </th>
+              <th className='hidden px-2 py-2.5 text-center font-medium whitespace-nowrap lg:table-cell lg:px-3'>
+                STRK
+              </th>
             </tr>
           </thead>
           <tbody>

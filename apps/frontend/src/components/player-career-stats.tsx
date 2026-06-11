@@ -118,7 +118,7 @@ export function PlayerCareerStats({seasons}: PlayerCareerStatsProps) {
           <div className='mt-4 grid gap-3 md:hidden'>
             {sortedSeasons.map((season) => (
               <article
-                key={`${season.season}-${season.seasonType}`}
+                key={`${season.season}-${season.seasonType}-${season.teamId ?? 'tot'}`}
                 className='bg-background/40 border-border rounded-lg border p-3'
               >
                 <div className='flex items-start justify-between gap-3'>
@@ -184,7 +184,7 @@ export function PlayerCareerStats({seasons}: PlayerCareerStatsProps) {
               <tbody>
                 {sortedSeasons.map((season) => (
                   <tr
-                    key={`${season.season}-${season.seasonType}`}
+                    key={`${season.season}-${season.seasonType}-${season.teamId ?? 'tot'}`}
                     className='border-border/70 text-card-foreground border-b'
                   >
                     <td className='px-2 py-2.5 sm:px-3'>{season.seasonLabel}</td>

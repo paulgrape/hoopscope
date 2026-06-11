@@ -5,6 +5,7 @@ export type PlayoffStatus = 'playoff' | 'play-in' | 'out'
 export type StandingTeam = {
   id: string
   displayName: string
+  shortName: string
   abbreviation: string
   logo: string | null
   color: string | null

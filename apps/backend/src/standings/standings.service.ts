@@ -10,7 +10,9 @@ type EspnStandingStat = {
 type EspnStandingEntry = {
   team: {
     id: string;
+    name?: string;
     displayName: string;
+    shortDisplayName?: string;
     abbreviation: string;
     logos?: Array<{ href?: string }>;
     color?: string;
@@ -35,6 +37,7 @@ export type PlayoffStatus = 'playoff' | 'play-in' | 'out';
 export type StandingTeam = {
   id: string;
   displayName: string;
+  shortName: string;
   abbreviation: string;
   logo: string | null;
   color: string | null;
@@ -98,6 +101,7 @@ export class StandingsService {
     return {
       id: team.id,
       displayName: team.displayName,
+      shortName: team.shortDisplayName ?? team.name ?? team.displayName,
       abbreviation: team.abbreviation,
       logo: team.logos?.[0]?.href ?? null,
       color: team.color ?? null,
