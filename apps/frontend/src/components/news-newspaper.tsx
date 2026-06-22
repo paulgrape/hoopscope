@@ -1,32 +1,13 @@
 import Image from 'next/image'
 import Link from 'next/link'
 
+import { LocalEditionDate, LocalTime } from '@/components/local-time'
 import type { NewsArticle } from '@/lib/news-api'
 import { SITE_DAILY_EDITION, SITE_DAILY_TITLE } from '@/lib/site'
 import { cn } from '@/lib/utils'
 
 type NewsNewspaperProps = {
   articles: NewsArticle[]
-}
-
-function formatEditionDate(date: Date) {
-  return date.toLocaleDateString('en-US', {
-    weekday: 'long',
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-  })
-}
-
-function formatPublishedDate(iso: string | null) {
-  if (!iso) return null
-
-  return new Date(iso).toLocaleString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-  })
 }
 
 function ArticleLink({
@@ -62,7 +43,7 @@ function TeamTags({ teams }: { teams: string[] }) {
       {teams.slice(0, 2).map((team) => (
         <span
           key={team}
-          className='border-border text-muted-foreground rounded-sm border px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider'
+          className='border-border text-muted-foreground rounded-sm border px-1.5 py-1 text-[10px] font-medium uppercase leading-none tracking-wider'
         >
           {team}
         </span>
@@ -81,9 +62,10 @@ export function NewsNewspaper({ articles }: NewsNewspaperProps) {
   }
 
   const [lead, ...rest] = articles
-  const sidebar = rest.slice(0, 3)
-  const bottomRow = rest.slice(3, 7)
-  const briefs = rest.slice(7)
+  const subLeads = rest.slice(0, 2)
+  const sidebar = rest.slice(2, 5)
+  const bottomRow = rest.slice(5, 9)
+  const briefs = rest.slice(9)
 
   return (
     <section className='bg-card border-border overflow-hidden rounded-xl border'>
@@ -95,7 +77,7 @@ export function NewsNewspaper({ articles }: NewsNewspaperProps) {
           {SITE_DAILY_TITLE}
         </h2>
         <div className='border-border mx-auto mt-4 flex max-w-xl flex-wrap items-center justify-center gap-x-4 gap-y-1 border-y py-2 text-[11px] uppercase tracking-[0.2em] sm:text-xs'>
-          <span>{formatEditionDate(new Date())}</span>
+          <span><LocalEditionDate /></span>
           <span className='text-muted-foreground hidden sm:inline'>•</span>
           <span className='text-muted-foreground'>Latest from ESPN</span>
           <span className='text-muted-foreground hidden sm:inline'>•</span>
@@ -104,64 +86,108 @@ export function NewsNewspaper({ articles }: NewsNewspaperProps) {
       </header>
 
       <div className='grid lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]'>
-        <article className='border-border border-b p-4 sm:p-6 lg:border-b-0 lg:border-r'>
-          <ArticleLink article={lead} className='flex h-full flex-col gap-4'>
-            {lead.imageUrl ? (
-              <div className='border-border relative aspect-video overflow-hidden border'>
-                <Image
-                  src={lead.imageUrl}
-                  alt={lead.headline}
-                  fill
-                  className='object-cover transition-transform duration-500 group-hover:scale-[1.02]'
-                  sizes='(max-width: 1024px) 100vw, 60vw'
-                  priority
-                />
-              </div>
-            ) : null}
-
-            <div className='flex flex-col gap-3'>
-              <div className='flex flex-wrap items-center gap-3'>
-                <span className='bg-foreground text-background px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.25em]'>
-                  Lead Story
-                </span>
-                <TeamTags teams={lead.teams} />
-              </div>
-
-              <h3 className='font-serif text-2xl leading-tight font-bold sm:text-3xl lg:text-4xl'>
-                {lead.headline}
-              </h3>
-
-              {lead.description ? (
-                <p className='text-muted-foreground max-w-3xl text-sm leading-relaxed sm:text-base'>
-                  <span className='font-serif text-foreground float-left mr-2 mt-0.5 text-4xl leading-none font-bold sm:text-5xl'>
-                    {lead.description.charAt(0)}
-                  </span>
-                  {lead.description.slice(1)}
-                </p>
+        <div className='border-border flex flex-col border-b lg:border-b-0 lg:border-r'>
+          <article className='p-4 sm:p-6'>
+            <ArticleLink article={lead} className='flex flex-col gap-4'>
+              {lead.imageUrl ? (
+                <div className='border-border relative aspect-video overflow-hidden border'>
+                  <Image
+                    src={lead.imageUrl}
+                    alt={lead.headline}
+                    fill
+                    className='object-cover transition-transform duration-500 group-hover:scale-[1.02]'
+                    sizes='(max-width: 1024px) 100vw, 60vw'
+                    priority
+                  />
+                </div>
               ) : null}
 
-              <footer className='text-muted-foreground flex flex-wrap items-center gap-2 text-xs'>
-                {lead.byline ? <span className='font-medium'>{lead.byline}</span> : null}
-                {lead.byline && lead.published ? <span>•</span> : null}
-                {lead.published ? <time dateTime={lead.published}>{formatPublishedDate(lead.published)}</time> : null}
-              </footer>
+              <div className='flex flex-col gap-3'>
+                <div className='flex flex-wrap items-center gap-3'>
+                  <span className='bg-foreground text-background px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.25em]'>
+                    Lead Story
+                  </span>
+                  <TeamTags teams={lead.teams} />
+                </div>
+
+                <h3 className='font-serif text-2xl leading-tight font-bold sm:text-3xl lg:text-4xl'>
+                  {lead.headline}
+                </h3>
+
+                {lead.description ? (
+                  <p className='text-muted-foreground max-w-3xl text-sm leading-relaxed sm:text-base'>
+                    <span className='font-serif text-foreground float-left mr-2 mt-0.5 text-4xl leading-none font-bold sm:text-5xl'>
+                      {lead.description.charAt(0)}
+                    </span>
+                    {lead.description.slice(1)}
+                  </p>
+                ) : null}
+
+                <footer className='text-muted-foreground flex flex-wrap items-center gap-2 text-xs'>
+                  {lead.byline ? <span className='font-medium'>{lead.byline}</span> : null}
+                  {lead.byline && lead.published ? <span>•</span> : null}
+                  {lead.published ? <LocalTime iso={lead.published} /> : null}
+                </footer>
+              </div>
+            </ArticleLink>
+          </article>
+
+          {subLeads.length > 0 ? (
+            <div className='border-border divide-border grid flex-1 divide-y border-t sm:grid-cols-2 sm:divide-x sm:divide-y-0'>
+              {subLeads.map((article, index) => (
+                <article key={article.id} className='p-4 sm:p-5'>
+                  <ArticleLink article={article} className='flex h-full flex-col gap-3'>
+                    <div className='flex items-center justify-between gap-3'>
+                      <span className='text-muted-foreground font-mono text-xs'>
+                        {String(index + 2).padStart(2, '0')}
+                      </span>
+                      <TeamTags teams={article.teams} />
+                    </div>
+
+                    {article.imageUrl ? (
+                      <div className='border-border relative aspect-3/2 overflow-hidden border'>
+                        <Image
+                          src={article.imageUrl}
+                          alt={article.headline}
+                          fill
+                          className='object-cover transition-transform duration-500 group-hover:scale-[1.02]'
+                          sizes='(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 30vw'
+                        />
+                      </div>
+                    ) : null}
+
+                    <h4 className='font-serif text-lg leading-snug font-semibold sm:text-xl'>{article.headline}</h4>
+                    {article.description ? (
+                      <p className='text-muted-foreground line-clamp-3 text-sm leading-relaxed'>
+                        {article.description}
+                      </p>
+                    ) : null}
+                    {article.published ? (
+                      <LocalTime iso={article.published} className='text-muted-foreground mt-auto pt-1 text-xs' />
+                    ) : null}
+                  </ArticleLink>
+                </article>
+              ))}
             </div>
-          </ArticleLink>
-        </article>
+          ) : null}
+        </div>
 
         <aside className='divide-border flex flex-col divide-y'>
           {sidebar.map((article, index) => (
-            <article key={article.id} className='p-4 sm:p-5'>
+            <article
+              key={article.id}
+              className={cn('p-4 sm:p-5', index === sidebar.length - 1 && 'flex-1')}
+            >
               <ArticleLink article={article} className='flex h-full flex-col gap-3'>
-                <div className='flex items-start justify-between gap-3'>
+                <div className='flex items-center justify-between gap-3'>
                   <span className='text-muted-foreground font-mono text-xs'>
-                    {String(index + 2).padStart(2, '0')}
+                    {String(index + 2 + subLeads.length).padStart(2, '0')}
                   </span>
                   <TeamTags teams={article.teams} />
                 </div>
 
                 {article.imageUrl ? (
-                  <div className='border-border relative aspect-3/2 overflow-hidden border'>
+                  <div className='border-border relative aspect-video overflow-hidden border'>
                     <Image
                       src={article.imageUrl}
                       alt={article.headline}
@@ -174,7 +200,7 @@ export function NewsNewspaper({ articles }: NewsNewspaperProps) {
 
                 <h4 className='font-serif text-lg leading-snug font-semibold sm:text-xl'>{article.headline}</h4>
                 {article.description ? (
-                  <p className='text-muted-foreground line-clamp-3 text-sm leading-relaxed'>{article.description}</p>
+                  <p className='text-muted-foreground line-clamp-2 text-sm leading-relaxed'>{article.description}</p>
                 ) : null}
               </ArticleLink>
             </article>
@@ -202,13 +228,24 @@ export function NewsNewspaper({ articles }: NewsNewspaperProps) {
                 )}
               >
                 <ArticleLink article={article} className='flex h-full flex-col gap-3'>
+                  {article.imageUrl ? (
+                    <div className='border-border relative aspect-video overflow-hidden border'>
+                      <Image
+                        src={article.imageUrl}
+                        alt={article.headline}
+                        fill
+                        className='object-cover transition-transform duration-500 group-hover:scale-[1.02]'
+                        sizes='(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 25vw'
+                      />
+                    </div>
+                  ) : null}
                   <TeamTags teams={article.teams} />
                   <h4 className='font-serif text-base leading-snug font-semibold sm:text-lg'>{article.headline}</h4>
                   {article.description ? (
-                    <p className='text-muted-foreground line-clamp-4 text-sm leading-relaxed'>{article.description}</p>
+                    <p className='text-muted-foreground line-clamp-3 text-sm leading-relaxed'>{article.description}</p>
                   ) : null}
                   {article.byline ? (
-                    <p className='text-muted-foreground mt-auto text-xs font-medium'>{article.byline}</p>
+                    <p className='text-muted-foreground mt-auto pt-1 text-xs font-medium'>{article.byline}</p>
                   ) : null}
                 </ArticleLink>
               </article>
@@ -228,9 +265,7 @@ export function NewsNewspaper({ articles }: NewsNewspaperProps) {
                 <ArticleLink article={article} className='hover:text-foreground text-muted-foreground'>
                   <span className='text-foreground font-serif font-semibold'>{article.headline}</span>
                   {article.published ? (
-                    <span className='ml-2 text-[11px] uppercase tracking-wide'>
-                      {formatPublishedDate(article.published)}
-                    </span>
+                    <LocalTime iso={article.published} className='ml-2 text-[11px] uppercase tracking-wide' />
                   ) : null}
                 </ArticleLink>
               </li>

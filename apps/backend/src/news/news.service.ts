@@ -6,10 +6,13 @@ import { mapNewsArticle } from './news.mapper';
 export class NewsService {
   constructor(private readonly espn: EspnService) {}
 
-  async findAll(limit = 12) {
+  async findAll(limit = 12, offset = 0) {
     const data = (await this.espn.getNews()) as { articles?: EspnNewsArticle[] };
     const articles = data.articles ?? [];
 
-    return articles.slice(0, limit).map((article) => mapNewsArticle(article));
+    return {
+      articles: articles.slice(offset, offset + limit).map((article) => mapNewsArticle(article)),
+      total: articles.length,
+    };
   }
 }
