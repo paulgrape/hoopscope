@@ -84,11 +84,11 @@ export async function getHistoricGame(gameId: string): Promise<LiveGameState | n
 export async function getSchedule(date: string, offsetMinutes: number): Promise<ScoreboardGame[]> {
   const params = new URLSearchParams({
     date,
-    offsetMinutes: String(offsetMinutes)
+    offsetMinutes: String(offsetMinutes),
   })
 
   const response = await fetch(`/api/games/schedule?${params.toString()}`, {
-    cache: 'no-store'
+    cache: 'no-store',
   })
 
   if (!response.ok) {
@@ -96,4 +96,29 @@ export async function getSchedule(date: string, offsetMinutes: number): Promise<
   }
 
   return response.json() as Promise<ScoreboardGame[]>
+}
+
+export async function getServerSchedule(
+  date: string,
+  offsetMinutes: number,
+): Promise<ScoreboardGame[]> {
+  const params = new URLSearchParams({
+    date,
+    offsetMinutes: String(offsetMinutes),
+  })
+
+  return request<ScoreboardGame[]>(`/games/schedule?${params.toString()}`)
+}
+
+export function getTodayDateKey(): string {
+  const date = new Date()
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
+export function getOffsetMinutesForDate(dateKey: string): number {
+  const [year, month, day] = dateKey.split('-').map(Number)
+  return new Date(year, month - 1, day).getTimezoneOffset()
 }

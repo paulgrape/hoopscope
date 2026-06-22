@@ -1,15 +1,37 @@
+import {JsonLd} from '@/components/json-ld'
 import {MatchCenterTimeline} from '@/components/match-center-timeline'
+import {webPageSchema} from '@/lib/seo-schema'
+import {
+  getOffsetMinutesForDate,
+  getServerSchedule,
+  getTodayDateKey,
+} from '@/lib/games-api'
 import {createPageMetadata} from '@/lib/site'
 
 export const metadata = createPageMetadata({
   title: 'Match Center',
   description:
     'Browse pro basketball games by your local calendar date, including live scoreboards and upcoming tip-offs.',
+  path: '/match-center',
 })
 
-export default function MatchCenterPage() {
+export default async function MatchCenterPage() {
+  const initialDate = getTodayDateKey()
+  const initialGames = await getServerSchedule(
+    initialDate,
+    getOffsetMinutesForDate(initialDate),
+  ).catch(() => [])
+
   return (
     <main className='mx-auto flex w-full max-w-7xl flex-1 flex-col gap-5 px-4 py-5 sm:gap-6 sm:px-6 sm:py-8'>
+      <JsonLd
+        data={webPageSchema({
+          path: '/match-center',
+          title: 'Match Center',
+          description:
+            'Browse NBA games by your local calendar date, including completed scoreboards, live game state, and upcoming tip-off times.',
+        })}
+      />
       <header className='flex flex-col gap-2'>
         <p className='text-muted-foreground text-sm uppercase tracking-wider'>Live schedule</p>
         <h1 className='text-2xl font-semibold sm:text-3xl'>Match Center</h1>
@@ -19,7 +41,7 @@ export default function MatchCenterPage() {
         </p>
       </header>
 
-      <MatchCenterTimeline />
+      <MatchCenterTimeline initialDate={initialDate} initialGames={initialGames} />
     </main>
   )
 }

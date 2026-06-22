@@ -1,12 +1,15 @@
 import Image from 'next/image'
 import Link from 'next/link'
 
+import {JsonLd} from '@/components/json-ld'
 import {getHistoricGames} from '@/lib/games-api'
+import {collectionPageSchema} from '@/lib/seo-schema'
 import {createPageMetadata} from '@/lib/site'
 
 export const metadata = createPageMetadata({
   title: 'Historic Games',
   description: 'Replay classic matchups with saved play-by-play feeds.',
+  path: '/historic-games',
 })
 
 export default async function HistoricGamesPage() {
@@ -14,6 +17,17 @@ export default async function HistoricGamesPage() {
 
   return (
     <main className='mx-auto flex w-full max-w-7xl flex-1 flex-col gap-5 px-4 py-5 sm:gap-6 sm:px-6 sm:py-8'>
+      <JsonLd
+        data={collectionPageSchema({
+          path: '/historic-games',
+          title: 'Historic NBA Games',
+          description: 'Replay classic matchups with saved play-by-play feeds.',
+          items: games.map(game => ({
+            name: game.name,
+            url: `/historic-games/${game.id}`,
+          })),
+        })}
+      />
       <header className='flex flex-col gap-2'>
         <p className='text-muted-foreground text-sm uppercase tracking-wider'>Replay archive</p>
         <h1 className='text-2xl font-semibold sm:text-3xl'>Historic NBA Games</h1>

@@ -1,7 +1,9 @@
 import Link from 'next/link'
 import {notFound} from 'next/navigation'
 
+import {JsonLd} from '@/components/json-ld'
 import {HistoricGameSimulator} from '@/components/historic-game-simulator'
+import {breadcrumbSchema, sportsEventSchema} from '@/lib/seo-schema'
 import {SOCKET_BASE_URL, getHistoricGame} from '@/lib/games-api'
 import {createPageMetadata} from '@/lib/site'
 import type {Metadata} from 'next'
@@ -20,12 +22,14 @@ export async function generateMetadata({params}: HistoricGamePageProps): Promise
     return createPageMetadata({
       title: 'Historic Game',
       description: 'Replay a classic pro basketball matchup.',
+      path: `/historic-games/${gameId}`,
     })
   }
 
   return createPageMetadata({
     title: game.name,
     description: `Replay ${game.name} with live play-by-play ticks.`,
+    path: `/historic-games/${gameId}`,
   })
 }
 
@@ -39,6 +43,24 @@ export default async function HistoricGamePage({params}: HistoricGamePageProps) 
 
   return (
     <main className='mx-auto flex w-full max-w-7xl flex-1 flex-col gap-5 px-4 py-5 sm:gap-6 sm:px-6 sm:py-8'>
+      <JsonLd
+        data={[
+          sportsEventSchema({
+            id: game.id,
+            name: game.name,
+            date: game.date,
+            homeTeam: game.homeTeam.name,
+            awayTeam: game.awayTeam.name,
+            homeScore: game.homeScore,
+            awayScore: game.awayScore,
+            status: game.status,
+          }),
+          breadcrumbSchema([
+            {name: 'Historic Games', path: '/historic-games'},
+            {name: game.name, path: `/historic-games/${gameId}`},
+          ]),
+        ]}
+      />
       <Link
         href='/historic-games'
         className='text-muted-foreground hover:text-foreground text-sm underline-offset-4 hover:underline'
