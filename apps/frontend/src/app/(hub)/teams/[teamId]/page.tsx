@@ -1,7 +1,9 @@
 import Image from 'next/image'
 import Link from 'next/link'
 
+import {JsonLd} from '@/components/json-ld'
 import {TeamSeasonStats} from '@/components/team-season-stats'
+import {breadcrumbSchema, sportsTeamSchema} from '@/lib/seo-schema'
 import {SITE_NAME, createPageMetadata} from '@/lib/site'
 import {getTeam, getTeamRoster, getTeamSeasonStats, type TeamRosterPlayer} from '@/lib/teams-api'
 import type {Metadata} from 'next'
@@ -18,7 +20,9 @@ export async function generateMetadata({params}: TeamDetailsPageProps): Promise<
 
   return createPageMetadata({
     title: team.displayName,
-    description: `${team.displayName} roster, record, and team details on ${SITE_NAME}.`
+    description: `${team.displayName} roster, record, and team details on ${SITE_NAME}.`,
+    path: `/teams/${teamId}`,
+    image: team.logo,
   })
 }
 
@@ -33,6 +37,21 @@ export default async function TeamDetailsPage({params}: TeamDetailsPageProps) {
 
   return (
     <main className='mx-auto flex w-full max-w-7xl flex-1 flex-col gap-5 px-4 py-5 sm:gap-6 sm:px-6 sm:py-8'>
+      <JsonLd
+        data={[
+          sportsTeamSchema({
+            id: team.id,
+            name: team.displayName,
+            location: team.location,
+            logo: team.logo,
+            record: team.record,
+          }),
+          breadcrumbSchema([
+            {name: 'Teams', path: '/teams'},
+            {name: team.displayName, path: `/teams/${teamId}`},
+          ]),
+        ]}
+      />
       <Link
         href='/teams'
         className='text-muted-foreground hover:text-foreground text-sm underline-offset-4 hover:underline'

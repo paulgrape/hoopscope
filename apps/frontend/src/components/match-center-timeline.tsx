@@ -10,12 +10,25 @@ const DATE_WINDOW_RADIUS = 4
 const REFRESH_INTERVAL_MS = 60_000
 const DISPLAY_LOCALE = 'en-US'
 
-export function MatchCenterTimeline() {
-  const [selectedDate, setSelectedDate] = useState(getTodayDateKey)
-  const [games, setGames] = useState<ScoreboardGame[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+type MatchCenterTimelineProps = {
+  initialDate?: string
+  initialGames?: ScoreboardGame[]
+}
+
+export function MatchCenterTimeline({
+  initialDate,
+  initialGames = [],
+}: MatchCenterTimelineProps) {
+  const today = getTodayDateKey()
+  const startingDate = initialDate ?? today
+  const hasInitialGames = initialGames.length > 0 && startingDate === (initialDate ?? today)
+
+  const [selectedDate, setSelectedDate] = useState(startingDate)
+  const [games, setGames] = useState<ScoreboardGame[]>(hasInitialGames ? initialGames : [])
+  const [isLoading, setIsLoading] = useState(!hasInitialGames)
   const [error, setError] = useState<string | null>(null)
   const selectedDateButtonRef = useRef<HTMLButtonElement | null>(null)
+  const skipInitialFetchRef = useRef(hasInitialGames)
 
   const dateOptions = useMemo(
     () =>
@@ -29,6 +42,11 @@ export function MatchCenterTimeline() {
     let isActive = true
 
     async function loadGames(showLoading: boolean) {
+      if (skipInitialFetchRef.current) {
+        skipInitialFetchRef.current = false
+        return
+      }
+
       if (showLoading) setIsLoading(true)
       setError(null)
 

@@ -1,8 +1,12 @@
+import {JsonLd} from '@/components/json-ld'
+import {webPageSchema} from '@/lib/seo-schema'
 import {createPageMetadata, SITE_NAME} from '@/lib/site'
 
 export const metadata = createPageMetadata({
   title: 'Privacy Policy',
-  description: `How ${SITE_NAME} collects, uses, and protects your information.`
+  description: `How ${SITE_NAME} collects, uses, and protects your information.`,
+  path: '/privacy',
+  noIndex: true,
 })
 
 const LAST_UPDATED = 'June 9, 2026'
@@ -10,6 +14,13 @@ const LAST_UPDATED = 'June 9, 2026'
 export default function PrivacyPage() {
   return (
     <main className='mx-auto flex w-full max-w-3xl flex-1 flex-col gap-8 px-4 py-5 sm:px-6 sm:py-8'>
+      <JsonLd
+        data={webPageSchema({
+          path: '/privacy',
+          title: 'Privacy Policy',
+          description: `How ${SITE_NAME} collects, uses, and protects your information.`,
+        })}
+      />
       <header className='flex flex-col gap-2'>
         <p className='text-muted-foreground text-sm uppercase tracking-wider'>Legal</p>
         <h1 className='text-2xl font-semibold sm:text-3xl'>Privacy Policy</h1>
