@@ -8,7 +8,7 @@ import {cn} from '@/lib/utils'
 
 type SortColumn = keyof Pick<
   PlayerCareerSeasonStats,
-  'seasonLabel' | 'teamAbbr' | 'gp' | 'min' | 'pts' | 'reb' | 'ast' | 'fgPct'
+  'seasonLabel' | 'teamAbbr' | 'gp' | 'min' | 'pts' | 'reb' | 'ast' | 'fgPct' | 'threePointPct' | 'freeThrowPct'
 >
 
 type SortDirection = 'asc' | 'desc'
@@ -22,6 +22,8 @@ const COLUMNS: Array<{key: SortColumn; label: string; numeric: boolean; classNam
   {key: 'reb', label: 'REB', numeric: true},
   {key: 'ast', label: 'AST', numeric: true},
   {key: 'fgPct', label: 'FG%', numeric: true, className: 'hidden sm:table-cell'},
+  {key: 'threePointPct', label: '3P%', numeric: true, className: 'hidden sm:table-cell'},
+  {key: 'freeThrowPct', label: 'FT%', numeric: true, className: 'hidden sm:table-cell'},
 ]
 
 type PlayerCareerStatsProps = {
@@ -143,6 +145,20 @@ export function PlayerCareerStats({seasons}: PlayerCareerStatsProps) {
                     value={formatStat(season.gp)}
                   />
                 </dl>
+                <dl className='text-muted-foreground mt-2 grid grid-cols-3 gap-2 text-xs'>
+                  <MiniStat
+                    label='FG%'
+                    value={formatPct(season.fgPct)}
+                  />
+                  <MiniStat
+                    label='3P%'
+                    value={formatPct(season.threePointPct)}
+                  />
+                  <MiniStat
+                    label='FT%'
+                    value={formatPct(season.freeThrowPct)}
+                  />
+                </dl>
               </article>
             ))}
           </div>
@@ -206,6 +222,12 @@ export function PlayerCareerStats({seasons}: PlayerCareerStatsProps) {
                     </td>
                     <td className='hidden px-2 py-2.5 text-right tabular-nums sm:table-cell sm:px-3'>
                       {formatPct(season.fgPct)}
+                    </td>
+                    <td className='hidden px-2 py-2.5 text-right tabular-nums sm:table-cell sm:px-3'>
+                      {formatPct(season.threePointPct)}
+                    </td>
+                    <td className='hidden px-2 py-2.5 text-right tabular-nums sm:table-cell sm:px-3'>
+                      {formatPct(season.freeThrowPct)}
                     </td>
                   </tr>
                 ))}

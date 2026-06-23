@@ -57,6 +57,8 @@ export type PlayerSeasonAverages = {
   blk: number;
   tov: number;
   fgPct: number;
+  threePointPct: number;
+  freeThrowPct: number;
 };
 
 export type PlayerSeasonStatsResponse = {
@@ -82,6 +84,8 @@ export type PlayerCareerSeasonStats = {
   blk: number;
   tov: number;
   fgPct: number;
+  threePointPct: number;
+  freeThrowPct: number;
 };
 
 export type PlayerCareerStatsResponse = {

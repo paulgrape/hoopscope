@@ -17,6 +17,8 @@ export type ParsedCareerSeasonStats = {
   blk: number;
   tov: number;
   fgPct: number;
+  threePointPct: number;
+  freeThrowPct: number;
 };
 
 function resolveTeamAbbr(
@@ -104,6 +106,8 @@ export function parseCareerStats(
       blk: toNumber(values.avgBlocks),
       tov: toNumber(values.avgTurnovers),
       fgPct: toNumber(values.fieldGoalPct),
+      threePointPct: toNumber(values.threePointFieldGoalPct),
+      freeThrowPct: toNumber(values.freeThrowPct),
     });
   }
 

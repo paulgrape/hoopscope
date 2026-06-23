@@ -49,7 +49,7 @@ export function PlayerSeasonStats({regularStats, playoffStats}: PlayerSeasonStat
           No playoff stats recorded for {playoffStats.seasonLabel}.
         </p>
       ) : stats.averages ? (
-        <dl className='mt-4 grid grid-cols-3 gap-2 sm:grid-cols-5 lg:grid-cols-9'>
+        <dl className='mt-4 grid grid-cols-3 gap-2 sm:grid-cols-5 lg:grid-cols-11'>
           <StatItem
             label='GP'
             value={formatStat(stats.averages.gp)}
@@ -88,6 +88,14 @@ export function PlayerSeasonStats({regularStats, playoffStats}: PlayerSeasonStat
           <StatItem
             label='FG%'
             value={formatPct(stats.averages.fgPct)}
+          />
+          <StatItem
+            label='3P%'
+            value={formatPct(stats.averages.threePointPct)}
+          />
+          <StatItem
+            label='FT%'
+            value={formatPct(stats.averages.freeThrowPct)}
           />
         </dl>
       ) : (

@@ -42,6 +42,8 @@ export type TeamSeasonStatPlayer = {
   blk: number
   tov: number
   fgPct: number
+  threePointPct: number
+  freeThrowPct: number
 }
 
 export type TeamSeasonStatsResponse = {
