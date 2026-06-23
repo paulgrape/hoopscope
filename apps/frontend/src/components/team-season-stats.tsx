@@ -11,7 +11,7 @@ import {cn} from '@/lib/utils'
 
 type SortColumn = keyof Pick<
   TeamSeasonStatPlayer,
-  'fullName' | 'gp' | 'min' | 'pts' | 'reb' | 'ast' | 'stl' | 'blk' | 'tov' | 'fgPct'
+  'fullName' | 'gp' | 'min' | 'pts' | 'reb' | 'ast' | 'stl' | 'blk' | 'tov' | 'fgPct' | 'threePointPct' | 'freeThrowPct'
 >
 
 type SortDirection = 'asc' | 'desc'
@@ -26,7 +26,9 @@ const COLUMNS: Array<{key: SortColumn; label: string; numeric: boolean; classNam
   {key: 'stl', label: 'STL', numeric: true, className: 'hidden lg:table-cell'},
   {key: 'blk', label: 'BLK', numeric: true, className: 'hidden lg:table-cell'},
   {key: 'tov', label: 'TO', numeric: true, className: 'hidden xl:table-cell'},
-  {key: 'fgPct', label: 'FG%', numeric: true, className: 'hidden xl:table-cell'}
+  {key: 'fgPct', label: 'FG%', numeric: true, className: 'hidden xl:table-cell'},
+  {key: 'threePointPct', label: '3P%', numeric: true, className: 'hidden xl:table-cell'},
+  {key: 'freeThrowPct', label: 'FT%', numeric: true, className: 'hidden xl:table-cell'}
 ]
 
 type TeamSeasonStatsProps = {
@@ -207,8 +209,10 @@ export function TeamSeasonStats({regularStats, playoffStats, teamId}: TeamSeason
                             player={player}
                             teamId={teamId}
                           />
-                        ) : column.key === 'fgPct' ? (
-                          formatPct(player.fgPct)
+                        ) : column.key === 'fgPct' ||
+                          column.key === 'threePointPct' ||
+                          column.key === 'freeThrowPct' ? (
+                          formatPct(player[column.key])
                         ) : (
                           formatStat(player[column.key] as number)
                         )}
@@ -290,7 +294,7 @@ function PlayerStatCard({player, teamId}: {player: TeamSeasonStatPlayer; teamId?
         />
       </dl>
 
-      <dl className='text-muted-foreground mt-3 grid grid-cols-4 gap-x-2 gap-y-2 text-xs sm:grid-cols-7'>
+      <dl className='text-muted-foreground mt-3 grid grid-cols-4 gap-x-2 gap-y-2 text-xs sm:grid-cols-9'>
         <StatItem
           label='GP'
           value={formatStat(player.gp)}
@@ -314,6 +318,14 @@ function PlayerStatCard({player, teamId}: {player: TeamSeasonStatPlayer; teamId?
         <StatItem
           label='FG%'
           value={formatPct(player.fgPct)}
+        />
+        <StatItem
+          label='3P%'
+          value={formatPct(player.threePointPct)}
+        />
+        <StatItem
+          label='FT%'
+          value={formatPct(player.freeThrowPct)}
         />
       </dl>
     </article>

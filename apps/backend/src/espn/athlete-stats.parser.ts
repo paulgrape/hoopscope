@@ -10,6 +10,8 @@ export type AthleteSeasonAverages = {
   blk: number;
   tov: number;
   fgPct: number;
+  threePointPct: number;
+  freeThrowPct: number;
 };
 
 export const SPLIT_BY_SEASON_TYPE: Record<EspnSeasonType, string> = {
@@ -55,6 +57,8 @@ export function parseOverviewAverages(
     blk: toNumber(values.avgBlocks),
     tov: toNumber(values.avgTurnovers),
     fgPct: toNumber(values.fieldGoalPct),
+    threePointPct: toNumber(values.threePointPct),
+    freeThrowPct: toNumber(values.freeThrowPct),
   };
 }
 
