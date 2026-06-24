@@ -47,6 +47,34 @@ export function updateConsent(choice: ConsentChoice): void {
   window.gtag?.('consent', 'update', getConsentModeState(choice))
 }
 
+export const COOKIE_CONSENT_CHANGED_EVENT = 'hoopscope-cookie-consent-changed'
+
+export function clearConsentCookie(): void {
+  document.cookie = `${COOKIE_CONSENT_NAME}=; path=/; max-age=0; SameSite=Lax`
+}
+
+function notifyConsentChanged(): void {
+  window.dispatchEvent(new CustomEvent(COOKIE_CONSENT_CHANGED_EVENT))
+}
+
+export function grantConsent(): void {
+  setConsentCookie('granted')
+  updateConsent('granted')
+  notifyConsentChanged()
+}
+
+export function denyConsent(): void {
+  setConsentCookie('denied')
+  updateConsent('denied')
+  notifyConsentChanged()
+}
+
+export function retractConsent(): void {
+  clearConsentCookie()
+  updateConsent('denied')
+  notifyConsentChanged()
+}
+
 declare global {
   interface Window {
     gtag?: (...args: unknown[]) => void

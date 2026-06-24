@@ -1,3 +1,4 @@
+import {CookieConsentPrivacyFooter} from '@/components/cookie-consent-privacy-footer'
 import {JsonLd} from '@/components/json-ld'
 import {webPageSchema} from '@/lib/seo-schema'
 import {createPageMetadata, SITE_NAME} from '@/lib/site'
@@ -123,6 +124,7 @@ export default function PrivacyPage() {
           </p>
         </section>
       </div>
+      <CookieConsentPrivacyFooter />
     </main>
   )
 }
