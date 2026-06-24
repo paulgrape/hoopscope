@@ -3,7 +3,7 @@ import {CookieConsentBanner} from '@/components/cookie-consent-banner-loader'
 import {GoogleTagManagerScript} from '@/components/google-tag-manager'
 import {JsonLd} from '@/components/json-ld'
 import {ThemeProvider} from '@/components/theme-provider'
-import {isAnalyticsEnabled} from '@/lib/analytics'
+import {isCookieConsentEnabled} from '@/lib/analytics'
 import {organizationSchema, websiteSchema} from '@/lib/seo-schema'
 import {rootMetadata} from '@/lib/site'
 import {Fraunces, IBM_Plex_Mono, Urbanist} from 'next/font/google'
@@ -32,7 +32,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const analyticsEnabled = isAnalyticsEnabled()
+  const cookieConsentEnabled = isCookieConsentEnabled()
 
   return (
     <html
@@ -58,7 +58,7 @@ export default function RootLayout({
         >
           {children}
         </ThemeProvider>
-        <CookieConsentBanner enabled={analyticsEnabled} />
+        <CookieConsentBanner enabled={cookieConsentEnabled} />
       </body>
     </html>
   )

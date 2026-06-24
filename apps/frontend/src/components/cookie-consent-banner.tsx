@@ -2,21 +2,17 @@
 
 import {Button} from '@/components/ui/button'
 import {
+  COOKIE_CONSENT_CHANGED_EVENT,
+  denyConsent,
   getConsentFromCookie,
-  setConsentCookie,
-  updateConsent,
-  type ConsentChoice
+  grantConsent,
+  updateConsent
 } from '@/lib/cookie-consent'
 import Link from 'next/link'
 import {useEffect, useRef, useState} from 'react'
 
 type CookieConsentBannerProps = {
   enabled: boolean
-}
-
-function applyConsent(choice: ConsentChoice) {
-  updateConsent(choice)
-  setConsentCookie(choice)
 }
 
 export function CookieConsentBannerClient({enabled}: CookieConsentBannerProps) {
@@ -27,9 +23,18 @@ export function CookieConsentBannerClient({enabled}: CookieConsentBannerProps) {
 
   useEffect(() => {
     if (savedChoice) {
-      applyConsent(savedChoice)
+      updateConsent(savedChoice)
     }
   }, [savedChoice])
+
+  useEffect(() => {
+    const syncConsentState = () => {
+      setHasChosen(getConsentFromCookie() !== null)
+    }
+
+    window.addEventListener(COOKIE_CONSENT_CHANGED_EVENT, syncConsentState)
+    return () => window.removeEventListener(COOKIE_CONSENT_CHANGED_EVENT, syncConsentState)
+  }, [])
 
   useEffect(() => {
     if (!isVisible) {
@@ -62,8 +67,13 @@ export function CookieConsentBannerClient({enabled}: CookieConsentBannerProps) {
     return null
   }
 
-  const handleChoice = (choice: ConsentChoice) => {
-    applyConsent(choice)
+  const handleGrant = () => {
+    grantConsent()
+    setHasChosen(true)
+  }
+
+  const handleDeny = () => {
+    denyConsent()
     setHasChosen(true)
   }
 
@@ -90,13 +100,13 @@ export function CookieConsentBannerClient({enabled}: CookieConsentBannerProps) {
           <Button
             variant='outline'
             size='sm'
-            onClick={() => handleChoice('denied')}
+            onClick={handleDeny}
           >
             Reject non-essential
           </Button>
           <Button
             size='sm'
-            onClick={() => handleChoice('granted')}
+            onClick={handleGrant}
           >
             Accept all
           </Button>

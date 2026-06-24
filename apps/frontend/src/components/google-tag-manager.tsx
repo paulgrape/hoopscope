@@ -1,10 +1,10 @@
-import {getGtmId, isAnalyticsEnabled} from '@/lib/analytics'
+import {getGtmId} from '@/lib/analytics'
 import {GoogleTagManager} from '@next/third-parties/google'
 
 export function GoogleTagManagerScript() {
   const gtmId = getGtmId()
 
-  if (!isAnalyticsEnabled() || !gtmId) {
+  if (process.env.NODE_ENV !== 'production' || !gtmId) {
     return null
   }
 
