@@ -25,6 +25,12 @@ export class CacheService {
     return entry.value as T;
   }
 
+  getStale<T>(key: string): T | null {
+    const entry = this.store.get(key);
+    if (!entry) return null;
+    return entry.value as T;
+  }
+
   private evict(): void {
     const now = Date.now();
     for (const [key, entry] of this.store) {

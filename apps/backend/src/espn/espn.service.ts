@@ -142,6 +142,21 @@ export class EspnService {
   readonly TTL_SEASON_STATS_CURRENT = 30 * 60 * 1000; // 30m
   readonly TTL_SEASON_STATS_HISTORIC = 24 * 60 * 60 * 1000; // 24h
 
+  // Resilience tunables (env-overridable)
+  private readonly retryAttempts: number;
+  private readonly retryBaseDelayMs: number;
+  private readonly retryMaxDelayMs: number;
+  private readonly maxConcurrency: number;
+  private readonly requestGapMs: number;
+
+  // De-duplicates concurrent requests that share the same cache key.
+  private readonly inFlight = new Map<string, Promise<unknown>>();
+
+  // Global concurrency throttle state.
+  private activeRequests = 0;
+  private readonly waiters: Array<() => void> = [];
+  private lastDispatchAt = 0;
+
   private readonly webApiBase =
     'https://site.web.api.espn.com/apis/common/v3/sports/basketball/nba';
 
@@ -153,16 +168,164 @@ export class EspnService {
       baseURL: this.config.get<string>('ESPN_BASE_URL'),
       timeout: 8000,
     });
+
+    this.retryAttempts = this.numConfig('ESPN_RETRY_ATTEMPTS', 3);
+    this.retryBaseDelayMs = this.numConfig('ESPN_RETRY_BASE_DELAY_MS', 500);
+    this.retryMaxDelayMs = this.numConfig('ESPN_RETRY_MAX_DELAY_MS', 8000);
+    this.maxConcurrency = this.numConfig('ESPN_MAX_CONCURRENCY', 5);
+    this.requestGapMs = this.numConfig('ESPN_REQUEST_GAP_MS', 0);
+  }
+
+  private numConfig(key: string, fallback: number): number {
+    const value = Number(this.config.get<string>(key));
+    return Number.isFinite(value) && value > 0 ? value : fallback;
+  }
+
+  /**
+   * Single resilient entry point for every ESPN HTTP call. Layers:
+   *  1. fresh-cache read
+   *  2. in-flight de-duplication (shared promise per cache key)
+   *  3. global concurrency throttle + min gap between dispatches
+   *  4. retry with exponential backoff + jitter (honoring Retry-After)
+   *  5. stale-cache fallback when all retries fail
+   */
+  private fetchJson<T>(
+    cacheKey: string,
+    ttlMs: number,
+    requester: () => Promise<T>,
+  ): Promise<T> {
+    const cached = this.cache.get<T>(cacheKey);
+    if (cached !== null) return Promise.resolve(cached);
+
+    const existing = this.inFlight.get(cacheKey);
+    if (existing) return existing as Promise<T>;
+
+    const promise = this.runWithResilience(cacheKey, ttlMs, requester).finally(
+      () => {
+        this.inFlight.delete(cacheKey);
+      },
+    );
+    this.inFlight.set(cacheKey, promise);
+    return promise;
+  }
+
+  private async runWithResilience<T>(
+    cacheKey: string,
+    ttlMs: number,
+    requester: () => Promise<T>,
+  ): Promise<T> {
+    let lastError: unknown;
+
+    for (let attempt = 0; attempt <= this.retryAttempts; attempt++) {
+      try {
+        const data = await this.withThrottle(requester);
+        this.cache.set(cacheKey, data, ttlMs);
+        return data;
+      } catch (err) {
+        lastError = err;
+        if (!this.isRetryable(err) || attempt === this.retryAttempts) break;
+
+        const delay = this.computeBackoff(attempt, err);
+        this.logger.warn(
+          `ESPN request failed for ${cacheKey} (attempt ${attempt + 1}/${
+            this.retryAttempts + 1
+          }): ${this.describeError(err)}; retrying in ${delay}ms`,
+        );
+        await this.sleep(delay);
+      }
+    }
+
+    const stale = this.cache.getStale<T>(cacheKey);
+    if (stale !== null) {
+      this.logger.warn(
+        `ESPN request failed for ${cacheKey}; serving stale cache`,
+      );
+      return stale;
+    }
+
+    throw lastError;
+  }
+
+  private async withThrottle<T>(fn: () => Promise<T>): Promise<T> {
+    await this.acquireSlot();
+    try {
+      return await fn();
+    } finally {
+      this.releaseSlot();
+    }
+  }
+
+  private async acquireSlot(): Promise<void> {
+    if (this.activeRequests >= this.maxConcurrency) {
+      await new Promise<void>((resolve) => this.waiters.push(resolve));
+    }
+    this.activeRequests++;
+
+    if (this.requestGapMs > 0) {
+      const wait = this.lastDispatchAt + this.requestGapMs - Date.now();
+      if (wait > 0) await this.sleep(wait);
+    }
+    this.lastDispatchAt = Date.now();
+  }
+
+  private releaseSlot(): void {
+    this.activeRequests = Math.max(0, this.activeRequests - 1);
+    const next = this.waiters.shift();
+    if (next) next();
+  }
+
+  private isRetryable(err: unknown): boolean {
+    if (!axios.isAxiosError(err)) return false;
+    const status = err.response?.status;
+    if (status === undefined) return true; // network error / timeout
+    if (status === 429) return true;
+    return status >= 500;
+  }
+
+  private computeBackoff(attempt: number, err: unknown): number {
+    const retryAfter = this.parseRetryAfter(err);
+    if (retryAfter !== null) {
+      return Math.min(retryAfter, this.retryMaxDelayMs);
+    }
+
+    const exponential = this.retryBaseDelayMs * 2 ** attempt;
+    const capped = Math.min(exponential, this.retryMaxDelayMs);
+    const jitter = Math.random() * capped * 0.25;
+    return Math.round(capped + jitter);
+  }
+
+  private parseRetryAfter(err: unknown): number | null {
+    if (!axios.isAxiosError(err)) return null;
+    const header = err.response?.headers?.['retry-after'];
+    if (!header) return null;
+
+    const seconds = Number(header);
+    if (Number.isFinite(seconds)) return Math.max(0, seconds * 1000);
+
+    const date = Date.parse(String(header));
+    if (!Number.isNaN(date)) return Math.max(0, date - Date.now());
+
+    return null;
+  }
+
+  private describeError(err: unknown): string {
+    if (axios.isAxiosError(err)) {
+      const status = err.response?.status;
+      return status ? `HTTP ${status}` : (err.code ?? err.message);
+    }
+    return err instanceof Error ? err.message : String(err);
+  }
+
+  private sleep(ms: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   async get<T>(path: string, ttlMs: number): Promise<T> {
-    const cached = this.cache.get<T>(path);
-    if (cached) return cached;
-
-    this.logger.log(`ESPN fetch: ${path}`);
-    const { data } = await this.http.get<T>(path);
-    this.cache.set(path, data, ttlMs);
-    return data;
+    return this.fetchJson<T>(path, ttlMs, async () => {
+      this.logger.log(`ESPN fetch: ${path}`);
+      const { data } = await this.http.get<T>(path);
+      return data;
+    });
   }
 
   getTeams() {
@@ -210,16 +373,16 @@ export class EspnService {
     const url = `${this.webApiBase}/athletes/${athleteId}/overview`;
     const cacheKey = `athlete-overview:${athleteId}:${season}:${seasontype}`;
 
-    const cached = this.cache.get<EspnAthleteOverview>(cacheKey);
-    if (cached) return cached;
-
-    this.logger.log(`ESPN fetch: ${url}?season=${season}&seasontype=${seasontype}`);
-    const { data } = await this.http.get<EspnAthleteOverview>(url, {
-      params: { season, seasontype },
-      timeout: 12_000,
+    return this.fetchJson<EspnAthleteOverview>(cacheKey, ttlMs, async () => {
+      this.logger.log(
+        `ESPN fetch: ${url}?season=${season}&seasontype=${seasontype}`,
+      );
+      const { data } = await this.http.get<EspnAthleteOverview>(url, {
+        params: { season, seasontype },
+        timeout: 12_000,
+      });
+      return data;
     });
-    this.cache.set(cacheKey, data, ttlMs);
-    return data;
   }
 
   async getTeamAthleteStatsFallback(
@@ -231,18 +394,16 @@ export class EspnService {
     const url = `${this.webApiBase}/statistics/byathlete`;
     const cacheKey = `byathlete:${teamId}:${season}:${seasontype}`;
 
-    const cached = this.cache.get<unknown>(cacheKey);
-    if (cached) return cached;
-
-    this.logger.log(
-      `ESPN fetch: ${url}?team=${teamId}&season=${season}&seasontype=${seasontype}`,
-    );
-    const { data } = await this.http.get<unknown>(url, {
-      params: { team: teamId, season, seasontype, limit: 200 },
-      timeout: 20_000,
+    return this.fetchJson<unknown>(cacheKey, this.TTL_PLAYERS, async () => {
+      this.logger.log(
+        `ESPN fetch: ${url}?team=${teamId}&season=${season}&seasontype=${seasontype}`,
+      );
+      const { data } = await this.http.get<unknown>(url, {
+        params: { team: teamId, season, seasontype, limit: 200 },
+        timeout: 20_000,
+      });
+      return data;
     });
-    this.cache.set(cacheKey, data, this.TTL_PLAYERS);
-    return data;
   }
   async getPlayer(id: string): Promise<EspnCoreAthlete> {
     const base =
@@ -250,14 +411,13 @@ export class EspnService {
       'https://sports.core.api.espn.com/v2/sports/basketball/leagues/nba';
     const url = `${base}/athletes/${id}`;
 
-    const cached = this.cache.get<EspnCoreAthlete>(url);
-    if (cached) return cached;
-
-    const { data } = await this.http.get<EspnCoreAthlete>(url, {
-      timeout: 15_000,
+    return this.fetchJson<EspnCoreAthlete>(url, this.TTL_PLAYERS, async () => {
+      this.logger.log(`ESPN fetch: ${url}`);
+      const { data } = await this.http.get<EspnCoreAthlete>(url, {
+        timeout: 15_000,
+      });
+      return data;
     });
-    this.cache.set(url, data, this.TTL_PLAYERS);
-    return data;
   }
   getScoreboard(date?: string) {
     const path = date ? `/scoreboard?dates=${date}` : '/scoreboard';
@@ -278,44 +438,51 @@ export class EspnService {
     const url = `${this.webApiBase}/athletes/${athleteId}/stats`;
     const cacheKey = `athlete-stats:${athleteId}:${seasontype}`;
 
-    const cached = this.cache.get<EspnAthleteStatsResponse>(cacheKey);
-    if (cached) return cached;
-
-    this.logger.log(`ESPN fetch: ${url}?seasontype=${seasontype}`);
-    const { data } = await this.http.get<EspnAthleteStatsResponse>(url, {
-      params: { seasontype },
-      timeout: 15_000,
-    });
-    this.cache.set(cacheKey, data, this.TTL_PLAYERS);
-    return data;
+    return this.fetchJson<EspnAthleteStatsResponse>(
+      cacheKey,
+      this.TTL_PLAYERS,
+      async () => {
+        this.logger.log(`ESPN fetch: ${url}?seasontype=${seasontype}`);
+        const { data } = await this.http.get<EspnAthleteStatsResponse>(url, {
+          params: { seasontype },
+          timeout: 15_000,
+        });
+        return data;
+      },
+    );
   }
 
   async getAthleteNews(athleteId: string): Promise<{ articles?: EspnNewsArticle[] }> {
     const path = `/athletes/${athleteId}/news`;
     const cacheKey = `athlete-news:${athleteId}`;
 
-    const cached = this.cache.get<{ articles?: EspnNewsArticle[] }>(cacheKey);
-    if (cached) return cached;
-
-    this.logger.log(`ESPN fetch: ${path}`);
-    const { data } = await this.http.get<{ articles?: EspnNewsArticle[] }>(path);
-    this.cache.set(cacheKey, data, this.TTL_NEWS);
-    return data;
+    return this.fetchJson<{ articles?: EspnNewsArticle[] }>(
+      cacheKey,
+      this.TTL_NEWS,
+      async () => {
+        this.logger.log(`ESPN fetch: ${path}`);
+        const { data } =
+          await this.http.get<{ articles?: EspnNewsArticle[] }>(path);
+        return data;
+      },
+    );
   }
 
   async getLeagueInjuries(): Promise<EspnInjuryReport> {
     const path = '/injuries';
     const cacheKey = 'league-injuries';
 
-    const cached = this.cache.get<EspnInjuryReport>(cacheKey);
-    if (cached) return cached;
-
-    this.logger.log(`ESPN fetch: ${path}`);
-    const { data } = await this.http.get<EspnInjuryReport>(path, {
-      timeout: 15_000,
-    });
-    this.cache.set(cacheKey, data, this.TTL_INJURIES);
-    return data;
+    return this.fetchJson<EspnInjuryReport>(
+      cacheKey,
+      this.TTL_INJURIES,
+      async () => {
+        this.logger.log(`ESPN fetch: ${path}`);
+        const { data } = await this.http.get<EspnInjuryReport>(path, {
+          timeout: 15_000,
+        });
+        return data;
+      },
+    );
   }
 
   async getStandings(league = 'nba') {
@@ -324,12 +491,10 @@ export class EspnService {
       'https://site.api.espn.com/apis/v2/sports/basketball';
     const url = `${base}/${league}/standings`;
 
-    const cached = this.cache.get<unknown>(url);
-    if (cached) return cached;
-
-    this.logger.log(`ESPN fetch: ${url}`);
-    const { data } = await this.http.get<unknown>(url, { timeout: 20_000 });
-    this.cache.set(url, data, this.TTL_STANDINGS);
-    return data;
+    return this.fetchJson<unknown>(url, this.TTL_STANDINGS, async () => {
+      this.logger.log(`ESPN fetch: ${url}`);
+      const { data } = await this.http.get<unknown>(url, { timeout: 20_000 });
+      return data;
+    });
   }
 }
