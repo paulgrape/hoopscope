@@ -5,8 +5,9 @@ import {getStandings} from '@/lib/standings-api'
 import {createPageMetadata} from '@/lib/site'
 
 export const metadata = createPageMetadata({
-  title: 'Standings',
-  description: 'Conference standings with playoff and play-in positions highlighted.',
+  title: 'NBA Standings - Conference & Playoff Race',
+  description:
+    'Live pro basketball conference standings on Hoopscope, with playoff seeding and play-in tournament positions clearly highlighted for both conferences.',
   path: '/standings',
 })
 

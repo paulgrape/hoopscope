@@ -20,15 +20,15 @@ export async function generateMetadata({params}: HistoricGamePageProps): Promise
 
   if (!game) {
     return createPageMetadata({
-      title: 'Historic Game',
-      description: 'Replay a classic pro basketball matchup.',
+      title: 'Historic Game - Classic NBA Replay',
+      description: 'Replay a classic pro basketball matchup tick-by-tick from saved ESPN play-by-play data on Hoopscope.',
       path: `/historic-games/${gameId}`,
     })
   }
 
   return createPageMetadata({
-    title: game.name,
-    description: `Replay ${game.name} with live play-by-play ticks.`,
+    title: `${game.name} - Play-by-Play Replay`,
+    description: `Replay ${game.name} on Hoopscope with a simulated, tick-by-tick play-by-play feed recreated from the original ESPN game data.`,
     path: `/historic-games/${gameId}`,
   })
 }

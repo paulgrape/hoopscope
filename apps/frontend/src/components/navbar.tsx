@@ -83,7 +83,7 @@ export const Navbar = () => {
         >
           <Image
             src='/icon1.png'
-            alt=''
+            alt='Hoopscope logo'
             width={36}
             height={36}
             className='h-9 w-9 shrink-0 rounded-full object-contain transition-all duration-200 group-hover:opacity-80'

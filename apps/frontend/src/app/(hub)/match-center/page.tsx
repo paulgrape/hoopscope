@@ -9,9 +9,9 @@ import {
 import {createPageMetadata} from '@/lib/site'
 
 export const metadata = createPageMetadata({
-  title: 'Match Center',
+  title: 'Match Center - Live NBA Scores & Schedule',
   description:
-    'Browse pro basketball games by your local calendar date, including live scoreboards and upcoming tip-offs.',
+    'Browse pro basketball games by your local calendar date, including live scoreboards, final results, and upcoming tip-offs across the league.',
   path: '/match-center',
 })
 

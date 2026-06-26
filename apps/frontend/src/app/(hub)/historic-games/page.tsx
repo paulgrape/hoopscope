@@ -7,8 +7,9 @@ import {collectionPageSchema} from '@/lib/seo-schema'
 import {createPageMetadata} from '@/lib/site'
 
 export const metadata = createPageMetadata({
-  title: 'Historic Games',
-  description: 'Replay classic matchups with saved play-by-play feeds.',
+  title: 'Historic Games - Classic NBA Replays',
+  description:
+    'Relive classic pro basketball matchups on Hoopscope, replayed tick-by-tick from saved ESPN play-by-play feeds for memorable games from the archives.',
   path: '/historic-games',
 })
 

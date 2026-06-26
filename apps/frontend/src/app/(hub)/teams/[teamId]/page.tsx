@@ -19,8 +19,8 @@ export async function generateMetadata({params}: TeamDetailsPageProps): Promise<
   const team = await getTeam(teamId)
 
   return createPageMetadata({
-    title: team.displayName,
-    description: `${team.displayName} roster, record, and team details on ${SITE_NAME}.`,
+    title: `${team.displayName} - Roster, Stats & Schedule`,
+    description: `Follow the ${team.displayName} on ${SITE_NAME}: full roster, season record, team details, and regular season and playoff statistics.`,
     path: `/teams/${teamId}`,
     image: team.logo,
   })
