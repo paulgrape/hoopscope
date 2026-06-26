@@ -40,9 +40,9 @@ export default function RootLayout({
       className={`${urbanist.variable} ${fraunces.variable} ${ibmPlexMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <GoogleTagManagerScript />
       <head>
         <ConsentDefaultsScript />
+        <GoogleTagManagerScript />
         <JsonLd data={[websiteSchema(), organizationSchema()]} />
         <meta
           name='apple-mobile-web-app-title'

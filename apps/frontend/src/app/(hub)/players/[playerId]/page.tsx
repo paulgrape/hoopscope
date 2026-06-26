@@ -30,8 +30,8 @@ export async function generateMetadata({params}: PlayerDetailsPageProps): Promis
   const player = await getPlayer(playerId)
 
   return createPageMetadata({
-    title: player.fullName,
-    description: `${player.fullName} stats, career history, and news on ${SITE_NAME}.`,
+    title: `${player.fullName} - Stats, Bio & News`,
+    description: `${player.fullName} player profile on ${SITE_NAME}: bio, season averages, full career statistics, and the latest related news headlines.`,
     path: `/players/${playerId}`,
     image: player.headshot,
     type: 'profile',

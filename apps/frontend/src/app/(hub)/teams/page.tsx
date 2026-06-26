@@ -5,8 +5,9 @@ import {createPageMetadata} from '@/lib/site'
 import {getTeams} from '@/lib/teams-api'
 
 export const metadata = createPageMetadata({
-  title: 'Teams',
-  description: 'All 30 pro basketball franchises with rosters and team details.',
+  title: 'NBA Teams - Rosters, Records & Season Stats',
+  description:
+    'Explore all 30 pro basketball franchises on Hoopscope, with current rosters, win-loss records, team details, and full season statistics in one place.',
   path: '/teams',
 })
 
