@@ -1,20 +1,21 @@
 import {JsonLd} from '@/components/json-ld'
+import {NewsNewspaper} from '@/components/news-newspaper'
+import {getNews} from '@/lib/news-api'
+import {collectionPageSchema} from '@/lib/seo-schema'
+import {SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE, createPageMetadata} from '@/lib/site'
+import {Rss} from 'lucide-react'
+import type {Metadata} from 'next'
 import Link from 'next/link'
-import { NewsNewspaper } from '@/components/news-newspaper'
-import { getNews } from '@/lib/news-api'
-import { collectionPageSchema } from '@/lib/seo-schema'
-import { SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE, createPageMetadata } from '@/lib/site'
-import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   ...createPageMetadata({
     title: SITE_NAME,
     description: `${SITE_TAGLINE}. ${SITE_DESCRIPTION}`,
-    path: '/',
+    path: '/'
   }),
   title: {
-    absolute: SITE_NAME,
-  },
+    absolute: SITE_NAME
+  }
 }
 
 const PAGE_SIZE = 12
@@ -30,11 +31,11 @@ function parsePage(value: string | undefined) {
   return Number.isInteger(parsed) && parsed > 0 ? parsed : 1
 }
 
-export default async function Home({ searchParams }: HomeProps) {
-  const { page: pageParam } = await searchParams
+export default async function Home({searchParams}: HomeProps) {
+  const {page: pageParam} = await searchParams
   const page = parsePage(pageParam)
 
-  const { articles, total } = await getNews(PAGE_SIZE, (page - 1) * PAGE_SIZE)
+  const {articles, total} = await getNews(PAGE_SIZE, (page - 1) * PAGE_SIZE)
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
 
   return (
@@ -46,23 +47,37 @@ export default async function Home({ searchParams }: HomeProps) {
           description: `${SITE_TAGLINE}. ${SITE_DESCRIPTION}`,
           items: articles.slice(0, 8).map(article => ({
             name: article.headline,
-            url: article.url ?? '/',
-          })),
+            url: article.url ?? '/'
+          }))
         })}
       />
-      <header className='flex flex-col gap-2'>
-        <p className='text-muted-foreground text-sm uppercase tracking-wider'>Welcome</p>
-        <h1 className='text-2xl font-semibold sm:text-3xl'>{SITE_NAME}</h1>
-        <p className='text-muted-foreground max-w-2xl text-sm sm:text-base'>
-          {SITE_TAGLINE}. Your morning read on league headlines, pulled fresh from ESPN.
-        </p>
+      <header className='flex items-start justify-between gap-4'>
+        <div className='flex flex-col gap-2'>
+          <p className='text-muted-foreground text-sm tracking-wider uppercase'>Welcome</p>
+          <h1 className='text-2xl font-semibold sm:text-3xl'>{SITE_NAME}</h1>
+          <p className='text-muted-foreground max-w-2xl text-sm sm:text-base'>
+            {SITE_TAGLINE}. Your morning read on league headlines, pulled fresh from ESPN.
+          </p>
+        </div>
+        <Link
+          href='/feed.xml'
+          aria-label='Subscribe to the RSS feed'
+          title='Subscribe to the RSS feed'
+          className='text-muted-foreground hover:text-foreground flex size-9 shrink-0 items-center justify-center rounded-lg border border-transparent transition-colors'
+        >
+          <Rss
+            className='size-4'
+            aria-hidden
+          />
+          <span className='sr-only'>Subscribe to the RSS feed</span>
+        </Link>
       </header>
 
       <NewsNewspaper articles={articles} />
 
       <nav
         aria-label='News pagination'
-        className='flex items-center justify-between gap-4 text-xs uppercase tracking-[0.2em] sm:text-sm'
+        className='flex items-center justify-between gap-4 text-xs tracking-[0.2em] uppercase sm:text-sm'
       >
         {page > 1 ? (
           <Link
@@ -72,7 +87,12 @@ export default async function Home({ searchParams }: HomeProps) {
             &larr; Newer
           </Link>
         ) : (
-          <span aria-hidden className='text-muted-foreground/40 select-none'>&larr; Newer</span>
+          <span
+            aria-hidden
+            className='text-muted-foreground/40 select-none'
+          >
+            &larr; Newer
+          </span>
         )}
 
         <span className='text-muted-foreground'>
@@ -87,7 +107,12 @@ export default async function Home({ searchParams }: HomeProps) {
             Earlier &rarr;
           </Link>
         ) : (
-          <span aria-hidden className='text-muted-foreground/40 select-none'>Earlier &rarr;</span>
+          <span
+            aria-hidden
+            className='text-muted-foreground/40 select-none'
+          >
+            Earlier &rarr;
+          </span>
         )}
       </nav>
     </main>

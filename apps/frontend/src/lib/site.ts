@@ -63,6 +63,9 @@ export const rootMetadata: Metadata = {
   },
   alternates: {
     canonical: '/',
+    types: {
+      'application/rss+xml': [{url: '/feed.xml', title: SITE_NAME}],
+    },
   },
   openGraph: {
     type: 'website',
