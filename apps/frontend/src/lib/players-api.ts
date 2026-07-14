@@ -136,9 +136,21 @@ export async function getPlayerCareerStats(
 
 export async function getPlayerNews(
   playerId: string,
-  limit = 12,
+  limit = 6,
 ): Promise<PlayerNewsArticle[]> {
   return request<PlayerNewsArticle[]>(`/players/${playerId}/news?limit=${limit}`)
+}
+
+export function getEspnPlayerNewsHref(playerId: string, fullName: string): string {
+  const slug = fullName
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
+
+  const id = String(playerId)
+  return `https://www.espn.com/nba/player/news/_/id/${id}/${slug || id}`
 }
 
 export function getPlayerHref(playerId: string, teamId?: string): string {
