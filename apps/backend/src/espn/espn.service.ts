@@ -160,6 +160,18 @@ export class EspnService {
   readonly TTL_SEASON_STATS_CURRENT = 30 * 60 * 1000; // 30m
   readonly TTL_SEASON_STATS_HISTORIC = 24 * 60 * 60 * 1000; // 24h
 
+  private readonly retryAttempts: number;
+  private readonly retryBaseDelayMs: number;
+  private readonly retryMaxDelayMs: number;
+  private readonly maxConcurrency: number;
+  private readonly requestGapMs: number;
+
+  private readonly inFlight = new Map<string, Promise<unknown>>();
+
+  private activeRequests = 0;
+  private readonly waiters: Array<() => void> = [];
+  private lastDispatchAt = 0;
+
   private readonly webApiBase: string;
   private readonly coreApiBase: string;
   private readonly nowApiUrl: string;
@@ -469,7 +481,9 @@ export class EspnService {
     );
   }
 
-  async getAthleteNews(athleteId: string): Promise<{ articles?: EspnNewsArticle[] }> {
+  async getAthleteNews(
+    athleteId: string,
+  ): Promise<{ articles?: EspnNewsArticle[] }> {
     const cacheKey = `athlete-news-now:${athleteId}:6`;
     const cached = this.cache.get<{ articles?: EspnNewsArticle[] }>(cacheKey);
     if (cached) return cached;
@@ -498,8 +512,9 @@ export class EspnService {
     });
 
     const articles: EspnNewsArticle[] = (data.feed ?? [])
-      .filter((item): item is EspnNowFeedItem & { id: number; headline: string } =>
-        typeof item.id === 'number' && Boolean(item.headline),
+      .filter(
+        (item): item is EspnNowFeedItem & { id: number; headline: string } =>
+          typeof item.id === 'number' && Boolean(item.headline),
       )
       .map((item) => ({
         id: item.id,
