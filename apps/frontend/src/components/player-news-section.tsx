@@ -1,10 +1,11 @@
+import {ArrowUpRight} from 'lucide-react'
 import Image from 'next/image'
-import Link from 'next/link'
 
 import type {PlayerNewsArticle} from '@/lib/players-api'
 
 type PlayerNewsSectionProps = {
   articles: PlayerNewsArticle[]
+  moreHref: string
 }
 
 function formatPublishedDate(iso: string | null) {
@@ -14,22 +15,20 @@ function formatPublishedDate(iso: string | null) {
     month: 'short',
     day: 'numeric',
     hour: 'numeric',
-    minute: '2-digit',
+    minute: '2-digit'
   })
 }
 
-export function PlayerNewsSection({articles}: PlayerNewsSectionProps) {
+export function PlayerNewsSection({articles, moreHref}: PlayerNewsSectionProps) {
   return (
-    <section className='bg-card border-border rounded-xl border p-3 sm:p-5'>
-      <h2 className='text-card-foreground text-lg font-semibold sm:text-xl'>News</h2>
-
+    <section>
       {articles.length === 0 ? (
-        <p className='text-muted-foreground mt-4 rounded-lg border border-dashed px-4 py-6 text-sm'>
+        <p className='text-muted-foreground rounded-xl border border-dashed px-4 py-6 text-sm'>
           No recent headlines for this player.
         </p>
       ) : (
-        <div className='mt-4 grid gap-3 sm:grid-cols-2'>
-          {articles.map((article) => (
+        <div className='grid gap-3 sm:grid-cols-2 lg:grid-cols-3'>
+          {articles.map(article => (
             <NewsCard
               key={article.id}
               article={article}
@@ -37,21 +36,37 @@ export function PlayerNewsSection({articles}: PlayerNewsSectionProps) {
           ))}
         </div>
       )}
+
+      {moreHref ? (
+        <div className='mt-4 flex'>
+          <a
+            href={moreHref}
+            target='_blank'
+            rel='noopener noreferrer'
+            className='text-foreground inline-flex w-full items-center justify-center gap-1 py-2 text-center text-sm font-medium underline-offset-4 hover:underline'
+          >
+            See more on ESPN
+            <ArrowUpRight className='size-4' />
+          </a>
+        </div>
+      ) : null}
     </section>
   )
 }
 
 function NewsCard({article}: {article: PlayerNewsArticle}) {
+  const href = typeof article.url === 'string' && article.url.length > 0 ? article.url : null
+
   const content = (
     <>
       {article.imageUrl ? (
-        <div className='relative aspect-[16/9] overflow-hidden rounded-lg'>
+        <div className='relative aspect-video overflow-hidden rounded-lg'>
           <Image
             src={article.imageUrl}
             alt={article.headline}
             fill
             className='object-cover'
-            sizes='(max-width: 768px) 100vw, 50vw'
+            sizes='(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw'
           />
         </div>
       ) : null}
@@ -68,18 +83,18 @@ function NewsCard({article}: {article: PlayerNewsArticle}) {
     </>
   )
 
-  if (!article.url) {
-    return <article className='bg-background/40 border-border rounded-lg border p-3'>{content}</article>
+  if (!href) {
+    return <article className='bg-card border-border rounded-xl border p-3'>{content}</article>
   }
 
   return (
-    <Link
-      href={article.url}
+    <a
+      href={href}
       target='_blank'
       rel='noopener noreferrer'
-      className='bg-background/40 border-border hover:bg-background/60 block rounded-lg border p-3 transition-colors'
+      className='bg-card border-border hover:bg-muted/40 block rounded-xl border p-3 transition-colors'
     >
       {content}
-    </Link>
+    </a>
   )
 }

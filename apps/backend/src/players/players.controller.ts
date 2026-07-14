@@ -56,7 +56,7 @@ export class PlayersController {
   @ApiOperation({ summary: 'Get player news articles' })
   @ApiQuery({ name: 'limit', required: false, type: Number })
   findNews(@Param('id') id: string, @Query('limit') limit?: string) {
-    const parsedLimit = limit ? Number(limit) : 12;
+    const parsedLimit = limit ? Number(limit) : 6;
     if (limit && (!Number.isFinite(parsedLimit) || parsedLimit <= 0)) {
       throw new BadRequestException('limit must be a positive number');
     }

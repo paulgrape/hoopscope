@@ -5,6 +5,7 @@ import { CacheService } from '../cache/cache.service';
 
 export interface EspnCoreAthlete {
   id: string;
+  guid?: string;
   fullName?: string;
   jersey?: string;
   age?: number;
@@ -106,6 +107,23 @@ export type EspnNewsArticle = {
   };
 };
 
+type EspnNowFeedItem = {
+  id?: number;
+  type?: string;
+  headline?: string;
+  description?: string;
+  published?: string;
+  lastModified?: string;
+  byline?: string;
+  images?: EspnNewsArticle['images'];
+  categories?: EspnNewsArticle['categories'];
+  links?: EspnNewsArticle['links'];
+};
+
+type EspnNowFeedResponse = {
+  feed?: EspnNowFeedItem[];
+};
+
 export interface EspnInjuryReport {
   items?: Array<{
     id?: string;
@@ -142,30 +160,32 @@ export class EspnService {
   readonly TTL_SEASON_STATS_CURRENT = 30 * 60 * 1000; // 30m
   readonly TTL_SEASON_STATS_HISTORIC = 24 * 60 * 60 * 1000; // 24h
 
-  // Resilience tunables (env-overridable)
-  private readonly retryAttempts: number;
-  private readonly retryBaseDelayMs: number;
-  private readonly retryMaxDelayMs: number;
-  private readonly maxConcurrency: number;
-  private readonly requestGapMs: number;
-
-  // De-duplicates concurrent requests that share the same cache key.
-  private readonly inFlight = new Map<string, Promise<unknown>>();
-
-  // Global concurrency throttle state.
-  private activeRequests = 0;
-  private readonly waiters: Array<() => void> = [];
-  private lastDispatchAt = 0;
-
-  private readonly webApiBase =
-    'https://site.web.api.espn.com/apis/common/v3/sports/basketball/nba';
+  private readonly webApiBase: string;
+  private readonly coreApiBase: string;
+  private readonly nowApiUrl: string;
+  private readonly standingsApiBase: string;
 
   constructor(
     private readonly config: ConfigService,
     private readonly cache: CacheService,
   ) {
+    this.webApiBase =
+      this.config.get<string>('ESPN_WEB_API_BASE_URL') ??
+      'https://site.web.api.espn.com/apis/common/v3/sports/basketball/nba';
+    this.coreApiBase =
+      this.config.get<string>('ESPN_CORE_BASE_URL') ??
+      'https://sports.core.api.espn.com/v2/sports/basketball/leagues/nba';
+    this.nowApiUrl =
+      this.config.get<string>('ESPN_NOW_API_URL') ??
+      'https://api-app.espn.com/allsports/apis/v1/now';
+    this.standingsApiBase =
+      this.config.get<string>('ESPN_STANDINGS_BASE_URL') ??
+      'https://site.api.espn.com/apis/v2/sports/basketball';
+
     this.http = axios.create({
-      baseURL: this.config.get<string>('ESPN_BASE_URL'),
+      baseURL:
+        this.config.get<string>('ESPN_BASE_URL') ??
+        'https://site.api.espn.com/apis/site/v2/sports/basketball/nba',
       timeout: 8000,
     });
 
@@ -406,10 +426,7 @@ export class EspnService {
     });
   }
   async getPlayer(id: string): Promise<EspnCoreAthlete> {
-    const base =
-      this.config.get<string>('ESPN_CORE_BASE_URL') ??
-      'https://sports.core.api.espn.com/v2/sports/basketball/leagues/nba';
-    const url = `${base}/athletes/${id}`;
+    const url = `${this.coreApiBase}/athletes/${id}`;
 
     return this.fetchJson<EspnCoreAthlete>(url, this.TTL_PLAYERS, async () => {
       this.logger.log(`ESPN fetch: ${url}`);
@@ -453,19 +470,53 @@ export class EspnService {
   }
 
   async getAthleteNews(athleteId: string): Promise<{ articles?: EspnNewsArticle[] }> {
-    const path = `/athletes/${athleteId}/news`;
-    const cacheKey = `athlete-news:${athleteId}`;
+    const cacheKey = `athlete-news-now:${athleteId}:6`;
+    const cached = this.cache.get<{ articles?: EspnNewsArticle[] }>(cacheKey);
+    if (cached) return cached;
 
-    return this.fetchJson<{ articles?: EspnNewsArticle[] }>(
-      cacheKey,
-      this.TTL_NEWS,
-      async () => {
-        this.logger.log(`ESPN fetch: ${path}`);
-        const { data } =
-          await this.http.get<{ articles?: EspnNewsArticle[] }>(path);
-        return data;
-      },
+    const athlete = await this.getPlayer(athleteId);
+    if (!athlete.guid) {
+      this.logger.warn(`No contentcategory guid for athlete ${athleteId}`);
+      return { articles: [] };
+    }
+
+    this.logger.log(
+      `ESPN fetch: ${this.nowApiUrl} contentcategories=${athlete.guid}`,
     );
+    const { data } = await this.http.get<EspnNowFeedResponse>(this.nowApiUrl, {
+      params: {
+        region: 'us',
+        lang: 'en',
+        contentorigin: 'espn',
+        limit: 6,
+        content:
+          'shortstop,story,blog,recap,theundefeated,fivethirtyeight,video',
+        contentcategories: athlete.guid,
+        enable: 'header,authors',
+      },
+      timeout: 15_000,
+    });
+
+    const articles: EspnNewsArticle[] = (data.feed ?? [])
+      .filter((item): item is EspnNowFeedItem & { id: number; headline: string } =>
+        typeof item.id === 'number' && Boolean(item.headline),
+      )
+      .map((item) => ({
+        id: item.id,
+        type: item.type,
+        headline: item.headline,
+        description: item.description,
+        published: item.published,
+        lastModified: item.lastModified,
+        byline: item.byline,
+        images: item.images,
+        categories: item.categories,
+        links: item.links,
+      }));
+
+    const result = { articles };
+    this.cache.set(cacheKey, result, this.TTL_NEWS);
+    return result;
   }
 
   async getLeagueInjuries(): Promise<EspnInjuryReport> {
@@ -486,10 +537,7 @@ export class EspnService {
   }
 
   async getStandings(league = 'nba') {
-    const base =
-      this.config.get<string>('ESPN_STANDINGS_BASE_URL') ??
-      'https://site.api.espn.com/apis/v2/sports/basketball';
-    const url = `${base}/${league}/standings`;
+    const url = `${this.standingsApiBase}/${league}/standings`;
 
     return this.fetchJson<unknown>(url, this.TTL_STANDINGS, async () => {
       this.logger.log(`ESPN fetch: ${url}`);

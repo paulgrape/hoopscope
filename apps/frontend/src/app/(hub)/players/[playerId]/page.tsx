@@ -2,10 +2,9 @@ import Link from 'next/link'
 
 import {JsonLd} from '@/components/json-ld'
 import {PlayerBioGrid, PlayerPageHeader} from '@/components/player-page-header'
-import {PlayerCareerStats} from '@/components/player-career-stats'
-import {PlayerNewsSection} from '@/components/player-news-section'
-import {PlayerSeasonStats} from '@/components/player-season-stats'
+import {PlayerProfileTabs} from '@/components/player-profile-tabs'
 import {
+  getEspnPlayerNewsHref,
   getPlayer,
   getPlayerCareerStats,
   getPlayerNews,
@@ -88,12 +87,13 @@ export default async function PlayerDetailsPage({params, searchParams}: PlayerDe
 
       <PlayerPageHeader player={player} />
       <PlayerBioGrid player={player} />
-      <PlayerSeasonStats
+      <PlayerProfileTabs
         regularStats={regularStats}
         playoffStats={playoffStats}
+        careerSeasons={careerStats.seasons}
+        news={news}
+        espnNewsHref={getEspnPlayerNewsHref(player.id, player.fullName)}
       />
-      <PlayerCareerStats seasons={careerStats.seasons} />
-      <PlayerNewsSection articles={news} />
     </main>
   )
 }

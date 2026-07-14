@@ -173,7 +173,7 @@ export class PlayersService {
     return result;
   }
 
-  async findNews(id: string, limit = 12) {
+  async findNews(id: string, limit = 6) {
     const cacheKey = `player-news-mapped:${id}:${limit}`;
     const cached = this.cache.get<ReturnType<typeof mapNewsArticle>[]>(cacheKey);
     if (cached) return cached;
