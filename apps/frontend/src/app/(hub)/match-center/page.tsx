@@ -1,10 +1,14 @@
+import {Suspense} from 'react'
+
 import {JsonLd} from '@/components/json-ld'
 import {MatchCenterTimeline} from '@/components/match-center-timeline'
+import {Skeleton} from '@/components/ui/skeleton'
 import {webPageSchema} from '@/lib/seo-schema'
 import {
   getOffsetMinutesForDate,
   getServerSchedule,
   getTodayDateKey,
+  isValidDateKey,
 } from '@/lib/games-api'
 import {createPageMetadata} from '@/lib/site'
 
@@ -15,8 +19,14 @@ export const metadata = createPageMetadata({
   path: '/match-center',
 })
 
-export default async function MatchCenterPage() {
-  const initialDate = getTodayDateKey()
+type MatchCenterPageProps = {
+  searchParams: Promise<{date?: string}>
+}
+
+export default async function MatchCenterPage({searchParams}: MatchCenterPageProps) {
+  const params = await searchParams
+  const today = getTodayDateKey()
+  const initialDate = isValidDateKey(params.date) ? params.date : today
   const initialGames = await getServerSchedule(
     initialDate,
     getOffsetMinutesForDate(initialDate),
@@ -41,7 +51,24 @@ export default async function MatchCenterPage() {
         </p>
       </header>
 
-      <MatchCenterTimeline initialDate={initialDate} initialGames={initialGames} />
+      <Suspense fallback={<MatchCenterTimelineFallback />}>
+        <MatchCenterTimeline initialDate={initialDate} initialGames={initialGames} />
+      </Suspense>
     </main>
+  )
+}
+
+function MatchCenterTimelineFallback() {
+  return (
+    <section className='flex min-w-0 flex-col gap-5 sm:gap-6'>
+      <div className='flex flex-wrap items-center gap-2'>
+        <Skeleton className='size-8 rounded-lg' />
+        <Skeleton className='h-8 w-44 rounded-lg' />
+        <Skeleton className='size-8 rounded-lg' />
+      </div>
+      {Array.from({length: 3}).map((_, index) => (
+        <Skeleton key={index} className='h-40 w-full rounded-xl' />
+      ))}
+    </section>
   )
 }

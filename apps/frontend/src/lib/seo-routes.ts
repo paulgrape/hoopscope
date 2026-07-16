@@ -63,4 +63,10 @@ export const ENTITY_ROUTE_PATTERNS = [
     description: 'Saved play-by-play replay for a classic NBA matchup.',
     entityType: 'game',
   },
+  {
+    pattern: '/match-center/{gameId}',
+    title: 'Match detail',
+    description: 'Scoreboard, team totals, and leaders for an NBA game.',
+    entityType: 'game',
+  },
 ] as const
