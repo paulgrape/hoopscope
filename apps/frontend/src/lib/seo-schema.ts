@@ -154,6 +154,7 @@ export function sportsEventSchema({
   homeScore,
   awayScore,
   status,
+  path,
 }: {
   id: string
   name: string
@@ -163,16 +164,18 @@ export function sportsEventSchema({
   homeScore: number
   awayScore: number
   status: string
+  path?: string
 }): JsonLd {
+  const eventPath = path ?? `/historic-games/${id}`
   return {
     '@context': 'https://schema.org',
     '@type': 'SportsEvent',
-    '@id': absoluteUrl(`/historic-games/${id}`),
+    '@id': absoluteUrl(eventPath),
     name,
     startDate: date,
     eventStatus: status === 'final' ? 'https://schema.org/EventScheduled' : 'https://schema.org/EventScheduled',
     sport: 'Basketball',
-    url: absoluteUrl(`/historic-games/${id}`),
+    url: absoluteUrl(eventPath),
     homeTeam: {
       '@type': 'SportsTeam',
       name: homeTeam,

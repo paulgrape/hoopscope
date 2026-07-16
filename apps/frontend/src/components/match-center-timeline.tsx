@@ -1,12 +1,29 @@
 'use client'
 
 import Image from 'next/image'
-import {useEffect, useMemo, useRef, useState} from 'react'
+import Link from 'next/link'
+import {usePathname, useRouter, useSearchParams} from 'next/navigation'
+import {useEffect, useRef, useState, useTransition} from 'react'
+import {ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon} from 'lucide-react'
 
+import {Button} from '@/components/ui/button'
+import {Calendar} from '@/components/ui/calendar'
+import {Popover, PopoverContent, PopoverTrigger} from '@/components/ui/popover'
 import {Skeleton} from '@/components/ui/skeleton'
-import {getSchedule, type ScoreboardGame, type ScoreboardTeam} from '@/lib/games-api'
+import {
+  addDaysToDateKey,
+  formatCompactDateLabel,
+  formatDateKey,
+  getNearestScheduleDate,
+  getOffsetMinutesForDate,
+  getSchedule,
+  getTodayDateKey,
+  isValidDateKey,
+  parseLocalDateKey,
+  type ScoreboardGame,
+  type ScoreboardTeam,
+} from '@/lib/games-api'
 
-const DATE_WINDOW_RADIUS = 4
 const REFRESH_INTERVAL_MS = 60_000
 const DISPLAY_LOCALE = 'en-US'
 
@@ -19,24 +36,46 @@ export function MatchCenterTimeline({
   initialDate,
   initialGames = [],
 }: MatchCenterTimelineProps) {
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const [, startTransition] = useTransition()
+
   const today = getTodayDateKey()
-  const startingDate = initialDate ?? today
+  const urlDate = searchParams.get('date')
+  const startingDate =
+    (isValidDateKey(urlDate) && urlDate) ||
+    (isValidDateKey(initialDate) && initialDate) ||
+    today
   const hasInitialGames = initialGames.length > 0 && startingDate === (initialDate ?? today)
 
-  const [selectedDate, setSelectedDate] = useState(startingDate)
+  const [selectedDate, setSelectedDateState] = useState(startingDate)
   const [games, setGames] = useState<ScoreboardGame[]>(hasInitialGames ? initialGames : [])
   const [isLoading, setIsLoading] = useState(!hasInitialGames)
   const [error, setError] = useState<string | null>(null)
-  const selectedDateButtonRef = useRef<HTMLButtonElement | null>(null)
+  const [calendarOpen, setCalendarOpen] = useState(false)
+  const [isFindingLastGame, setIsFindingLastGame] = useState(false)
   const skipInitialFetchRef = useRef(hasInitialGames)
 
-  const dateOptions = useMemo(
-    () =>
-      Array.from({length: DATE_WINDOW_RADIUS * 2 + 1}, (_, index) =>
-        addDays(selectedDate, index - DATE_WINDOW_RADIUS),
-      ),
-    [selectedDate],
-  )
+  useEffect(() => {
+    if (isValidDateKey(urlDate) && urlDate !== selectedDate) {
+      setSelectedDateState(urlDate)
+    }
+  }, [urlDate, selectedDate])
+
+  function setSelectedDate(nextDate: string) {
+    setSelectedDateState(nextDate)
+    const params = new URLSearchParams(searchParams.toString())
+    if (nextDate === today) {
+      params.delete('date')
+    } else {
+      params.set('date', nextDate)
+    }
+    const query = params.toString()
+    startTransition(() => {
+      router.replace(query ? `${pathname}?${query}` : pathname, {scroll: false})
+    })
+  }
 
   useEffect(() => {
     let isActive = true
@@ -51,7 +90,7 @@ export function MatchCenterTimeline({
       setError(null)
 
       try {
-        const nextGames = await getSchedule(selectedDate, getOffsetMinutes(selectedDate))
+        const nextGames = await getSchedule(selectedDate, getOffsetMinutesForDate(selectedDate))
         if (isActive) setGames(nextGames)
       } catch (caughtError) {
         if (isActive) {
@@ -72,57 +111,100 @@ export function MatchCenterTimeline({
     }
   }, [selectedDate])
 
-  useEffect(() => {
-    selectedDateButtonRef.current?.scrollIntoView({
-      behavior: 'smooth',
-      block: 'nearest',
-      inline: 'center',
-    })
-  }, [dateOptions])
+  async function jumpToLastGameDay() {
+    setIsFindingLastGame(true)
+    setError(null)
+    try {
+      const nearest = await getNearestScheduleDate(
+        selectedDate,
+        getOffsetMinutesForDate(selectedDate),
+        'before',
+      )
+      if (nearest) {
+        setSelectedDate(nearest)
+      } else {
+        setError('Could not find a previous game day.')
+      }
+    } catch (caughtError) {
+      setError(
+        caughtError instanceof Error ? caughtError.message : 'Could not find a previous game day.',
+      )
+    } finally {
+      setIsFindingLastGame(false)
+    }
+  }
 
-  const selectedDateLabel = formatFullDate(selectedDate)
+  const selectedDateLabel = formatCompactDateLabel(selectedDate, DISPLAY_LOCALE)
   const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
+  const selectedCalendarDate = parseLocalDateKey(selectedDate)
 
   return (
     <section className='flex min-w-0 flex-col gap-5 sm:gap-6'>
-      <div className='bg-card border-border rounded-xl border p-3 sm:p-4'>
-        <div className='flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between'>
-          <div className='min-w-0'>
-            <p className='text-muted-foreground text-sm uppercase tracking-wider'>Selected date</p>
-            <h2 className='mt-1 text-xl font-semibold sm:text-2xl'>{selectedDateLabel}</h2>
-            <p className='text-muted-foreground mt-1 text-sm'>Times are shown in {timeZone}.</p>
-          </div>
+      <div className='flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between'>
+        <div className='flex flex-wrap items-center gap-2'>
+          <Button
+            type='button'
+            variant='outline'
+            size='icon'
+            aria-label='Previous day'
+            onClick={() => setSelectedDate(addDaysToDateKey(selectedDate, -1))}
+          >
+            <ChevronLeftIcon />
+          </Button>
 
-          <div className='grid grid-cols-3 gap-2 sm:flex sm:flex-wrap sm:items-center'>
-            <DateButton label='Previous' onClick={() => setSelectedDate(addDays(selectedDate, -1))} />
-            <DateButton label='Today' onClick={() => setSelectedDate(getTodayDateKey())} />
-            <DateButton label='Next' onClick={() => setSelectedDate(addDays(selectedDate, 1))} />
-          </div>
+          <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
+            <PopoverTrigger
+              className='border-border bg-background hover:bg-muted inline-flex h-8 min-w-44 items-center justify-between gap-2 rounded-lg border px-2.5 text-sm font-medium'
+            >
+              <span>{selectedDateLabel}</span>
+              <ChevronDownIcon className='size-4 opacity-70' />
+            </PopoverTrigger>
+            <PopoverContent align='start' className='w-auto p-0'>
+              <Calendar
+                mode='single'
+                selected={selectedCalendarDate}
+                defaultMonth={selectedCalendarDate}
+                onSelect={date => {
+                  if (!date) return
+                  setSelectedDate(formatDateKey(date))
+                  setCalendarOpen(false)
+                }}
+              />
+            </PopoverContent>
+          </Popover>
+
+          <Button
+            type='button'
+            variant='outline'
+            size='icon'
+            aria-label='Next day'
+            onClick={() => setSelectedDate(addDaysToDateKey(selectedDate, 1))}
+          >
+            <ChevronRightIcon />
+          </Button>
         </div>
 
-        <div className='mt-5 -mx-3 flex snap-x gap-2 overflow-x-auto scroll-px-3 px-3 pb-2 sm:mx-0 sm:scroll-px-0 sm:px-0'>
-          {dateOptions.map(date => {
-            const isSelected = date === selectedDate
-
-            return (
-              <button
-                key={date}
-                ref={isSelected ? selectedDateButtonRef : null}
-                type='button'
-                onClick={() => setSelectedDate(date)}
-                className={`min-w-20 snap-start rounded-xl border px-3 py-2 text-left transition sm:min-w-24 ${
-                  isSelected
-                    ? 'bg-primary text-primary-foreground border-primary'
-                    : 'border-border hover:bg-muted'
-                }`}
-              >
-                <span className='block text-xs uppercase tracking-wider'>{formatWeekday(date)}</span>
-                <span className='mt-1 block font-semibold'>{formatShortDate(date)}</span>
-              </button>
-            )
-          })}
+        <div className='flex flex-wrap items-center gap-2'>
+          <Button
+            type='button'
+            variant='outline'
+            disabled={selectedDate === today}
+            onClick={() => setSelectedDate(today)}
+          >
+            Today
+          </Button>
+          <Button
+            type='button'
+            variant='outline'
+            disabled={isFindingLastGame}
+            onClick={() => void jumpToLastGameDay()}
+          >
+            {isFindingLastGame ? 'Finding…' : 'Last game day'}
+          </Button>
         </div>
       </div>
+
+      <p className='text-muted-foreground text-sm'>Times are shown in {timeZone}.</p>
 
       <div className='relative flex min-w-0 flex-col gap-3 sm:gap-4'>
         <div className='bg-border absolute top-2 bottom-2 left-4 hidden w-px md:block' />
@@ -135,50 +217,61 @@ export function MatchCenterTimeline({
             <p className='text-muted-foreground mt-1 text-sm'>{error}</p>
           </div>
         ) : games.length === 0 ? (
-          <div className='bg-card border-border rounded-xl border p-6 text-center'>
-            <p className='font-medium'>No NBA games for this local date.</p>
-            <p className='text-muted-foreground mt-1 text-sm'>Try a nearby date from the timeline above.</p>
+          <div className='bg-card border-border flex flex-col items-center gap-4 rounded-xl border p-6 text-center'>
+            <div>
+              <p className='font-medium'>No NBA games for this local date.</p>
+              <p className='text-muted-foreground mt-1 text-sm'>
+                Jump to the most recent date with games, or pick another day.
+              </p>
+            </div>
+            <Button
+              type='button'
+              variant='outline'
+              disabled={isFindingLastGame}
+              onClick={() => void jumpToLastGameDay()}
+            >
+              {isFindingLastGame ? 'Finding…' : 'Last game day'}
+            </Button>
           </div>
         ) : (
-          games.map(game => <GameTimelineCard key={game.id} game={game} />)
+          games.map(game => (
+            <GameTimelineCard key={game.id} game={game} dateKey={selectedDate} />
+          ))
         )}
       </div>
     </section>
   )
 }
 
-function DateButton({label, onClick}: {label: string; onClick: () => void}) {
-  return (
-    <button
-      type='button'
-      onClick={onClick}
-      className='border-border hover:bg-muted rounded-lg border px-2 py-2 text-sm font-medium transition sm:px-3'
-    >
-      {label}
-    </button>
-  )
-}
-
-function GameTimelineCard({game}: {game: ScoreboardGame}) {
+function GameTimelineCard({game, dateKey}: {game: ScoreboardGame; dateKey: string}) {
   const startsAt = new Date(game.date)
   const showScore = game.status !== 'scheduled'
+  const matchHref = `/match-center/${game.id}?date=${dateKey}`
 
   return (
     <article className='relative md:pl-12'>
       <div className='bg-background border-primary absolute top-7 left-2 hidden h-5 w-5 rounded-full border-4 md:block' />
-      <div className='bg-card border-border rounded-xl border p-3 sm:p-5'>
-        <div className='flex flex-col gap-3 md:flex-row md:items-center md:justify-between'>
+      <div className='bg-card border-border relative rounded-xl border p-3 transition hover:border-foreground/20 sm:p-5'>
+        <Link
+          href={matchHref}
+          className='absolute inset-0 z-0 rounded-xl'
+          aria-label={`View ${game.shortName ?? game.name}`}
+        />
+
+        <div className='relative z-10 flex flex-col gap-3 pointer-events-none md:flex-row md:items-center md:justify-between'>
           <div className='min-w-0'>
             <p className='text-muted-foreground text-sm'>{formatGameTime(startsAt)}</p>
-            <h3 className='mt-1 truncate text-base font-semibold sm:text-lg'>{game.shortName ?? game.name}</h3>
+            <h3 className='mt-1 truncate text-base font-semibold sm:text-lg'>
+              {game.shortName ?? game.name}
+            </h3>
             {game.venue ? <p className='text-muted-foreground mt-1 text-sm'>{game.venue}</p> : null}
           </div>
           <StatusBadge game={game} />
         </div>
 
-        <div className='mt-4 grid gap-2 sm:mt-5 md:grid-cols-[1fr_auto_1fr] md:items-center md:gap-4'>
+        <div className='relative z-10 mt-4 grid gap-2 sm:mt-5 md:grid-cols-[1fr_auto_1fr] md:items-center md:gap-4'>
           <TeamPanel team={game.awayTeam} score={showScore ? game.awayScore : null} />
-          <div className='text-muted-foreground py-1 text-center text-xs font-semibold uppercase tracking-wider md:text-sm'>
+          <div className='text-muted-foreground pointer-events-none py-1 text-center text-xs font-semibold uppercase tracking-wider md:text-sm'>
             {showScore ? 'at' : 'vs'}
           </div>
           <TeamPanel team={game.homeTeam} score={showScore ? game.homeScore : null} align='right' />
@@ -252,12 +345,8 @@ function TeamPanel({
   score: number | null
   align?: 'left' | 'right'
 }) {
-  return (
-    <div
-      className={`bg-background/40 flex min-w-0 items-center gap-3 rounded-lg p-3 md:bg-transparent md:p-0 ${
-        align === 'right' ? 'md:flex-row-reverse md:text-right' : ''
-      }`}
-    >
+  const content = (
+    <>
       {team?.logo ? (
         <Image
           src={team.logo}
@@ -275,7 +364,21 @@ function TeamPanel({
         {score !== null ? <p className='mt-2 hidden text-3xl font-semibold md:block'>{score}</p> : null}
       </div>
       {score !== null ? <p className='shrink-0 text-2xl font-semibold md:hidden'>{score}</p> : null}
-    </div>
+    </>
+  )
+
+  const layoutClass = `bg-background/40 flex min-w-0 items-center gap-3 rounded-lg p-3 md:bg-transparent md:p-0 ${
+    align === 'right' ? 'md:flex-row-reverse md:text-right' : ''
+  }`
+
+  if (!team?.id) {
+    return <div className={layoutClass}>{content}</div>
+  }
+
+  return (
+    <Link href={`/teams/${team.id}`} className={`${layoutClass} pointer-events-auto hover:opacity-90`}>
+      {content}
+    </Link>
   )
 }
 
@@ -283,49 +386,6 @@ function statusClassName(status: ScoreboardGame['status']) {
   if (status === 'live') return 'border-red-500/30 bg-red-500/10 text-red-600 dark:text-red-300'
   if (status === 'final') return 'border-border bg-muted text-muted-foreground'
   return 'border-sky-500/30 bg-sky-500/10 text-sky-700 dark:text-sky-300'
-}
-
-function getTodayDateKey() {
-  return formatDateKey(new Date())
-}
-
-function addDays(dateKey: string, days: number) {
-  const date = parseLocalDateKey(dateKey)
-  date.setDate(date.getDate() + days)
-  return formatDateKey(date)
-}
-
-function getOffsetMinutes(dateKey: string) {
-  return parseLocalDateKey(dateKey).getTimezoneOffset()
-}
-
-function parseLocalDateKey(dateKey: string) {
-  const [year, month, day] = dateKey.split('-').map(Number)
-  return new Date(year, month - 1, day)
-}
-
-function formatDateKey(date: Date) {
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const day = String(date.getDate()).padStart(2, '0')
-  return `${year}-${month}-${day}`
-}
-
-function formatWeekday(dateKey: string) {
-  return new Intl.DateTimeFormat(DISPLAY_LOCALE, {weekday: 'short'}).format(parseLocalDateKey(dateKey))
-}
-
-function formatShortDate(dateKey: string) {
-  return new Intl.DateTimeFormat(DISPLAY_LOCALE, {month: 'short', day: 'numeric'}).format(parseLocalDateKey(dateKey))
-}
-
-function formatFullDate(dateKey: string) {
-  return new Intl.DateTimeFormat(DISPLAY_LOCALE, {
-    weekday: 'long',
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-  }).format(parseLocalDateKey(dateKey))
 }
 
 function formatGameTime(date: Date) {
