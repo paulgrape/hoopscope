@@ -4,7 +4,15 @@ import Image from 'next/image'
 import Link from 'next/link'
 import {useEffect, useState} from 'react'
 
-import {getGameSummary, type GameLeader, type GameSummary, type ScoreboardTeam, type TeamStatLine} from '@/lib/games-api'
+import {Tabs, TabsContent, TabsList, TabsTrigger} from '@/components/ui/tabs'
+import {
+  getGameSummary,
+  type BoxScorePlayer,
+  type GameLeader,
+  type GameSummary,
+  type ScoreboardTeam,
+  type TeamStatLine,
+} from '@/lib/games-api'
 import {cn} from '@/lib/utils'
 
 const REFRESH_INTERVAL_MS = 60_000
@@ -63,9 +71,9 @@ export function MatchSummary({initialSummary}: MatchSummaryProps) {
           <StatusPill summary={summary} />
         </div>
 
-        <div className='mt-6 grid gap-4 md:grid-cols-[1fr_auto_1fr] md:items-center'>
+        <div className='mt-6 grid gap-3 md:grid-cols-[1fr_auto_1fr] md:items-center md:gap-4'>
           <TeamScorePanel team={summary.awayTeam} score={showScore ? summary.awayScore : null} />
-          <div className='text-muted-foreground text-center text-sm font-semibold uppercase tracking-wider'>
+          <div className='text-muted-foreground py-0.5 text-center text-xs font-semibold uppercase tracking-wider md:text-sm'>
             {summary.status === 'scheduled' ? 'vs' : 'at'}
           </div>
           <TeamScorePanel
@@ -74,12 +82,21 @@ export function MatchSummary({initialSummary}: MatchSummaryProps) {
             align='right'
           />
         </div>
+
+        <LineScore summary={summary} />
       </section>
+
+      {(summary.awayPlayers.length > 0 || summary.homePlayers.length > 0) && (
+        <section className='flex flex-col gap-3'>
+          <h2 className='text-lg font-semibold'>Box score</h2>
+          <BoxScoreTabs summary={summary} />
+        </section>
+      )}
 
       {(summary.awayTotals.length > 0 || summary.homeTotals.length > 0) && (
         <section className='flex flex-col gap-3'>
           <h2 className='text-lg font-semibold'>Team totals</h2>
-          <TeamTotalsTable
+          <TeamTotalsComparison
             awayTeam={summary.awayTeam}
             homeTeam={summary.homeTeam}
             awayTotals={summary.awayTotals}
@@ -91,7 +108,7 @@ export function MatchSummary({initialSummary}: MatchSummaryProps) {
       {summary.leaders.length > 0 && (
         <section className='flex flex-col gap-3'>
           <h2 className='text-lg font-semibold'>Leaders</h2>
-          <div className='grid gap-3 sm:grid-cols-3'>
+          <div className='border-border divide-border grid divide-y rounded-xl border sm:grid-cols-3 sm:divide-x sm:divide-y-0'>
             {summary.leaders.map(leader => (
               <LeaderCard key={`${leader.category}-${leader.athleteId}`} leader={leader} />
             ))}
@@ -132,7 +149,7 @@ function TeamScorePanel({
   score: number | null
   align?: 'left' | 'right'
 }) {
-  const body = (
+  const identity = (
     <>
       {team?.logo ? (
         <Image
@@ -140,24 +157,35 @@ function TeamScorePanel({
           alt={`${team.displayName} logo`}
           width={64}
           height={64}
-          className='size-14 object-contain sm:size-16'
+          className='size-12 shrink-0 object-contain sm:size-14'
         />
       ) : (
-        <div className='bg-muted size-14 rounded-full sm:size-16' />
+        <div className='bg-muted size-12 shrink-0 rounded-full sm:size-14' />
       )}
-      <div className={cn('min-w-0', align === 'right' && 'md:text-right')}>
-        <p className='text-xl font-semibold'>{team?.abbreviation ?? 'TBD'}</p>
-        <p className='text-muted-foreground truncate text-sm'>
+      <div className={cn('min-w-0 flex-1', align === 'right' && 'md:text-right')}>
+        <p className='text-lg leading-tight font-semibold sm:text-xl'>{team?.abbreviation ?? 'TBD'}</p>
+        <p className='text-muted-foreground truncate text-sm leading-tight'>
           {team?.displayName ?? 'To be determined'}
         </p>
       </div>
-      {score !== null ? <p className='text-4xl font-semibold tabular-nums'>{score}</p> : null}
     </>
   )
 
+  const scoreEl =
+    score !== null ? (
+      <p className='shrink-0 text-3xl leading-none font-semibold tabular-nums md:text-5xl'>{score}</p>
+    ) : null
+
   const className = cn(
-    'flex min-w-0 items-center gap-3',
+    'bg-muted/30 flex min-w-0 items-center gap-3 rounded-lg p-3 md:bg-transparent md:p-0',
     align === 'right' && 'md:flex-row-reverse',
+  )
+
+  const body = (
+    <>
+      {identity}
+      {scoreEl}
+    </>
   )
 
   if (!team?.id) {
@@ -171,7 +199,207 @@ function TeamScorePanel({
   )
 }
 
-function TeamTotalsTable({
+function LineScore({summary}: {summary: GameSummary}) {
+  const awayPeriods = summary.periodScores?.away ?? []
+  const homePeriods = summary.periodScores?.home ?? []
+  const periodCount = Math.max(awayPeriods.length, homePeriods.length)
+  if (periodCount === 0) return null
+
+  const headers = Array.from({length: periodCount}, (_, index) =>
+    index < 4 ? `Q${index + 1}` : `OT${index - 3}`,
+  )
+
+  return (
+    <div className='border-border mt-6 overflow-x-auto rounded-lg border'>
+      <table className='w-full min-w-[20rem] text-sm'>
+        <thead className='bg-muted/40 text-muted-foreground'>
+          <tr>
+            <th className='px-3 py-2 text-left font-medium'>Team</th>
+            {headers.map(label => (
+              <th key={label} className='px-2 py-2 text-center font-medium'>
+                {label}
+              </th>
+            ))}
+            <th className='px-3 py-2 text-center font-medium'>T</th>
+          </tr>
+        </thead>
+        <tbody>
+          <LineScoreRow
+            team={summary.awayTeam}
+            periods={awayPeriods}
+            periodCount={periodCount}
+            total={summary.awayScore}
+          />
+          <LineScoreRow
+            team={summary.homeTeam}
+            periods={homePeriods}
+            periodCount={periodCount}
+            total={summary.homeScore}
+          />
+        </tbody>
+      </table>
+    </div>
+  )
+}
+
+function LineScoreRow({
+  team,
+  periods,
+  periodCount,
+  total,
+}: {
+  team: ScoreboardTeam | null
+  periods: number[]
+  periodCount: number
+  total: number | null
+}) {
+  return (
+    <tr className='border-border border-t'>
+      <td className='px-3 py-2 font-medium'>{team?.abbreviation ?? '—'}</td>
+      {Array.from({length: periodCount}, (_, index) => (
+        <td key={index} className='px-2 py-2 text-center tabular-nums'>
+          {periods[index] ?? '—'}
+        </td>
+      ))}
+      <td className='px-3 py-2 text-center font-semibold tabular-nums'>{total ?? '—'}</td>
+    </tr>
+  )
+}
+
+function BoxScoreTabs({summary}: {summary: GameSummary}) {
+  const awayLabel = summary.awayTeam?.abbreviation ?? 'Away'
+  const homeLabel = summary.homeTeam?.abbreviation ?? 'Home'
+  const defaultTab =
+    summary.awayPlayers.length > 0 ? 'away' : summary.homePlayers.length > 0 ? 'home' : 'away'
+
+  return (
+    <Tabs defaultValue={defaultTab} className='gap-3'>
+      <TabsList className='w-full sm:w-fit'>
+        <TabsTrigger value='away' className='flex-1 sm:flex-none' disabled={summary.awayPlayers.length === 0}>
+          {awayLabel}
+        </TabsTrigger>
+        <TabsTrigger value='home' className='flex-1 sm:flex-none' disabled={summary.homePlayers.length === 0}>
+          {homeLabel}
+        </TabsTrigger>
+      </TabsList>
+      <TabsContent value='away'>
+        <BoxScoreTable team={summary.awayTeam} players={summary.awayPlayers} />
+      </TabsContent>
+      <TabsContent value='home'>
+        <BoxScoreTable team={summary.homeTeam} players={summary.homePlayers} />
+      </TabsContent>
+    </Tabs>
+  )
+}
+
+function BoxScoreTable({
+  team,
+  players,
+}: {
+  team: ScoreboardTeam | null
+  players: BoxScorePlayer[]
+}) {
+  if (players.length === 0) {
+    return (
+      <p className='text-muted-foreground text-sm'>
+        No box score yet for {team?.displayName ?? 'this team'}.
+      </p>
+    )
+  }
+
+  const starters = players.filter(player => player.starter)
+  const bench = players.filter(player => !player.starter)
+
+  return (
+    <div className='border-border overflow-x-auto rounded-xl border'>
+      <table className='w-full min-w-160 text-sm'>
+        <thead className='bg-muted/40 text-muted-foreground sticky top-0'>
+          <tr>
+            <th className='px-3 py-2 text-left font-medium'>Player</th>
+            <th className='px-2 py-2 text-right font-medium'>MIN</th>
+            <th className='px-2 py-2 text-right font-medium'>FG</th>
+            <th className='px-2 py-2 text-right font-medium'>3PT</th>
+            <th className='px-2 py-2 text-right font-medium'>FT</th>
+            <th className='px-2 py-2 text-right font-medium'>REB</th>
+            <th className='px-2 py-2 text-right font-medium'>AST</th>
+            <th className='px-2 py-2 text-right font-medium'>STL</th>
+            <th className='px-2 py-2 text-right font-medium'>BLK</th>
+            <th className='px-2 py-2 text-right font-medium'>TO</th>
+            <th className='px-2 py-2 text-right font-medium'>PF</th>
+            <th className='text-foreground px-3 py-2 text-right font-semibold'>PTS</th>
+          </tr>
+        </thead>
+        <tbody>
+          {starters.length > 0 ? (
+            <>
+              <BoxScoreGroupLabel colSpan={12} label='Starters' />
+              {starters.map(player => (
+                <BoxScoreRow key={player.athleteId ?? player.name} player={player} />
+              ))}
+            </>
+          ) : null}
+          {bench.length > 0 ? (
+            <>
+              <BoxScoreGroupLabel colSpan={12} label='Bench' />
+              {bench.map(player => (
+                <BoxScoreRow key={player.athleteId ?? player.name} player={player} />
+              ))}
+            </>
+          ) : null}
+        </tbody>
+      </table>
+    </div>
+  )
+}
+
+function BoxScoreGroupLabel({colSpan, label}: {colSpan: number; label: string}) {
+  return (
+    <tr className='bg-muted/20'>
+      <td colSpan={colSpan} className='text-muted-foreground px-3 py-1.5 text-xs font-medium tracking-wider uppercase'>
+        {label}
+      </td>
+    </tr>
+  )
+}
+
+function BoxScoreRow({player}: {player: BoxScorePlayer}) {
+  const name = player.shortName ?? player.name
+  const nameCell = (
+    <span className='flex min-w-0 items-baseline gap-1.5'>
+      <span className='truncate font-medium'>{name}</span>
+      {player.position ? (
+        <span className='text-muted-foreground shrink-0 text-xs'>{player.position}</span>
+      ) : null}
+    </span>
+  )
+
+  return (
+    <tr className='border-border border-t'>
+      <td className='max-w-40 px-3 py-2'>
+        {player.athleteId ? (
+          <Link href={`/players/${player.athleteId}`} className='hover:underline'>
+            {nameCell}
+          </Link>
+        ) : (
+          nameCell
+        )}
+      </td>
+      <td className='px-2 py-2 text-right tabular-nums'>{player.minutes || '—'}</td>
+      <td className='px-2 py-2 text-right tabular-nums'>{player.fieldGoals ?? '—'}</td>
+      <td className='px-2 py-2 text-right tabular-nums'>{player.threePointers ?? '—'}</td>
+      <td className='px-2 py-2 text-right tabular-nums'>{player.freeThrows ?? '—'}</td>
+      <td className='px-2 py-2 text-right tabular-nums'>{player.rebounds}</td>
+      <td className='px-2 py-2 text-right tabular-nums'>{player.assists}</td>
+      <td className='px-2 py-2 text-right tabular-nums'>{player.steals}</td>
+      <td className='px-2 py-2 text-right tabular-nums'>{player.blocks}</td>
+      <td className='px-2 py-2 text-right tabular-nums'>{player.turnovers}</td>
+      <td className='px-2 py-2 text-right tabular-nums'>{player.fouls}</td>
+      <td className='px-3 py-2 text-right font-semibold tabular-nums'>{player.points}</td>
+    </tr>
+  )
+}
+
+function TeamTotalsComparison({
   awayTeam,
   homeTeam,
   awayTotals,
@@ -189,58 +417,77 @@ function TeamTotalsTable({
   const homeByName = new Map(homeTotals.map(stat => [stat.name, stat.displayValue]))
 
   return (
-    <div className='border-border overflow-x-auto rounded-xl border'>
-      <table className='w-full min-w-md text-sm'>
-        <thead className='bg-muted/40 text-muted-foreground'>
-          <tr>
-            <th className='px-3 py-2 text-left font-medium'>Stat</th>
-            <th className='px-3 py-2 text-right font-medium'>
-              {awayTeam?.abbreviation ?? 'Away'}
-            </th>
-            <th className='px-3 py-2 text-right font-medium'>
-              {homeTeam?.abbreviation ?? 'Home'}
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {labels.map(stat => (
-            <tr key={stat.name} className='border-border border-t'>
-              <td className='px-3 py-2'>{stat.label}</td>
-              <td className='px-3 py-2 text-right tabular-nums'>
-                {awayByName.get(stat.name) ?? '—'}
-              </td>
-              <td className='px-3 py-2 text-right tabular-nums'>
-                {homeByName.get(stat.name) ?? '—'}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className='border-border max-w-xl rounded-xl border'>
+      <div className='bg-muted/40 text-muted-foreground grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] gap-3 px-3 py-2 text-sm font-medium sm:px-4'>
+        <span className='text-left'>{awayTeam?.abbreviation ?? 'Away'}</span>
+        <span className='w-28 text-center sm:w-36'>Stat</span>
+        <span className='text-right'>{homeTeam?.abbreviation ?? 'Home'}</span>
+      </div>
+      <ul>
+        {labels.map(stat => {
+          const awayValue = awayByName.get(stat.name) ?? '—'
+          const homeValue = homeByName.get(stat.name) ?? '—'
+          const leader = compareNumericLead(awayValue, homeValue)
+
+          return (
+            <li
+              key={stat.name}
+              className='border-border grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 border-t px-3 py-2.5 text-sm sm:px-4'
+            >
+              <span
+                className={cn(
+                  'text-left tabular-nums',
+                  leader === 'away' && 'font-semibold',
+                )}
+              >
+                {awayValue}
+              </span>
+              <span className='text-muted-foreground w-28 text-center sm:w-36'>{stat.label}</span>
+              <span
+                className={cn(
+                  'text-right tabular-nums',
+                  leader === 'home' && 'font-semibold',
+                )}
+              >
+                {homeValue}
+              </span>
+            </li>
+          )
+        })}
+      </ul>
     </div>
   )
 }
 
 function LeaderCard({leader}: {leader: GameLeader}) {
   return (
-    <div className='bg-card border-border flex items-center gap-3 rounded-xl border p-3'>
-      {leader.headshot ? (
-        <Image
-          src={leader.headshot}
-          alt={leader.athleteName}
-          width={48}
-          height={48}
-          className='size-12 rounded-full object-cover'
-        />
-      ) : (
-        <div className='bg-muted size-12 rounded-full' />
-      )}
-      <div className='min-w-0'>
-        <p className='text-muted-foreground text-xs uppercase tracking-wider'>{leader.displayName}</p>
-        <p className='truncate font-semibold'>{leader.shortName ?? leader.athleteName}</p>
-        <p className='text-muted-foreground text-sm'>
-          {leader.value}
-          {leader.teamAbbreviation ? ` · ${leader.teamAbbreviation}` : ''}
-        </p>
+    <div className='flex items-center gap-3 p-3 sm:flex-col sm:items-start sm:gap-3 sm:p-4'>
+      <p className='text-muted-foreground hidden text-xs font-medium tracking-wider uppercase sm:block'>
+        {leader.displayName}
+      </p>
+
+      <div className='flex min-w-0 flex-1 items-center gap-3 sm:w-full'>
+        {leader.headshot ? (
+          <Image
+            src={leader.headshot}
+            alt={leader.athleteName}
+            width={48}
+            height={48}
+            className='size-11 shrink-0 rounded-full object-cover'
+          />
+        ) : (
+          <div className='bg-muted size-11 shrink-0 rounded-full' />
+        )}
+        <div className='min-w-0 flex-1'>
+          <p className='text-muted-foreground text-xs font-medium tracking-wider uppercase sm:hidden'>
+            {leader.displayName}
+          </p>
+          <p className='truncate font-semibold'>{leader.shortName ?? leader.athleteName}</p>
+          {leader.teamAbbreviation ? (
+            <p className='text-muted-foreground text-sm'>{leader.teamAbbreviation}</p>
+          ) : null}
+        </div>
+        <p className='shrink-0 text-2xl leading-none font-semibold tabular-nums'>{leader.value}</p>
       </div>
     </div>
   )
@@ -257,4 +504,19 @@ function mergeStatLabels(awayTotals: TeamStatLine[], homeTotals: TeamStatLine[])
   }
 
   return labels
+}
+
+/** Pure numbers only — skip FG-style "32-80" / percentages mixed with text. */
+function compareNumericLead(awayValue: string, homeValue: string): 'away' | 'home' | null {
+  const away = parseStrictNumber(awayValue)
+  const home = parseStrictNumber(homeValue)
+  if (away === null || home === null || away === home) return null
+  return away > home ? 'away' : 'home'
+}
+
+function parseStrictNumber(value: string): number | null {
+  const trimmed = value.trim()
+  if (!/^-?\d+(\.\d+)?$/.test(trimmed)) return null
+  const n = Number(trimmed)
+  return Number.isFinite(n) ? n : null
 }

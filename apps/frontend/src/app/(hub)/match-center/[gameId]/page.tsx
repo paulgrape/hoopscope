@@ -46,7 +46,7 @@ export default async function MatchPage({params, searchParams}: MatchPageProps) 
   const awayName = game.awayTeam?.displayName ?? 'Away'
 
   return (
-    <main className='mx-auto flex w-full max-w-7xl flex-1 flex-col gap-5 px-4 py-5 sm:gap-6 sm:px-6 sm:py-8'>
+    <main className='mx-auto flex w-full max-w-5xl flex-1 flex-col gap-5 px-4 py-5 sm:gap-6 sm:px-6 sm:py-8'>
       <JsonLd
         data={[
           sportsEventSchema({
@@ -74,12 +74,8 @@ export default async function MatchPage({params, searchParams}: MatchPageProps) 
         Back to Match Center
       </Link>
 
-      <header className='flex flex-col gap-2'>
-        <p className='text-muted-foreground text-sm uppercase tracking-wider'>Match</p>
-        <h1 className='text-2xl font-semibold sm:text-3xl'>{game.name}</h1>
-        <p className='text-muted-foreground max-w-2xl text-sm sm:text-base'>
-          Scoreboard, team totals, and leaders for this tip-off.
-        </p>
+      <header>
+        <h1 className='text-2xl font-semibold sm:text-3xl'>{game.shortName ?? game.name}</h1>
       </header>
 
       <MatchSummary initialSummary={game} />
