@@ -210,8 +210,6 @@ export class GamesService {
         : calendar.filter((entry) => entry > originDate);
 
     for (const candidate of candidates.slice(0, CALENDAR_VERIFY_ATTEMPTS)) {
-      // ESPN calendar days are slate dates; tip-offs can land on an adjacent
-      // local date depending on timezone — probe candidate ± 1 day.
       const verifyDates = calendarVerifyDates(candidate, originDate, direction);
       for (const verifyDate of verifyDates) {
         const games = await this.loadScheduleForDate(
@@ -242,7 +240,8 @@ export class GamesService {
     const competitors = competition.competitors ?? [];
     const home = competitors.find((c: any) => c.homeAway === 'home');
     const away = competitors.find((c: any) => c.homeAway === 'away');
-    const statusType = competition.status?.type ?? data?.header?.competitions?.[0]?.status?.type;
+    const statusType =
+      competition.status?.type ?? data?.header?.competitions?.[0]?.status?.type;
     const boxTeams: any[] = data?.boxscore?.teams ?? [];
     const homeBox = findBoxTeam(boxTeams, home?.team?.id);
     const awayBox = findBoxTeam(boxTeams, away?.team?.id);
@@ -263,7 +262,8 @@ export class GamesService {
         'Scheduled',
       period: competition.status?.period ?? null,
       clock: competition.status?.displayClock ?? null,
-      venue: data?.gameInfo?.venue?.fullName ?? competition?.venue?.fullName ?? null,
+      venue:
+        data?.gameInfo?.venue?.fullName ?? competition?.venue?.fullName ?? null,
       homeTeam: normalizeSummaryTeam(home),
       awayTeam: normalizeSummaryTeam(away),
       homeScore: parseScore(home?.score),
@@ -291,11 +291,11 @@ export class GamesService {
     );
     const localDayEnd = new Date(localDayStart.getTime() + 24 * 60 * 60 * 1000);
 
-    const scoreboardDates = [-1, 0, 1].map(dayOffset =>
+    const scoreboardDates = [-1, 0, 1].map((dayOffset) =>
       formatEspnDate(addDays(selectedDate, dayOffset)),
     );
     const scoreboards = await Promise.all(
-      scoreboardDates.map(scoreboardDate =>
+      scoreboardDates.map((scoreboardDate) =>
         this.getScoreboardCached(scoreboardDate, scoreboardCache),
       ),
     );
@@ -384,7 +384,10 @@ function normalizeScoreboardEvent(event: any): ScoreboardGame {
     date: event.date,
     status: normalizeStatus(statusType?.state),
     statusDetail:
-      statusType?.shortDetail ?? statusType?.detail ?? statusType?.description ?? 'Scheduled',
+      statusType?.shortDetail ??
+      statusType?.detail ??
+      statusType?.description ??
+      'Scheduled',
     homeTeam: normalizeTeam(home),
     awayTeam: normalizeTeam(away),
     homeScore: parseScore(home?.score),
@@ -425,7 +428,7 @@ function normalizeTeamTotals(boxTeam: any): TeamStatLine[] {
   const stats: any[] = boxTeam?.statistics ?? [];
   const byName = new Map(stats.map((stat: any) => [stat.name, stat]));
 
-  return TEAM_TOTAL_KEYS.flatMap(key => {
+  return TEAM_TOTAL_KEYS.flatMap((key) => {
     const stat = byName.get(key);
     if (!stat?.displayValue) return [];
     return [
@@ -440,8 +443,8 @@ function normalizeTeamTotals(boxTeam: any): TeamStatLine[] {
 
 function normalizePeriodScores(linescores: any[] | undefined): number[] {
   return (linescores ?? [])
-    .map(line => Number(line?.value ?? line?.displayValue ?? NaN))
-    .filter(value => Number.isFinite(value));
+    .map((line) => Number(line?.value ?? line?.displayValue ?? NaN))
+    .filter((value) => Number.isFinite(value));
 }
 
 function normalizeBoxPlayers(players: any[]): Map<string, BoxScorePlayer[]> {
@@ -484,9 +487,7 @@ function normalizeBoxPlayers(players: any[]): Map<string, BoxScorePlayer[]> {
           shortName: athlete?.shortName ?? null,
           jersey: athlete?.jersey ? String(athlete.jersey) : null,
           position:
-            athlete?.position?.abbreviation ??
-            athlete?.position?.name ??
-            null,
+            athlete?.position?.abbreviation ?? athlete?.position?.name ?? null,
           starter: Boolean(entry.starter),
           minutes: stringAt(stats, index.min),
           points: numberAt(stats, index.pts),
@@ -501,7 +502,10 @@ function normalizeBoxPlayers(players: any[]): Map<string, BoxScorePlayer[]> {
           freeThrows: nullableStringAt(stats, index.ft),
         };
       })
-      .filter((player: BoxScorePlayer | null): player is BoxScorePlayer => player !== null)
+      .filter(
+        (player: BoxScorePlayer | null): player is BoxScorePlayer =>
+          player !== null,
+      )
       .sort(compareBoxPlayers);
 
     statsByTeam.set(teamId, rows);
@@ -538,14 +542,20 @@ function stringAt(stats: string[] | undefined, index: number): string {
   return String(stats[index] ?? '');
 }
 
-function nullableStringAt(stats: string[] | undefined, index: number): string | null {
+function nullableStringAt(
+  stats: string[] | undefined,
+  index: number,
+): string | null {
   if (!stats || index < 0) return null;
   const value = String(stats[index] ?? '').trim();
   return value.length > 0 ? value : null;
 }
 
 function normalizeLeaders(teamLeaderGroups: any[]): GameLeader[] {
-  const bestByCategory = new Map<string, GameLeader & { numericValue: number }>();
+  const bestByCategory = new Map<
+    string,
+    GameLeader & { numericValue: number }
+  >();
 
   for (const group of teamLeaderGroups) {
     const teamId = group?.team?.id ? String(group.team.id) : null;
@@ -586,7 +596,10 @@ function normalizeLeaders(teamLeaderGroups: any[]): GameLeader[] {
     }
   }
 
-  const order = { points: 0, rebounds: 1, assists: 2 } as Record<string, number>;
+  const order = { points: 0, rebounds: 1, assists: 2 } as Record<
+    string,
+    number
+  >;
   return [...bestByCategory.values()]
     .sort((a, b) => (order[a.category] ?? 99) - (order[b.category] ?? 99))
     .map(({ numericValue: _numericValue, ...leader }) => leader);
@@ -594,9 +607,15 @@ function normalizeLeaders(teamLeaderGroups: any[]): GameLeader[] {
 
 function buildGameName(away: any, home: any) {
   const awayName =
-    away?.team?.displayName ?? away?.team?.name ?? away?.team?.abbreviation ?? 'Away';
+    away?.team?.displayName ??
+    away?.team?.name ??
+    away?.team?.abbreviation ??
+    'Away';
   const homeName =
-    home?.team?.displayName ?? home?.team?.name ?? home?.team?.abbreviation ?? 'Home';
+    home?.team?.displayName ??
+    home?.team?.name ??
+    home?.team?.abbreviation ??
+    'Home';
   return `${awayName} at ${homeName}`;
 }
 
