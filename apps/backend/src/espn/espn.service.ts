@@ -154,6 +154,7 @@ export class EspnService {
   private readonly TTL_TEAMS = 24 * 60 * 60 * 1000; // 24h
   private readonly TTL_PLAYERS = 24 * 60 * 60 * 1000;
   private readonly TTL_SCORES = 60 * 1000; // 60s
+  private readonly TTL_SCHEDULE_CALENDAR = 12 * 60 * 60 * 1000; // 12h
   private readonly TTL_NEWS = 10 * 60 * 1000; // 10m
   private readonly TTL_INJURIES = 10 * 60 * 1000; // 10m
   private readonly TTL_STANDINGS = 30 * 60 * 1000; // 30m
@@ -452,6 +453,18 @@ export class EspnService {
     const path = date ? `/scoreboard?dates=${date}` : '/scoreboard';
     return this.get(path, this.TTL_SCORES);
   }
+
+  getScheduleCalendar(): Promise<string[]> {
+    return this.fetchJson<string[]>(
+      'nba-schedule-calendar',
+      this.TTL_SCHEDULE_CALENDAR,
+      async () => {
+        const data = await this.getScoreboard();
+        return parseScheduleCalendar(data);
+      },
+    );
+  }
+
   getGameSummary(eventId: string) {
     return this.get(`/summary?event=${eventId}`, this.TTL_SCORES);
   }
@@ -560,4 +573,32 @@ export class EspnService {
       return data;
     });
   }
+}
+
+type EspnScoreboardLeague = {
+  calendarIsWhitelist?: boolean;
+  calendar?: unknown[];
+};
+
+function parseScheduleCalendar(data: unknown): string[] {
+  const leagues = (data as { leagues?: EspnScoreboardLeague[] } | null)
+    ?.leagues;
+  const league = leagues?.[0];
+  if (!league?.calendarIsWhitelist || !Array.isArray(league.calendar)) {
+    return [];
+  }
+
+  const dates = new Set<string>();
+  for (const entry of league.calendar) {
+    const key = espnCalendarEntryToDateKey(entry);
+    if (key) dates.add(key);
+  }
+
+  return [...dates].sort();
+}
+
+function espnCalendarEntryToDateKey(entry: unknown): string | null {
+  if (typeof entry !== 'string') return null;
+  const match = /^(\d{4}-\d{2}-\d{2})/.exec(entry);
+  return match?.[1] ?? null;
 }

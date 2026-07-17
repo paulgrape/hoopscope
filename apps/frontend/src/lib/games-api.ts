@@ -78,6 +78,26 @@ export type GameLeader = {
   summary: string | null
 }
 
+export type BoxScorePlayer = {
+  athleteId: string | null
+  name: string
+  shortName: string | null
+  jersey: string | null
+  position: string | null
+  starter: boolean
+  minutes: string
+  points: number
+  rebounds: number
+  assists: number
+  steals: number
+  blocks: number
+  turnovers: number
+  fouls: number
+  fieldGoals: string | null
+  threePointers: string | null
+  freeThrows: string | null
+}
+
 export type GameSummary = {
   id: string
   name: string
@@ -92,8 +112,14 @@ export type GameSummary = {
   awayTeam: ScoreboardTeam | null
   homeScore: number | null
   awayScore: number | null
+  periodScores: {
+    home: number[]
+    away: number[]
+  }
   homeTotals: TeamStatLine[]
   awayTotals: TeamStatLine[]
+  homePlayers: BoxScorePlayer[]
+  awayPlayers: BoxScorePlayer[]
   leaders: GameLeader[]
 }
 
