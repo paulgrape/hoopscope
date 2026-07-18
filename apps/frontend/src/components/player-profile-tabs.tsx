@@ -3,12 +3,14 @@
 import {PlayerCareerStats} from '@/components/player-career-stats'
 import {PlayerNewsSection} from '@/components/player-news-section'
 import {PlayerSeasonStats} from '@/components/player-season-stats'
+import {ShotHeatmapCourt} from '@/components/shot-heatmap-court'
 import {Tabs, TabsContent, TabsList, TabsTrigger} from '@/components/ui/tabs'
 import type {
   PlayerCareerSeasonStats,
   PlayerNewsArticle,
   PlayerSeasonStatsResponse,
 } from '@/lib/players-api'
+import type {ShotHeatmapResponse} from '@/lib/shots-api'
 
 type PlayerProfileTabsProps = {
   regularStats: PlayerSeasonStatsResponse
@@ -16,6 +18,7 @@ type PlayerProfileTabsProps = {
   careerSeasons: PlayerCareerSeasonStats[]
   news: PlayerNewsArticle[]
   espnNewsHref: string
+  heatmap?: ShotHeatmapResponse | null
 }
 
 export function PlayerProfileTabs({
@@ -24,6 +27,7 @@ export function PlayerProfileTabs({
   careerSeasons,
   news,
   espnNewsHref,
+  heatmap = null,
 }: PlayerProfileTabsProps) {
   return (
     <Tabs
@@ -37,6 +41,14 @@ export function PlayerProfileTabs({
         >
           Stats
         </TabsTrigger>
+        {heatmap ? (
+          <TabsTrigger
+            value='heatmap'
+            className='flex-1 sm:flex-none'
+          >
+            Heatmap
+          </TabsTrigger>
+        ) : null}
         <TabsTrigger
           value='news'
           className='flex-1 sm:flex-none'
@@ -55,6 +67,23 @@ export function PlayerProfileTabs({
         />
         <PlayerCareerStats seasons={careerSeasons} />
       </TabsContent>
+
+      {heatmap ? (
+        <TabsContent
+          value='heatmap'
+          keepMounted={false}
+          className='flex flex-col gap-3'
+        >
+          <p className='text-muted-foreground text-sm'>
+            {heatmap.season} {heatmap.seasonType} — shrink-adjusted FG% vs zone league average
+            (blue below / red above); brightness is volume.
+          </p>
+          <ShotHeatmapCourt
+            shots={heatmap.shots}
+            leagueZones={heatmap.leagueZones}
+          />
+        </TabsContent>
+      ) : null}
 
       <TabsContent
         value='news'
