@@ -720,29 +720,17 @@ function CloudHeatmap({
 }
 
 export function ShotHeatmapCourt({shots, leagueZones}: ShotHeatmapCourtProps) {
-  const [mode, setMode] = useState<VizMode>('hex')
+  const [mode, setMode] = useState<VizMode>('cloud')
   const [hover, setHover] = useState<HoverInfo | null>(null)
   const league = useMemo(() => buildLeagueLookup(leagueZones), [leagueZones])
 
   return (
-    <div className='flex w-full max-w-md flex-col gap-3'>
+    <div className='flex w-full max-w-3xl flex-col gap-3'>
       <div
         className='flex w-fit gap-1 rounded-lg border p-1'
         role='group'
         aria-label='Heatmap visualization mode'
       >
-        <Button
-          type='button'
-          size='sm'
-          variant={mode === 'hex' ? 'secondary' : 'ghost'}
-          className={cn(mode === 'hex' && 'bg-muted')}
-          onClick={() => {
-            setHover(null)
-            setMode('hex')
-          }}
-        >
-          Hex
-        </Button>
         <Button
           type='button'
           size='sm'
@@ -755,23 +743,41 @@ export function ShotHeatmapCourt({shots, leagueZones}: ShotHeatmapCourtProps) {
         >
           Cloud
         </Button>
+        <Button
+          type='button'
+          size='sm'
+          variant={mode === 'hex' ? 'secondary' : 'ghost'}
+          className={cn(mode === 'hex' && 'bg-muted')}
+          onClick={() => {
+            setHover(null)
+            setMode('hex')
+          }}
+        >
+          Hex
+        </Button>
       </div>
 
-      {mode === 'hex' ? (
-        <HexHeatmap
-          shots={shots}
-          league={league}
-          onHover={setHover}
-        />
-      ) : (
-        <CloudHeatmap
-          shots={shots}
-          league={league}
-          onHover={setHover}
-        />
-      )}
+      <div className='flex flex-col gap-4 sm:flex-row sm:items-start'>
+        <div className='w-full max-w-md shrink-0'>
+          {mode === 'cloud' ? (
+            <CloudHeatmap
+              shots={shots}
+              league={league}
+              onHover={setHover}
+            />
+          ) : (
+            <HexHeatmap
+              shots={shots}
+              league={league}
+              onHover={setHover}
+            />
+          )}
+        </div>
 
-      <HeatmapLegend hover={hover} />
+        <div className='sm:min-w-48 sm:max-w-xs sm:sticky sm:top-4'>
+          <HeatmapLegend hover={hover} />
+        </div>
+      </div>
     </div>
   )
 }

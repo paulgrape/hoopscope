@@ -1,0 +1,5450 @@
+{
+  "playerId": "1628386",
+  "playerName": "Jarrett Allen",
+  "season": "2025-26",
+  "seasonType": "Regular Season",
+  "shots": [
+    {
+      "x": 0,
+      "y": 4,
+      "made": false,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -13,
+      "y": 44,
+      "made": true,
+      "value": 2,
+      "distance": 4,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -47,
+      "y": 48,
+      "made": false,
+      "value": 2,
+      "distance": 6,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 12,
+      "y": 4,
+      "made": false,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -26,
+      "y": 42,
+      "made": true,
+      "value": 2,
+      "distance": 4,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -20,
+      "y": 32,
+      "made": true,
+      "value": 2,
+      "distance": 3,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -36,
+      "y": 31,
+      "made": true,
+      "value": 2,
+      "distance": 4,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 2,
+      "y": 25,
+      "made": true,
+      "value": 2,
+      "distance": 2,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 28,
+      "y": 18,
+      "made": false,
+      "value": 2,
+      "distance": 3,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 13,
+      "y": 62,
+      "made": true,
+      "value": 2,
+      "distance": 6,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 11,
+      "y": 57,
+      "made": true,
+      "value": 2,
+      "distance": 5,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 0,
+      "y": 38,
+      "made": false,
+      "value": 2,
+      "distance": 3,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 4,
+      "y": 119,
+      "made": false,
+      "value": 2,
+      "distance": 11,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": -1,
+      "y": 64,
+      "made": false,
+      "value": 2,
+      "distance": 6,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 12,
+      "y": 35,
+      "made": true,
+      "value": 2,
+      "distance": 3,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 12,
+      "y": 125,
+      "made": false,
+      "value": 2,
+      "distance": 12,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": -4,
+      "y": 2,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 6,
+      "y": 15,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 1,
+      "y": 3,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 0,
+      "y": 0,
+      "made": false,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -50,
+      "y": 92,
+      "made": true,
+      "value": 2,
+      "distance": 10,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": 51,
+      "y": 57,
+      "made": false,
+      "value": 2,
+      "distance": 7,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -4,
+      "y": -3,
+      "made": false,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 25,
+      "y": 32,
+      "made": false,
+      "value": 2,
+      "distance": 4,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -11,
+      "y": 11,
+      "made": false,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 0,
+      "y": 0,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 0,
+      "y": 0,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -4,
+      "y": 8,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 0,
+      "y": 64,
+      "made": false,
+      "value": 2,
+      "distance": 6,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -2,
+      "y": 53,
+      "made": true,
+      "value": 2,
+      "distance": 5,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 36,
+      "y": 39,
+      "made": true,
+      "value": 2,
+      "distance": 5,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 0,
+      "y": 0,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -29,
+      "y": 34,
+      "made": true,
+      "value": 2,
+      "distance": 4,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 6,
+      "y": -1,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 11,
+      "y": 43,
+      "made": false,
+      "value": 2,
+      "distance": 4,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -10,
+      "y": 29,
+      "made": true,
+      "value": 2,
+      "distance": 3,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -26,
+      "y": 19,
+      "made": false,
+      "value": 2,
+      "distance": 3,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -9,
+      "y": 38,
+      "made": false,
+      "value": 2,
+      "distance": 3,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 5,
+      "y": 8,
+      "made": false,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -4,
+      "y": 17,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 71,
+      "y": 61,
+      "made": false,
+      "value": 2,
+      "distance": 9,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Right Side(R)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": 10,
+      "y": 5,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 0,
+      "y": 0,
+      "made": false,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 4,
+      "y": 41,
+      "made": false,
+      "value": 2,
+      "distance": 4,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 6,
+      "y": 13,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 13,
+      "y": 29,
+      "made": false,
+      "value": 2,
+      "distance": 3,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 4,
+      "y": 14,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 13,
+      "y": 54,
+      "made": true,
+      "value": 2,
+      "distance": 5,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 6,
+      "y": 8,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -26,
+      "y": 31,
+      "made": true,
+      "value": 2,
+      "distance": 4,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 10,
+      "y": 16,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 4,
+      "y": 16,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -32,
+      "y": 17,
+      "made": false,
+      "value": 2,
+      "distance": 3,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 17,
+      "y": 3,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 37,
+      "y": 32,
+      "made": false,
+      "value": 2,
+      "distance": 4,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 2,
+      "y": 9,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 69,
+      "y": 72,
+      "made": true,
+      "value": 2,
+      "distance": 9,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Right Side(R)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": -186,
+      "y": 209,
+      "made": false,
+      "value": 3,
+      "distance": 27,
+      "zoneBasic": "Above the Break 3",
+      "zoneArea": "Left Side Center(LC)",
+      "zoneRange": "24+ ft."
+    },
+    {
+      "x": -5,
+      "y": -1,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -61,
+      "y": 25,
+      "made": true,
+      "value": 2,
+      "distance": 6,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 9,
+      "y": 7,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 20,
+      "y": 32,
+      "made": false,
+      "value": 2,
+      "distance": 3,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 1,
+      "y": 113,
+      "made": false,
+      "value": 2,
+      "distance": 11,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": -11,
+      "y": 3,
+      "made": false,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -60,
+      "y": 53,
+      "made": false,
+      "value": 2,
+      "distance": 8,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Left Side(L)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": -59,
+      "y": 27,
+      "made": false,
+      "value": 2,
+      "distance": 6,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -2,
+      "y": 12,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -13,
+      "y": 74,
+      "made": true,
+      "value": 2,
+      "distance": 7,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -91,
+      "y": 38,
+      "made": true,
+      "value": 2,
+      "distance": 9,
+      "zoneBasic": "Mid-Range",
+      "zoneArea": "Left Side(L)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": -31,
+      "y": 11,
+      "made": true,
+      "value": 2,
+      "distance": 3,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 62,
+      "y": 53,
+      "made": false,
+      "value": 2,
+      "distance": 8,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Right Side(R)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": 7,
+      "y": 10,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -233,
+      "y": 26,
+      "made": false,
+      "value": 3,
+      "distance": 23,
+      "zoneBasic": "Left Corner 3",
+      "zoneArea": "Left Side(L)",
+      "zoneRange": "24+ ft."
+    },
+    {
+      "x": 28,
+      "y": 46,
+      "made": false,
+      "value": 2,
+      "distance": 5,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 234,
+      "y": 69,
+      "made": false,
+      "value": 3,
+      "distance": 24,
+      "zoneBasic": "Right Corner 3",
+      "zoneArea": "Right Side(R)",
+      "zoneRange": "24+ ft."
+    },
+    {
+      "x": 10,
+      "y": 15,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 11,
+      "y": 27,
+      "made": false,
+      "value": 2,
+      "distance": 2,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 47,
+      "y": 122,
+      "made": true,
+      "value": 2,
+      "distance": 13,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": 0,
+      "y": 13,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -1,
+      "y": 5,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 13,
+      "y": 36,
+      "made": false,
+      "value": 2,
+      "distance": 3,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -17,
+      "y": 9,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -9,
+      "y": 8,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -6,
+      "y": 15,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -9,
+      "y": 3,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 113,
+      "y": 85,
+      "made": true,
+      "value": 2,
+      "distance": 14,
+      "zoneBasic": "Mid-Range",
+      "zoneArea": "Right Side(R)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": -5,
+      "y": 78,
+      "made": false,
+      "value": 2,
+      "distance": 7,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -6,
+      "y": 10,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 17,
+      "y": 26,
+      "made": false,
+      "value": 2,
+      "distance": 3,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -2,
+      "y": 8,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -2,
+      "y": 31,
+      "made": true,
+      "value": 2,
+      "distance": 3,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 64,
+      "y": 99,
+      "made": true,
+      "value": 2,
+      "distance": 11,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Right Side(R)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": -11,
+      "y": 14,
+      "made": false,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 6,
+      "y": -4,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 7,
+      "y": 5,
+      "made": false,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -67,
+      "y": 102,
+      "made": false,
+      "value": 2,
+      "distance": 12,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Left Side(L)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": 58,
+      "y": 42,
+      "made": true,
+      "value": 2,
+      "distance": 7,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 28,
+      "y": 32,
+      "made": true,
+      "value": 2,
+      "distance": 4,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -48,
+      "y": 32,
+      "made": true,
+      "value": 2,
+      "distance": 5,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 15,
+      "y": 16,
+      "made": true,
+      "value": 2,
+      "distance": 2,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 37,
+      "y": 27,
+      "made": false,
+      "value": 2,
+      "distance": 4,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -39,
+      "y": 31,
+      "made": false,
+      "value": 2,
+      "distance": 4,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 0,
+      "y": 0,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 60,
+      "y": 50,
+      "made": false,
+      "value": 2,
+      "distance": 7,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 17,
+      "y": 6,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 51,
+      "y": 4,
+      "made": false,
+      "value": 2,
+      "distance": 5,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 22,
+      "y": 51,
+      "made": false,
+      "value": 2,
+      "distance": 5,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 34,
+      "y": 35,
+      "made": true,
+      "value": 2,
+      "distance": 4,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 1,
+      "y": 143,
+      "made": true,
+      "value": 2,
+      "distance": 14,
+      "zoneBasic": "Mid-Range",
+      "zoneArea": "Center(C)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": 12,
+      "y": 37,
+      "made": true,
+      "value": 2,
+      "distance": 3,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -61,
+      "y": 3,
+      "made": false,
+      "value": 2,
+      "distance": 6,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -39,
+      "y": 52,
+      "made": false,
+      "value": 2,
+      "distance": 6,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -16,
+      "y": 51,
+      "made": false,
+      "value": 2,
+      "distance": 5,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -9,
+      "y": 17,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -2,
+      "y": 52,
+      "made": true,
+      "value": 2,
+      "distance": 5,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 11,
+      "y": 30,
+      "made": true,
+      "value": 2,
+      "distance": 3,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 34,
+      "y": 42,
+      "made": true,
+      "value": 2,
+      "distance": 5,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -233,
+      "y": 27,
+      "made": false,
+      "value": 3,
+      "distance": 23,
+      "zoneBasic": "Left Corner 3",
+      "zoneArea": "Left Side(L)",
+      "zoneRange": "24+ ft."
+    },
+    {
+      "x": 38,
+      "y": 76,
+      "made": false,
+      "value": 2,
+      "distance": 8,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": -13,
+      "y": 34,
+      "made": true,
+      "value": 2,
+      "distance": 3,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 11,
+      "y": 71,
+      "made": false,
+      "value": 2,
+      "distance": 7,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 29,
+      "y": 34,
+      "made": true,
+      "value": 2,
+      "distance": 4,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 42,
+      "y": 34,
+      "made": true,
+      "value": 2,
+      "distance": 5,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 32,
+      "y": 33,
+      "made": true,
+      "value": 2,
+      "distance": 4,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 37,
+      "y": 39,
+      "made": true,
+      "value": 2,
+      "distance": 5,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 2,
+      "y": 24,
+      "made": false,
+      "value": 2,
+      "distance": 2,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -7,
+      "y": 96,
+      "made": true,
+      "value": 2,
+      "distance": 9,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": -9,
+      "y": 15,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 47,
+      "y": 96,
+      "made": true,
+      "value": 2,
+      "distance": 10,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": 37,
+      "y": 25,
+      "made": false,
+      "value": 2,
+      "distance": 4,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 107,
+      "y": 22,
+      "made": false,
+      "value": 2,
+      "distance": 10,
+      "zoneBasic": "Mid-Range",
+      "zoneArea": "Right Side(R)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": 7,
+      "y": 99,
+      "made": false,
+      "value": 2,
+      "distance": 9,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": 10,
+      "y": 30,
+      "made": false,
+      "value": 2,
+      "distance": 3,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 145,
+      "y": 111,
+      "made": true,
+      "value": 2,
+      "distance": 18,
+      "zoneBasic": "Mid-Range",
+      "zoneArea": "Right Side Center(RC)",
+      "zoneRange": "16-24 ft."
+    },
+    {
+      "x": 4,
+      "y": 4,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -9,
+      "y": 7,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -11,
+      "y": 4,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -7,
+      "y": 6,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 10,
+      "y": 24,
+      "made": false,
+      "value": 2,
+      "distance": 2,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -22,
+      "y": 1,
+      "made": false,
+      "value": 2,
+      "distance": 2,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -2,
+      "y": 31,
+      "made": true,
+      "value": 2,
+      "distance": 3,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 89,
+      "y": 147,
+      "made": false,
+      "value": 2,
+      "distance": 17,
+      "zoneBasic": "Mid-Range",
+      "zoneArea": "Right Side Center(RC)",
+      "zoneRange": "16-24 ft."
+    },
+    {
+      "x": 0,
+      "y": 0,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 44,
+      "y": 24,
+      "made": false,
+      "value": 2,
+      "distance": 5,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -2,
+      "y": 6,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 5,
+      "y": 14,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -38,
+      "y": 84,
+      "made": false,
+      "value": 2,
+      "distance": 9,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": 51,
+      "y": 8,
+      "made": false,
+      "value": 2,
+      "distance": 5,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -4,
+      "y": 8,
+      "made": false,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -7,
+      "y": 8,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 5,
+      "y": 73,
+      "made": true,
+      "value": 2,
+      "distance": 7,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -5,
+      "y": -8,
+      "made": false,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -32,
+      "y": 37,
+      "made": false,
+      "value": 2,
+      "distance": 4,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 0,
+      "y": 0,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -12,
+      "y": 5,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -5,
+      "y": 6,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 20,
+      "y": 6,
+      "made": true,
+      "value": 2,
+      "distance": 2,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -12,
+      "y": 3,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 82,
+      "y": 1,
+      "made": true,
+      "value": 2,
+      "distance": 8,
+      "zoneBasic": "Mid-Range",
+      "zoneArea": "Right Side(R)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": 4,
+      "y": 5,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 4,
+      "y": 0,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -11,
+      "y": 21,
+      "made": false,
+      "value": 2,
+      "distance": 2,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 42,
+      "y": 5,
+      "made": false,
+      "value": 2,
+      "distance": 4,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 13,
+      "y": 15,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -23,
+      "y": 13,
+      "made": false,
+      "value": 2,
+      "distance": 2,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -11,
+      "y": 4,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -28,
+      "y": 62,
+      "made": false,
+      "value": 2,
+      "distance": 6,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 4,
+      "y": 15,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 5,
+      "y": -4,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 0,
+      "y": 7,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -1,
+      "y": 5,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 18,
+      "y": 78,
+      "made": false,
+      "value": 2,
+      "distance": 8,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": 0,
+      "y": 0,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 2,
+      "y": 5,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -2,
+      "y": 41,
+      "made": true,
+      "value": 2,
+      "distance": 4,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -146,
+      "y": 7,
+      "made": true,
+      "value": 2,
+      "distance": 14,
+      "zoneBasic": "Mid-Range",
+      "zoneArea": "Left Side(L)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": 9,
+      "y": 17,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 15,
+      "y": 14,
+      "made": true,
+      "value": 2,
+      "distance": 2,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 1,
+      "y": 12,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -58,
+      "y": 28,
+      "made": false,
+      "value": 2,
+      "distance": 6,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 6,
+      "y": 6,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 9,
+      "y": 2,
+      "made": false,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 48,
+      "y": 13,
+      "made": false,
+      "value": 2,
+      "distance": 4,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -6,
+      "y": -1,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -11,
+      "y": 13,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 11,
+      "y": 247,
+      "made": true,
+      "value": 3,
+      "distance": 24,
+      "zoneBasic": "Above the Break 3",
+      "zoneArea": "Center(C)",
+      "zoneRange": "24+ ft."
+    },
+    {
+      "x": -45,
+      "y": 59,
+      "made": true,
+      "value": 2,
+      "distance": 7,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -34,
+      "y": 120,
+      "made": true,
+      "value": 2,
+      "distance": 12,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": 26,
+      "y": 21,
+      "made": true,
+      "value": 2,
+      "distance": 3,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -64,
+      "y": 15,
+      "made": false,
+      "value": 2,
+      "distance": 6,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 27,
+      "y": 15,
+      "made": false,
+      "value": 2,
+      "distance": 3,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 0,
+      "y": 5,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -28,
+      "y": 162,
+      "made": true,
+      "value": 2,
+      "distance": 16,
+      "zoneBasic": "Mid-Range",
+      "zoneArea": "Center(C)",
+      "zoneRange": "16-24 ft."
+    },
+    {
+      "x": 80,
+      "y": -3,
+      "made": true,
+      "value": 2,
+      "distance": 8,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Right Side(R)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": 2,
+      "y": 21,
+      "made": true,
+      "value": 2,
+      "distance": 2,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -33,
+      "y": 157,
+      "made": false,
+      "value": 2,
+      "distance": 16,
+      "zoneBasic": "Mid-Range",
+      "zoneArea": "Center(C)",
+      "zoneRange": "16-24 ft."
+    },
+    {
+      "x": 48,
+      "y": 4,
+      "made": false,
+      "value": 2,
+      "distance": 4,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 230,
+      "y": -5,
+      "made": false,
+      "value": 3,
+      "distance": 23,
+      "zoneBasic": "Right Corner 3",
+      "zoneArea": "Right Side(R)",
+      "zoneRange": "24+ ft."
+    },
+    {
+      "x": -16,
+      "y": 4,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -20,
+      "y": -3,
+      "made": true,
+      "value": 2,
+      "distance": 2,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -124,
+      "y": 1,
+      "made": false,
+      "value": 2,
+      "distance": 12,
+      "zoneBasic": "Mid-Range",
+      "zoneArea": "Left Side(L)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": 1,
+      "y": 4,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 43,
+      "y": 10,
+      "made": false,
+      "value": 2,
+      "distance": 4,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 1,
+      "y": 68,
+      "made": true,
+      "value": 2,
+      "distance": 6,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 16,
+      "y": 5,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -65,
+      "y": 122,
+      "made": false,
+      "value": 2,
+      "distance": 13,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": 32,
+      "y": 26,
+      "made": false,
+      "value": 2,
+      "distance": 4,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -1,
+      "y": 4,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 0,
+      "y": 1,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 45,
+      "y": 32,
+      "made": false,
+      "value": 2,
+      "distance": 5,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 20,
+      "y": 1,
+      "made": false,
+      "value": 2,
+      "distance": 2,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -10,
+      "y": 7,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 78,
+      "y": 32,
+      "made": true,
+      "value": 2,
+      "distance": 8,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Right Side(R)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": 4,
+      "y": 8,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -1,
+      "y": 13,
+      "made": false,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 0,
+      "y": 8,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -18,
+      "y": 68,
+      "made": false,
+      "value": 2,
+      "distance": 7,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -5,
+      "y": 26,
+      "made": true,
+      "value": 2,
+      "distance": 2,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 9,
+      "y": 6,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 61,
+      "y": 19,
+      "made": true,
+      "value": 2,
+      "distance": 6,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 45,
+      "y": 174,
+      "made": false,
+      "value": 2,
+      "distance": 17,
+      "zoneBasic": "Mid-Range",
+      "zoneArea": "Center(C)",
+      "zoneRange": "16-24 ft."
+    },
+    {
+      "x": 26,
+      "y": 30,
+      "made": false,
+      "value": 2,
+      "distance": 3,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -4,
+      "y": 66,
+      "made": false,
+      "value": 2,
+      "distance": 6,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 6,
+      "y": 6,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 65,
+      "y": 53,
+      "made": true,
+      "value": 2,
+      "distance": 8,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Right Side(R)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": -9,
+      "y": 5,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 2,
+      "y": 11,
+      "made": false,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -6,
+      "y": 13,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 91,
+      "y": 12,
+      "made": false,
+      "value": 2,
+      "distance": 9,
+      "zoneBasic": "Mid-Range",
+      "zoneArea": "Right Side(R)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": -20,
+      "y": 104,
+      "made": true,
+      "value": 2,
+      "distance": 10,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": 21,
+      "y": 37,
+      "made": true,
+      "value": 2,
+      "distance": 4,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 239,
+      "y": 8,
+      "made": false,
+      "value": 3,
+      "distance": 23,
+      "zoneBasic": "Right Corner 3",
+      "zoneArea": "Right Side(R)",
+      "zoneRange": "24+ ft."
+    },
+    {
+      "x": 2,
+      "y": 51,
+      "made": false,
+      "value": 2,
+      "distance": 5,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 25,
+      "y": 8,
+      "made": true,
+      "value": 2,
+      "distance": 2,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -115,
+      "y": 11,
+      "made": true,
+      "value": 2,
+      "distance": 11,
+      "zoneBasic": "Mid-Range",
+      "zoneArea": "Left Side(L)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": 2,
+      "y": 9,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 16,
+      "y": 22,
+      "made": false,
+      "value": 2,
+      "distance": 2,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -11,
+      "y": -4,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -7,
+      "y": 22,
+      "made": true,
+      "value": 2,
+      "distance": 2,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 10,
+      "y": 67,
+      "made": false,
+      "value": 2,
+      "distance": 6,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 20,
+      "y": -1,
+      "made": false,
+      "value": 2,
+      "distance": 2,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -1,
+      "y": -1,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -1,
+      "y": 71,
+      "made": false,
+      "value": 2,
+      "distance": 7,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 4,
+      "y": 6,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -4,
+      "y": 15,
+      "made": false,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 13,
+      "y": -5,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -1,
+      "y": 5,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -22,
+      "y": 46,
+      "made": false,
+      "value": 2,
+      "distance": 5,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -9,
+      "y": 69,
+      "made": true,
+      "value": 2,
+      "distance": 6,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -9,
+      "y": 136,
+      "made": false,
+      "value": 2,
+      "distance": 13,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": -10,
+      "y": 6,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -2,
+      "y": 4,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -6,
+      "y": 8,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -50,
+      "y": 123,
+      "made": false,
+      "value": 2,
+      "distance": 13,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": 1,
+      "y": 73,
+      "made": false,
+      "value": 2,
+      "distance": 7,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 51,
+      "y": 49,
+      "made": true,
+      "value": 2,
+      "distance": 7,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 27,
+      "y": 85,
+      "made": false,
+      "value": 2,
+      "distance": 8,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": 15,
+      "y": 17,
+      "made": true,
+      "value": 2,
+      "distance": 2,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 0,
+      "y": 10,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 4,
+      "y": 27,
+      "made": true,
+      "value": 2,
+      "distance": 2,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 64,
+      "y": 43,
+      "made": false,
+      "value": 2,
+      "distance": 7,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -32,
+      "y": 121,
+      "made": false,
+      "value": 2,
+      "distance": 12,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": -2,
+      "y": 4,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 7,
+      "y": 8,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 11,
+      "y": 73,
+      "made": false,
+      "value": 2,
+      "distance": 7,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -31,
+      "y": 92,
+      "made": false,
+      "value": 2,
+      "distance": 9,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": -45,
+      "y": -2,
+      "made": true,
+      "value": 2,
+      "distance": 4,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 0,
+      "y": 0,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -16,
+      "y": 21,
+      "made": true,
+      "value": 2,
+      "distance": 2,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 33,
+      "y": 40,
+      "made": false,
+      "value": 2,
+      "distance": 5,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 28,
+      "y": 32,
+      "made": true,
+      "value": 2,
+      "distance": 4,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 9,
+      "y": 18,
+      "made": true,
+      "value": 2,
+      "distance": 2,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -13,
+      "y": 8,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 4,
+      "y": 82,
+      "made": true,
+      "value": 2,
+      "distance": 8,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": -7,
+      "y": 15,
+      "made": false,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 15,
+      "y": 23,
+      "made": true,
+      "value": 2,
+      "distance": 2,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 11,
+      "y": 70,
+      "made": false,
+      "value": 2,
+      "distance": 7,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -1,
+      "y": 22,
+      "made": true,
+      "value": 2,
+      "distance": 2,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 4,
+      "y": 18,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -110,
+      "y": 64,
+      "made": false,
+      "value": 2,
+      "distance": 12,
+      "zoneBasic": "Mid-Range",
+      "zoneArea": "Left Side(L)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": -26,
+      "y": 26,
+      "made": false,
+      "value": 2,
+      "distance": 3,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 1,
+      "y": 78,
+      "made": true,
+      "value": 2,
+      "distance": 7,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 75,
+      "y": 21,
+      "made": true,
+      "value": 2,
+      "distance": 7,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -2,
+      "y": 8,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 10,
+      "y": 56,
+      "made": false,
+      "value": 2,
+      "distance": 5,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 32,
+      "y": 6,
+      "made": false,
+      "value": 2,
+      "distance": 3,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 4,
+      "y": 10,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 11,
+      "y": 85,
+      "made": false,
+      "value": 2,
+      "distance": 8,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": -54,
+      "y": 141,
+      "made": true,
+      "value": 2,
+      "distance": 15,
+      "zoneBasic": "Mid-Range",
+      "zoneArea": "Center(C)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": -9,
+      "y": 69,
+      "made": false,
+      "value": 2,
+      "distance": 6,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -10,
+      "y": -6,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 0,
+      "y": 0,
+      "made": false,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 7,
+      "y": 155,
+      "made": false,
+      "value": 2,
+      "distance": 15,
+      "zoneBasic": "Mid-Range",
+      "zoneArea": "Center(C)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": 71,
+      "y": 74,
+      "made": true,
+      "value": 2,
+      "distance": 10,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Right Side(R)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": 12,
+      "y": 34,
+      "made": true,
+      "value": 2,
+      "distance": 3,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 211,
+      "y": 152,
+      "made": false,
+      "value": 3,
+      "distance": 26,
+      "zoneBasic": "Above the Break 3",
+      "zoneArea": "Right Side Center(RC)",
+      "zoneRange": "24+ ft."
+    },
+    {
+      "x": 10,
+      "y": 12,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 1,
+      "y": 11,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 76,
+      "y": 118,
+      "made": true,
+      "value": 2,
+      "distance": 14,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Right Side(R)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": -70,
+      "y": 62,
+      "made": false,
+      "value": 2,
+      "distance": 9,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Left Side(L)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": -65,
+      "y": 22,
+      "made": true,
+      "value": 2,
+      "distance": 6,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 0,
+      "y": 9,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -2,
+      "y": 11,
+      "made": false,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -13,
+      "y": 118,
+      "made": false,
+      "value": 2,
+      "distance": 11,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": 0,
+      "y": 0,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -4,
+      "y": 8,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -16,
+      "y": 102,
+      "made": false,
+      "value": 2,
+      "distance": 10,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": 4,
+      "y": 10,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 6,
+      "y": -15,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 0,
+      "y": 5,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -9,
+      "y": 10,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 21,
+      "y": 122,
+      "made": false,
+      "value": 2,
+      "distance": 12,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": 9,
+      "y": 5,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 0,
+      "y": 11,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -11,
+      "y": 91,
+      "made": false,
+      "value": 2,
+      "distance": 9,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": 9,
+      "y": 1,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -20,
+      "y": 6,
+      "made": true,
+      "value": 2,
+      "distance": 2,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -28,
+      "y": 39,
+      "made": true,
+      "value": 2,
+      "distance": 4,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 37,
+      "y": 33,
+      "made": true,
+      "value": 2,
+      "distance": 4,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 13,
+      "y": 183,
+      "made": false,
+      "value": 2,
+      "distance": 18,
+      "zoneBasic": "Mid-Range",
+      "zoneArea": "Center(C)",
+      "zoneRange": "16-24 ft."
+    },
+    {
+      "x": -11,
+      "y": 41,
+      "made": true,
+      "value": 2,
+      "distance": 4,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -5,
+      "y": 37,
+      "made": true,
+      "value": 2,
+      "distance": 3,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 23,
+      "y": 67,
+      "made": false,
+      "value": 2,
+      "distance": 7,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 0,
+      "y": 0,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 0,
+      "y": 41,
+      "made": false,
+      "value": 2,
+      "distance": 4,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -6,
+      "y": 48,
+      "made": true,
+      "value": 2,
+      "distance": 4,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -2,
+      "y": 33,
+      "made": true,
+      "value": 2,
+      "distance": 3,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -22,
+      "y": 122,
+      "made": true,
+      "value": 2,
+      "distance": 12,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": 0,
+      "y": 25,
+      "made": true,
+      "value": 2,
+      "distance": 2,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 4,
+      "y": 21,
+      "made": true,
+      "value": 2,
+      "distance": 2,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 2,
+      "y": 20,
+      "made": true,
+      "value": 2,
+      "distance": 2,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -26,
+      "y": 21,
+      "made": true,
+      "value": 2,
+      "distance": 3,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -10,
+      "y": 252,
+      "made": false,
+      "value": 3,
+      "distance": 25,
+      "zoneBasic": "Above the Break 3",
+      "zoneArea": "Center(C)",
+      "zoneRange": "24+ ft."
+    },
+    {
+      "x": 31,
+      "y": 36,
+      "made": false,
+      "value": 2,
+      "distance": 4,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 40,
+      "y": 34,
+      "made": true,
+      "value": 2,
+      "distance": 5,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -11,
+      "y": 23,
+      "made": true,
+      "value": 2,
+      "distance": 2,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 18,
+      "y": 29,
+      "made": true,
+      "value": 2,
+      "distance": 3,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 11,
+      "y": 27,
+      "made": true,
+      "value": 2,
+      "distance": 2,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 23,
+      "y": 14,
+      "made": false,
+      "value": 2,
+      "distance": 2,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 5,
+      "y": 59,
+      "made": true,
+      "value": 2,
+      "distance": 5,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 60,
+      "y": 16,
+      "made": true,
+      "value": 2,
+      "distance": 6,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -23,
+      "y": 21,
+      "made": true,
+      "value": 2,
+      "distance": 3,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 0,
+      "y": 0,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 25,
+      "y": 75,
+      "made": false,
+      "value": 2,
+      "distance": 7,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 92,
+      "y": 24,
+      "made": false,
+      "value": 2,
+      "distance": 9,
+      "zoneBasic": "Mid-Range",
+      "zoneArea": "Right Side(R)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": -55,
+      "y": 134,
+      "made": false,
+      "value": 2,
+      "distance": 14,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": -2,
+      "y": 36,
+      "made": true,
+      "value": 2,
+      "distance": 3,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 0,
+      "y": 16,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 10,
+      "y": 26,
+      "made": true,
+      "value": 2,
+      "distance": 2,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 0,
+      "y": 0,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 9,
+      "y": 18,
+      "made": true,
+      "value": 2,
+      "distance": 2,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -53,
+      "y": 110,
+      "made": false,
+      "value": 2,
+      "distance": 12,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": -1,
+      "y": 18,
+      "made": false,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -37,
+      "y": 119,
+      "made": false,
+      "value": 2,
+      "distance": 12,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": -13,
+      "y": 10,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -49,
+      "y": 4,
+      "made": true,
+      "value": 2,
+      "distance": 4,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 0,
+      "y": 94,
+      "made": true,
+      "value": 2,
+      "distance": 9,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": 4,
+      "y": 74,
+      "made": true,
+      "value": 2,
+      "distance": 7,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -48,
+      "y": 17,
+      "made": true,
+      "value": 2,
+      "distance": 5,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 51,
+      "y": 47,
+      "made": true,
+      "value": 2,
+      "distance": 6,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 48,
+      "y": 5,
+      "made": true,
+      "value": 2,
+      "distance": 4,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 29,
+      "y": 54,
+      "made": true,
+      "value": 2,
+      "distance": 6,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -6,
+      "y": 64,
+      "made": true,
+      "value": 2,
+      "distance": 6,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 9,
+      "y": 64,
+      "made": true,
+      "value": 2,
+      "distance": 6,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 54,
+      "y": 25,
+      "made": true,
+      "value": 2,
+      "distance": 5,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -83,
+      "y": 42,
+      "made": false,
+      "value": 2,
+      "distance": 9,
+      "zoneBasic": "Mid-Range",
+      "zoneArea": "Left Side(L)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": 0,
+      "y": 0,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -22,
+      "y": 23,
+      "made": true,
+      "value": 2,
+      "distance": 3,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -18,
+      "y": 16,
+      "made": false,
+      "value": 2,
+      "distance": 2,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 59,
+      "y": 120,
+      "made": false,
+      "value": 2,
+      "distance": 13,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": 58,
+      "y": 98,
+      "made": true,
+      "value": 2,
+      "distance": 11,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Right Side(R)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": -21,
+      "y": 10,
+      "made": false,
+      "value": 2,
+      "distance": 2,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -76,
+      "y": 16,
+      "made": true,
+      "value": 2,
+      "distance": 7,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -102,
+      "y": 34,
+      "made": true,
+      "value": 2,
+      "distance": 10,
+      "zoneBasic": "Mid-Range",
+      "zoneArea": "Left Side(L)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": 39,
+      "y": 78,
+      "made": true,
+      "value": 2,
+      "distance": 8,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": 11,
+      "y": 82,
+      "made": false,
+      "value": 2,
+      "distance": 8,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": -112,
+      "y": 5,
+      "made": true,
+      "value": 2,
+      "distance": 11,
+      "zoneBasic": "Mid-Range",
+      "zoneArea": "Left Side(L)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": 6,
+      "y": 11,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 10,
+      "y": 52,
+      "made": false,
+      "value": 2,
+      "distance": 5,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -56,
+      "y": 35,
+      "made": false,
+      "value": 2,
+      "distance": 6,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 26,
+      "y": 11,
+      "made": true,
+      "value": 2,
+      "distance": 2,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -4,
+      "y": 9,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 5,
+      "y": 5,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 56,
+      "y": 29,
+      "made": true,
+      "value": 2,
+      "distance": 6,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 4,
+      "y": -4,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -37,
+      "y": 79,
+      "made": true,
+      "value": 2,
+      "distance": 8,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": -40,
+      "y": 62,
+      "made": true,
+      "value": 2,
+      "distance": 7,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -6,
+      "y": 12,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 9,
+      "y": -13,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -5,
+      "y": 8,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -10,
+      "y": 13,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 4,
+      "y": 1,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -16,
+      "y": 5,
+      "made": false,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 5,
+      "y": -3,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 2,
+      "y": 31,
+      "made": false,
+      "value": 2,
+      "distance": 3,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -5,
+      "y": 12,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -1,
+      "y": 5,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 233,
+      "y": 22,
+      "made": false,
+      "value": 3,
+      "distance": 23,
+      "zoneBasic": "Right Corner 3",
+      "zoneArea": "Right Side(R)",
+      "zoneRange": "24+ ft."
+    },
+    {
+      "x": -83,
+      "y": 158,
+      "made": true,
+      "value": 2,
+      "distance": 17,
+      "zoneBasic": "Mid-Range",
+      "zoneArea": "Left Side Center(LC)",
+      "zoneRange": "16-24 ft."
+    },
+    {
+      "x": 0,
+      "y": 17,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 9,
+      "y": 28,
+      "made": false,
+      "value": 2,
+      "distance": 2,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -6,
+      "y": 22,
+      "made": true,
+      "value": 2,
+      "distance": 2,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -13,
+      "y": 67,
+      "made": false,
+      "value": 2,
+      "distance": 6,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 4,
+      "y": 64,
+      "made": true,
+      "value": 2,
+      "distance": 6,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 6,
+      "y": 37,
+      "made": true,
+      "value": 2,
+      "distance": 3,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 1,
+      "y": 31,
+      "made": true,
+      "value": 2,
+      "distance": 3,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -4,
+      "y": 14,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 0,
+      "y": 0,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 0,
+      "y": 0,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -5,
+      "y": 1,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -2,
+      "y": 31,
+      "made": false,
+      "value": 2,
+      "distance": 3,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 9,
+      "y": 5,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 0,
+      "y": 0,
+      "made": false,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -9,
+      "y": 10,
+      "made": false,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 21,
+      "y": 0,
+      "made": true,
+      "value": 2,
+      "distance": 2,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 6,
+      "y": 12,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 18,
+      "y": 47,
+      "made": true,
+      "value": 2,
+      "distance": 5,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -66,
+      "y": 86,
+      "made": false,
+      "value": 2,
+      "distance": 10,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Left Side(L)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": -80,
+      "y": 46,
+      "made": true,
+      "value": 2,
+      "distance": 9,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Left Side(L)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": -65,
+      "y": 32,
+      "made": true,
+      "value": 2,
+      "distance": 7,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 9,
+      "y": 18,
+      "made": true,
+      "value": 2,
+      "distance": 2,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 7,
+      "y": 7,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 15,
+      "y": 32,
+      "made": false,
+      "value": 2,
+      "distance": 3,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 2,
+      "y": 4,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -21,
+      "y": -6,
+      "made": true,
+      "value": 2,
+      "distance": 2,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -4,
+      "y": 15,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 29,
+      "y": 73,
+      "made": true,
+      "value": 2,
+      "distance": 7,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 0,
+      "y": 0,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -16,
+      "y": 19,
+      "made": true,
+      "value": 2,
+      "distance": 2,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -135,
+      "y": 150,
+      "made": false,
+      "value": 2,
+      "distance": 20,
+      "zoneBasic": "Mid-Range",
+      "zoneArea": "Left Side Center(LC)",
+      "zoneRange": "16-24 ft."
+    },
+    {
+      "x": 1,
+      "y": 85,
+      "made": false,
+      "value": 2,
+      "distance": 8,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": -28,
+      "y": 49,
+      "made": true,
+      "value": 2,
+      "distance": 5,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 4,
+      "y": 72,
+      "made": true,
+      "value": 2,
+      "distance": 7,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 1,
+      "y": 49,
+      "made": true,
+      "value": 2,
+      "distance": 4,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 23,
+      "y": 20,
+      "made": true,
+      "value": 2,
+      "distance": 3,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -2,
+      "y": 81,
+      "made": true,
+      "value": 2,
+      "distance": 8,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": -66,
+      "y": 8,
+      "made": false,
+      "value": 2,
+      "distance": 6,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 61,
+      "y": 9,
+      "made": true,
+      "value": 2,
+      "distance": 6,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -31,
+      "y": 36,
+      "made": false,
+      "value": 2,
+      "distance": 4,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 27,
+      "y": 13,
+      "made": true,
+      "value": 2,
+      "distance": 2,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 9,
+      "y": 36,
+      "made": true,
+      "value": 2,
+      "distance": 3,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 7,
+      "y": 26,
+      "made": false,
+      "value": 2,
+      "distance": 2,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -118,
+      "y": 17,
+      "made": true,
+      "value": 2,
+      "distance": 11,
+      "zoneBasic": "Mid-Range",
+      "zoneArea": "Left Side(L)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": 18,
+      "y": -6,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 5,
+      "y": 31,
+      "made": true,
+      "value": 2,
+      "distance": 3,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -40,
+      "y": 109,
+      "made": true,
+      "value": 2,
+      "distance": 11,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": 26,
+      "y": 50,
+      "made": false,
+      "value": 2,
+      "distance": 5,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 50,
+      "y": 34,
+      "made": true,
+      "value": 2,
+      "distance": 6,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 21,
+      "y": 75,
+      "made": true,
+      "value": 2,
+      "distance": 7,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 16,
+      "y": 131,
+      "made": true,
+      "value": 2,
+      "distance": 13,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": 174,
+      "y": 131,
+      "made": false,
+      "value": 2,
+      "distance": 21,
+      "zoneBasic": "Mid-Range",
+      "zoneArea": "Right Side Center(RC)",
+      "zoneRange": "16-24 ft."
+    },
+    {
+      "x": 18,
+      "y": 127,
+      "made": true,
+      "value": 2,
+      "distance": 12,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": -12,
+      "y": 58,
+      "made": true,
+      "value": 2,
+      "distance": 5,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 18,
+      "y": 21,
+      "made": true,
+      "value": 2,
+      "distance": 2,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 1,
+      "y": 10,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -107,
+      "y": 18,
+      "made": false,
+      "value": 2,
+      "distance": 10,
+      "zoneBasic": "Mid-Range",
+      "zoneArea": "Left Side(L)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": -53,
+      "y": 79,
+      "made": true,
+      "value": 2,
+      "distance": 9,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Left Side(L)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": 6,
+      "y": 10,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -55,
+      "y": 69,
+      "made": false,
+      "value": 2,
+      "distance": 8,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Left Side(L)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": -25,
+      "y": 33,
+      "made": false,
+      "value": 2,
+      "distance": 4,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -67,
+      "y": 157,
+      "made": false,
+      "value": 2,
+      "distance": 17,
+      "zoneBasic": "Mid-Range",
+      "zoneArea": "Left Side Center(LC)",
+      "zoneRange": "16-24 ft."
+    },
+    {
+      "x": 0,
+      "y": 63,
+      "made": false,
+      "value": 2,
+      "distance": 6,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -4,
+      "y": 9,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -78,
+      "y": 27,
+      "made": true,
+      "value": 2,
+      "distance": 8,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Left Side(L)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": -31,
+      "y": 16,
+      "made": true,
+      "value": 2,
+      "distance": 3,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -10,
+      "y": 5,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 15,
+      "y": 43,
+      "made": true,
+      "value": 2,
+      "distance": 4,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 47,
+      "y": 4,
+      "made": false,
+      "value": 2,
+      "distance": 4,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -16,
+      "y": 83,
+      "made": true,
+      "value": 2,
+      "distance": 8,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": 13,
+      "y": 75,
+      "made": false,
+      "value": 2,
+      "distance": 7,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 0,
+      "y": 0,
+      "made": false,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 6,
+      "y": 7,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 15,
+      "y": 8,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -53,
+      "y": 76,
+      "made": true,
+      "value": 2,
+      "distance": 9,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Left Side(L)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": -1,
+      "y": -1,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 0,
+      "y": 10,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 42,
+      "y": 111,
+      "made": false,
+      "value": 2,
+      "distance": 11,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": 13,
+      "y": -5,
+      "made": false,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -6,
+      "y": -3,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -2,
+      "y": -8,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -6,
+      "y": 4,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -91,
+      "y": -10,
+      "made": true,
+      "value": 2,
+      "distance": 9,
+      "zoneBasic": "Mid-Range",
+      "zoneArea": "Left Side(L)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": 112,
+      "y": 26,
+      "made": true,
+      "value": 2,
+      "distance": 11,
+      "zoneBasic": "Mid-Range",
+      "zoneArea": "Right Side(R)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": -6,
+      "y": 58,
+      "made": true,
+      "value": 2,
+      "distance": 5,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -20,
+      "y": 3,
+      "made": true,
+      "value": 2,
+      "distance": 2,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 9,
+      "y": 24,
+      "made": true,
+      "value": 2,
+      "distance": 2,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 21,
+      "y": 5,
+      "made": false,
+      "value": 2,
+      "distance": 2,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -39,
+      "y": 10,
+      "made": true,
+      "value": 2,
+      "distance": 4,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 0,
+      "y": 0,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 71,
+      "y": 26,
+      "made": true,
+      "value": 2,
+      "distance": 7,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -68,
+      "y": 38,
+      "made": true,
+      "value": 2,
+      "distance": 7,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -36,
+      "y": 5,
+      "made": true,
+      "value": 2,
+      "distance": 3,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 17,
+      "y": 80,
+      "made": false,
+      "value": 2,
+      "distance": 8,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": 12,
+      "y": 27,
+      "made": true,
+      "value": 2,
+      "distance": 2,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 0,
+      "y": 0,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 32,
+      "y": 26,
+      "made": false,
+      "value": 2,
+      "distance": 4,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -4,
+      "y": 18,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -22,
+      "y": 12,
+      "made": true,
+      "value": 2,
+      "distance": 2,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 9,
+      "y": 13,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 27,
+      "y": 54,
+      "made": false,
+      "value": 2,
+      "distance": 6,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -36,
+      "y": 63,
+      "made": false,
+      "value": 2,
+      "distance": 7,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 37,
+      "y": 62,
+      "made": false,
+      "value": 2,
+      "distance": 7,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 47,
+      "y": 59,
+      "made": false,
+      "value": 2,
+      "distance": 7,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 0,
+      "y": 40,
+      "made": true,
+      "value": 2,
+      "distance": 4,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 70,
+      "y": 56,
+      "made": false,
+      "value": 2,
+      "distance": 8,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Right Side(R)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": 31,
+      "y": 25,
+      "made": false,
+      "value": 2,
+      "distance": 3,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 16,
+      "y": 1,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -1,
+      "y": 0,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -1,
+      "y": 15,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -16,
+      "y": 15,
+      "made": true,
+      "value": 2,
+      "distance": 2,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 50,
+      "y": 134,
+      "made": true,
+      "value": 2,
+      "distance": 14,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": 38,
+      "y": 65,
+      "made": false,
+      "value": 2,
+      "distance": 7,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 5,
+      "y": 13,
+      "made": false,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 61,
+      "y": 12,
+      "made": false,
+      "value": 2,
+      "distance": 6,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -7,
+      "y": 5,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -5,
+      "y": 14,
+      "made": false,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -2,
+      "y": 9,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 0,
+      "y": -1,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -7,
+      "y": 9,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": -6,
+      "y": 26,
+      "made": false,
+      "value": 2,
+      "distance": 2,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 6,
+      "y": 19,
+      "made": false,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 5,
+      "y": 30,
+      "made": false,
+      "value": 2,
+      "distance": 3,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 2,
+      "y": 11,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 157,
+      "y": 72,
+      "made": false,
+      "value": 2,
+      "distance": 17,
+      "zoneBasic": "Mid-Range",
+      "zoneArea": "Right Side(R)",
+      "zoneRange": "16-24 ft."
+    },
+    {
+      "x": -6,
+      "y": 13,
+      "made": false,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 54,
+      "y": 111,
+      "made": false,
+      "value": 2,
+      "distance": 12,
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "8-16 ft."
+    },
+    {
+      "x": -1,
+      "y": 0,
+      "made": true,
+      "value": 2,
+      "distance": 0,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    },
+    {
+      "x": 15,
+      "y": 5,
+      "made": true,
+      "value": 2,
+      "distance": 1,
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft."
+    }
+  ],
+  "leagueZones": [
+    {
+      "zoneBasic": "Above the Break 3",
+      "zoneArea": "Back Court(BC)",
+      "zoneRange": "Back Court Shot",
+      "fga": 10,
+      "fgm": 6,
+      "fgPct": 0.6
+    },
+    {
+      "zoneBasic": "Above the Break 3",
+      "zoneArea": "Center(C)",
+      "zoneRange": "24+ ft.",
+      "fga": 18243,
+      "fgm": 6407,
+      "fgPct": 0.351
+    },
+    {
+      "zoneBasic": "Above the Break 3",
+      "zoneArea": "Left Side Center(LC)",
+      "zoneRange": "24+ ft.",
+      "fga": 28170,
+      "fgm": 9895,
+      "fgPct": 0.351
+    },
+    {
+      "zoneBasic": "Above the Break 3",
+      "zoneArea": "Right Side Center(RC)",
+      "zoneRange": "24+ ft.",
+      "fga": 25214,
+      "fgm": 8722,
+      "fgPct": 0.346
+    },
+    {
+      "zoneBasic": "Backcourt",
+      "zoneArea": "Back Court(BC)",
+      "zoneRange": "Back Court Shot",
+      "fga": 34,
+      "fgm": 17,
+      "fgPct": 0.5
+    },
+    {
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "8-16 ft.",
+      "fga": 14425,
+      "fgm": 6627,
+      "fgPct": 0.459
+    },
+    {
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft.",
+      "fga": 27186,
+      "fgm": 11881,
+      "fgPct": 0.437
+    },
+    {
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Left Side(L)",
+      "zoneRange": "8-16 ft.",
+      "fga": 2425,
+      "fgm": 1041,
+      "fgPct": 0.429
+    },
+    {
+      "zoneBasic": "In The Paint (Non-RA)",
+      "zoneArea": "Right Side(R)",
+      "zoneRange": "8-16 ft.",
+      "fga": 2714,
+      "fgm": 1183,
+      "fgPct": 0.436
+    },
+    {
+      "zoneBasic": "Left Corner 3",
+      "zoneArea": "Left Side(L)",
+      "zoneRange": "24+ ft.",
+      "fga": 13024,
+      "fgm": 5044,
+      "fgPct": 0.387
+    },
+    {
+      "zoneBasic": "Mid-Range",
+      "zoneArea": "Center(C)",
+      "zoneRange": "8-16 ft.",
+      "fga": 2034,
+      "fgm": 914,
+      "fgPct": 0.449
+    },
+    {
+      "zoneBasic": "Mid-Range",
+      "zoneArea": "Center(C)",
+      "zoneRange": "16-24 ft.",
+      "fga": 3014,
+      "fgm": 1232,
+      "fgPct": 0.409
+    },
+    {
+      "zoneBasic": "Mid-Range",
+      "zoneArea": "Left Side Center(LC)",
+      "zoneRange": "16-24 ft.",
+      "fga": 3051,
+      "fgm": 1204,
+      "fgPct": 0.395
+    },
+    {
+      "zoneBasic": "Mid-Range",
+      "zoneArea": "Left Side(L)",
+      "zoneRange": "16-24 ft.",
+      "fga": 1268,
+      "fgm": 497,
+      "fgPct": 0.392
+    },
+    {
+      "zoneBasic": "Mid-Range",
+      "zoneArea": "Left Side(L)",
+      "zoneRange": "8-16 ft.",
+      "fga": 5023,
+      "fgm": 2093,
+      "fgPct": 0.417
+    },
+    {
+      "zoneBasic": "Mid-Range",
+      "zoneArea": "Right Side Center(RC)",
+      "zoneRange": "16-24 ft.",
+      "fga": 3029,
+      "fgm": 1212,
+      "fgPct": 0.4
+    },
+    {
+      "zoneBasic": "Mid-Range",
+      "zoneArea": "Right Side(R)",
+      "zoneRange": "8-16 ft.",
+      "fga": 5165,
+      "fgm": 2278,
+      "fgPct": 0.441
+    },
+    {
+      "zoneBasic": "Mid-Range",
+      "zoneArea": "Right Side(R)",
+      "zoneRange": "16-24 ft.",
+      "fga": 1118,
+      "fgm": 439,
+      "fgPct": 0.393
+    },
+    {
+      "zoneBasic": "Restricted Area",
+      "zoneArea": "Center(C)",
+      "zoneRange": "Less Than 8 ft.",
+      "fga": 66364,
+      "fgm": 44418,
+      "fgPct": 0.669
+    },
+    {
+      "zoneBasic": "Right Corner 3",
+      "zoneArea": "Right Side(R)",
+      "zoneRange": "24+ ft.",
+      "fga": 12122,
+      "fgm": 4655,
+      "fgPct": 0.384
+    }
+  ]
+}

@@ -3,6 +3,7 @@ import Link from 'next/link'
 import {JsonLd} from '@/components/json-ld'
 import {PlayerBioGrid, PlayerPageHeader} from '@/components/player-page-header'
 import {PlayerProfileTabs} from '@/components/player-profile-tabs'
+import {getCachedShotHeatmapForEspnPlayer} from '@/lib/espn-nba-ids'
 import {
   getEspnPlayerNewsHref,
   getPlayer,
@@ -41,14 +42,16 @@ export default async function PlayerDetailsPage({params, searchParams}: PlayerDe
   const {playerId} = await params
   const {teamId} = await searchParams
 
-  const [player, regularStats, playoffStats, careerStats, news, team] = await Promise.all([
-    getPlayer(playerId),
-    getPlayerSeasonStats(playerId, {seasonType: 'regular'}),
-    getPlayerSeasonStats(playerId, {seasonType: 'playoffs'}),
-    getPlayerCareerStats(playerId),
-    getPlayerNews(playerId),
-    teamId ? getTeam(teamId).catch(() => null) : Promise.resolve(null),
-  ])
+  const [player, regularStats, playoffStats, careerStats, news, team, heatmap] =
+    await Promise.all([
+      getPlayer(playerId),
+      getPlayerSeasonStats(playerId, {seasonType: 'regular'}),
+      getPlayerSeasonStats(playerId, {seasonType: 'playoffs'}),
+      getPlayerCareerStats(playerId),
+      getPlayerNews(playerId),
+      teamId ? getTeam(teamId).catch(() => null) : Promise.resolve(null),
+      getCachedShotHeatmapForEspnPlayer(playerId),
+    ])
 
   const backHref = teamId ? `/teams/${teamId}` : '/teams'
   const backLabel = team ? `Back to ${team.displayName}` : 'Back to teams'
@@ -93,6 +96,7 @@ export default async function PlayerDetailsPage({params, searchParams}: PlayerDe
         careerSeasons={careerStats.seasons}
         news={news}
         espnNewsHref={getEspnPlayerNewsHref(player.id, player.fullName)}
+        heatmap={heatmap}
       />
     </main>
   )

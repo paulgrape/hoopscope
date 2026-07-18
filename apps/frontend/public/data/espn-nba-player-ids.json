@@ -1,0 +1,728 @@
+{
+  "generatedAt": "2026-07-18T20:35:48.557Z",
+  "matches": [
+    {
+      "espnId": "3064290",
+      "nbaId": "203932",
+      "name": "Aaron Gordon"
+    },
+    {
+      "espnId": "5160992",
+      "nbaId": "1642259",
+      "name": "Alex Sarr"
+    },
+    {
+      "espnId": "4871144",
+      "nbaId": "1630578",
+      "name": "Alperen Sengun"
+    },
+    {
+      "espnId": "4684740",
+      "nbaId": "1641708",
+      "name": "Amen Thompson"
+    },
+    {
+      "espnId": "4395712",
+      "nbaId": "1629614",
+      "name": "Andrew Nembhard"
+    },
+    {
+      "espnId": "3059319",
+      "nbaId": "203952",
+      "name": "Andrew Wiggins"
+    },
+    {
+      "espnId": "4351851",
+      "nbaId": "1629014",
+      "name": "Anfernee Simons"
+    },
+    {
+      "espnId": "4712849",
+      "nbaId": "1641710",
+      "name": "Anthony Black"
+    },
+    {
+      "espnId": "6583",
+      "nbaId": "203076",
+      "name": "Anthony Davis"
+    },
+    {
+      "espnId": "4594268",
+      "nbaId": "1630162",
+      "name": "Anthony Edwards"
+    },
+    {
+      "espnId": "4066457",
+      "nbaId": "1630559",
+      "name": "Austin Reaves"
+    },
+    {
+      "espnId": "4397002",
+      "nbaId": "1630245",
+      "name": "Ayo Dosunmu"
+    },
+    {
+      "espnId": "4066261",
+      "nbaId": "1628389",
+      "name": "Bam Adebayo"
+    },
+    {
+      "espnId": "4683634",
+      "nbaId": "1631097",
+      "name": "Bennedict Mathurin"
+    },
+    {
+      "espnId": "4709138",
+      "nbaId": "1641764",
+      "name": "Brandin Podziemski"
+    },
+    {
+      "espnId": "3913176",
+      "nbaId": "1627742",
+      "name": "Brandon Ingram"
+    },
+    {
+      "espnId": "4433287",
+      "nbaId": "1641706",
+      "name": "Brandon Miller"
+    },
+    {
+      "espnId": "5105839",
+      "nbaId": "1641729",
+      "name": "Brice Sensabaugh"
+    },
+    {
+      "espnId": "4432166",
+      "nbaId": "1630595",
+      "name": "Cade Cunningham"
+    },
+    {
+      "espnId": "4433255",
+      "nbaId": "1631096",
+      "name": "Chet Holmgren"
+    },
+    {
+      "espnId": "2490149",
+      "nbaId": "203468",
+      "name": "CJ McCollum"
+    },
+    {
+      "espnId": "4395651",
+      "nbaId": "1629632",
+      "name": "Coby White"
+    },
+    {
+      "espnId": "4277811",
+      "nbaId": "1629012",
+      "name": "Collin Sexton"
+    },
+    {
+      "espnId": "5041939",
+      "nbaId": "1642843",
+      "name": "Cooper Flagg"
+    },
+    {
+      "espnId": "4397114",
+      "nbaId": "1642504",
+      "name": "Cormac Ryan"
+    },
+    {
+      "espnId": "4396907",
+      "nbaId": "1629636",
+      "name": "Darius Garland"
+    },
+    {
+      "espnId": "4066259",
+      "nbaId": "1628368",
+      "name": "De'Aaron Fox"
+    },
+    {
+      "espnId": "3907497",
+      "nbaId": "1627749",
+      "name": "Dejounte Murray"
+    },
+    {
+      "espnId": "4683021",
+      "nbaId": "1630166",
+      "name": "Deni Avdija"
+    },
+    {
+      "espnId": "3078576",
+      "nbaId": "1628401",
+      "name": "Derrick White"
+    },
+    {
+      "espnId": "4066320",
+      "nbaId": "1630217",
+      "name": "Desmond Bane"
+    },
+    {
+      "espnId": "3136193",
+      "nbaId": "1626164",
+      "name": "Devin Booker"
+    },
+    {
+      "espnId": "4395630",
+      "nbaId": "1630170",
+      "name": "Devin Vassell"
+    },
+    {
+      "espnId": "3155526",
+      "nbaId": "1628415",
+      "name": "Dillon Brooks"
+    },
+    {
+      "espnId": "3155942",
+      "nbaId": "1627734",
+      "name": "Domantas Sabonis"
+    },
+    {
+      "espnId": "3908809",
+      "nbaId": "1628378",
+      "name": "Donovan Mitchell"
+    },
+    {
+      "espnId": "4432158",
+      "nbaId": "1630596",
+      "name": "Evan Mobley"
+    },
+    {
+      "espnId": "4566434",
+      "nbaId": "1630532",
+      "name": "Franz Wagner"
+    },
+    {
+      "espnId": "3032977",
+      "nbaId": "203507",
+      "name": "Giannis Antetokounmpo"
+    },
+    {
+      "espnId": "3135045",
+      "nbaId": "1628960",
+      "name": "Grayson Allen"
+    },
+    {
+      "espnId": "4395724",
+      "nbaId": "1630193",
+      "name": "Immanuel Quickley"
+    },
+    {
+      "espnId": "4017837",
+      "nbaId": "1627826",
+      "name": "Ivica Zubac"
+    },
+    {
+      "espnId": "4279888",
+      "nbaId": "1629630",
+      "name": "Ja Morant"
+    },
+    {
+      "espnId": "4432639",
+      "nbaId": "1631095",
+      "name": "Jabari Smith Jr."
+    },
+    {
+      "espnId": "4431671",
+      "nbaId": "1630183",
+      "name": "Jaden McDaniels"
+    },
+    {
+      "espnId": "4432848",
+      "nbaId": "1631170",
+      "name": "Jaime Jaquez Jr."
+    },
+    {
+      "espnId": "3934672",
+      "nbaId": "1628973",
+      "name": "Jalen Brunson"
+    },
+    {
+      "espnId": "4433621",
+      "nbaId": "1631105",
+      "name": "Jalen Duren"
+    },
+    {
+      "espnId": "4437244",
+      "nbaId": "1630224",
+      "name": "Jalen Green"
+    },
+    {
+      "espnId": "4701230",
+      "nbaId": "1630552",
+      "name": "Jalen Johnson"
+    },
+    {
+      "espnId": "4593803",
+      "nbaId": "1631114",
+      "name": "Jalen Williams"
+    },
+    {
+      "espnId": "3936299",
+      "nbaId": "1627750",
+      "name": "Jamal Murray"
+    },
+    {
+      "espnId": "3992",
+      "nbaId": "201935",
+      "name": "James Harden"
+    },
+    {
+      "espnId": "4277961",
+      "nbaId": "1628991",
+      "name": "Jaren Jackson Jr."
+    },
+    {
+      "espnId": "4066328",
+      "nbaId": "1628386",
+      "name": "Jarrett Allen"
+    },
+    {
+      "espnId": "3917376",
+      "nbaId": "1627759",
+      "name": "Jaylen Brown"
+    },
+    {
+      "espnId": "4065648",
+      "nbaId": "1628369",
+      "name": "Jayson Tatum"
+    },
+    {
+      "espnId": "2991070",
+      "nbaId": "203924",
+      "name": "Jerami Grant"
+    },
+    {
+      "espnId": "5144091",
+      "nbaId": "1642847",
+      "name": "Jeremiah Fears"
+    },
+    {
+      "espnId": "6430",
+      "nbaId": "202710",
+      "name": "Jimmy Butler III"
+    },
+    {
+      "espnId": "3059318",
+      "nbaId": "203954",
+      "name": "Joel Embiid"
+    },
+    {
+      "espnId": "4871145",
+      "nbaId": "1630581",
+      "name": "Josh Giddey"
+    },
+    {
+      "espnId": "3995",
+      "nbaId": "201950",
+      "name": "Jrue Holiday"
+    },
+    {
+      "espnId": "3064514",
+      "nbaId": "203944",
+      "name": "Julius Randle"
+    },
+    {
+      "espnId": "3136195",
+      "nbaId": "1626157",
+      "name": "Karl-Anthony Towns"
+    },
+    {
+      "espnId": "6450",
+      "nbaId": "202695",
+      "name": "Kawhi Leonard"
+    },
+    {
+      "espnId": "4594327",
+      "nbaId": "1631099",
+      "name": "Keegan Murray"
+    },
+    {
+      "espnId": "3133603",
+      "nbaId": "1626162",
+      "name": "Kelly Oubre Jr."
+    },
+    {
+      "espnId": "3202",
+      "nbaId": "201142",
+      "name": "Kevin Durant"
+    },
+    {
+      "espnId": "4397140",
+      "nbaId": "1629645",
+      "name": "Kevin Porter Jr."
+    },
+    {
+      "espnId": "4433627",
+      "nbaId": "1641718",
+      "name": "Keyonte George"
+    },
+    {
+      "espnId": "5061575",
+      "nbaId": "1642851",
+      "name": "Kon Knueppel"
+    },
+    {
+      "espnId": "3102531",
+      "nbaId": "204001",
+      "name": "Kristaps Porziņģis"
+    },
+    {
+      "espnId": "5174563",
+      "nbaId": "1642273",
+      "name": "Kyshawn George"
+    },
+    {
+      "espnId": "4432816",
+      "nbaId": "1630163",
+      "name": "LaMelo Ball"
+    },
+    {
+      "espnId": "4066336",
+      "nbaId": "1628374",
+      "name": "Lauri Markkanen"
+    },
+    {
+      "espnId": "3945274",
+      "nbaId": "1629029",
+      "name": "Luka Dončić"
+    },
+    {
+      "espnId": "4711294",
+      "nbaId": "1641824",
+      "name": "Matas Buzelis"
+    },
+    {
+      "espnId": "4278104",
+      "nbaId": "1629008",
+      "name": "Michael Porter Jr."
+    },
+    {
+      "espnId": "3147657",
+      "nbaId": "1628969",
+      "name": "Mikal Bridges"
+    },
+    {
+      "espnId": "4066383",
+      "nbaId": "1628970",
+      "name": "Miles Bridges"
+    },
+    {
+      "espnId": "4278594",
+      "nbaId": "1630230",
+      "name": "Naji Marshall"
+    },
+    {
+      "espnId": "4278039",
+      "nbaId": "1629638",
+      "name": "Nickeil Alexander-Walker"
+    },
+    {
+      "espnId": "3112335",
+      "nbaId": "203999",
+      "name": "Nikola Jokić"
+    },
+    {
+      "espnId": "6478",
+      "nbaId": "202696",
+      "name": "Nikola Vučević"
+    },
+    {
+      "espnId": "2595516",
+      "nbaId": "1626181",
+      "name": "Norman Powell"
+    },
+    {
+      "espnId": "3934719",
+      "nbaId": "1628384",
+      "name": "OG Anunoby"
+    },
+    {
+      "espnId": "4431680",
+      "nbaId": "1630168",
+      "name": "Onyeka Okongwu"
+    },
+    {
+      "espnId": "4278078",
+      "nbaId": "1629023",
+      "name": "P.J. Washington"
+    },
+    {
+      "espnId": "4432573",
+      "nbaId": "1631094",
+      "name": "Paolo Banchero"
+    },
+    {
+      "espnId": "3149673",
+      "nbaId": "1627783",
+      "name": "Pascal Siakam"
+    },
+    {
+      "espnId": "4251",
+      "nbaId": "202331",
+      "name": "Paul George"
+    },
+    {
+      "espnId": "4066354",
+      "nbaId": "1630202",
+      "name": "Payton Pritchard"
+    },
+    {
+      "espnId": "4576087",
+      "nbaId": "1631212",
+      "name": "Peyton Watson"
+    },
+    {
+      "espnId": "4395625",
+      "nbaId": "1629628",
+      "name": "RJ Barrett"
+    },
+    {
+      "espnId": "4591725",
+      "nbaId": "1631157",
+      "name": "Ryan Rollins"
+    },
+    {
+      "espnId": "4397136",
+      "nbaId": "1630180",
+      "name": "Saddiq Bey"
+    },
+    {
+      "espnId": "4593125",
+      "nbaId": "1630583",
+      "name": "Santi Aldama"
+    },
+    {
+      "espnId": "4683678",
+      "nbaId": "1630703",
+      "name": "Scoot Henderson"
+    },
+    {
+      "espnId": "4433134",
+      "nbaId": "1630567",
+      "name": "Scottie Barnes"
+    },
+    {
+      "espnId": "4914336",
+      "nbaId": "1631101",
+      "name": "Shaedon Sharpe"
+    },
+    {
+      "espnId": "4278073",
+      "nbaId": "1628983",
+      "name": "Shai Gilgeous-Alexander"
+    },
+    {
+      "espnId": "3975",
+      "nbaId": "201939",
+      "name": "Stephen Curry"
+    },
+    {
+      "espnId": "4845367",
+      "nbaId": "1642264",
+      "name": "Stephon Castle"
+    },
+    {
+      "espnId": "4277905",
+      "nbaId": "1629027",
+      "name": "Trae Young"
+    },
+    {
+      "espnId": "4395626",
+      "nbaId": "1630200",
+      "name": "Tre Jones"
+    },
+    {
+      "espnId": "4397688",
+      "nbaId": "1630530",
+      "name": "Trey Murphy III"
+    },
+    {
+      "espnId": "4065733",
+      "nbaId": "1629660",
+      "name": "Ty Jerome"
+    },
+    {
+      "espnId": "4395725",
+      "nbaId": "1629639",
+      "name": "Tyler Herro"
+    },
+    {
+      "espnId": "4431678",
+      "nbaId": "1630178",
+      "name": "Tyrese Maxey"
+    },
+    {
+      "espnId": "5104157",
+      "nbaId": "1641705",
+      "name": "Victor Wembanyama"
+    },
+    {
+      "espnId": "5124612",
+      "nbaId": "1642845",
+      "name": "VJ Edgecombe"
+    },
+    {
+      "espnId": "4433136",
+      "nbaId": "1631117",
+      "name": "Walker Kessler"
+    },
+    {
+      "espnId": "3064440",
+      "nbaId": "203897",
+      "name": "Zach LaVine"
+    },
+    {
+      "espnId": "4395628",
+      "nbaId": "1629627",
+      "name": "Zion Williamson"
+    },
+    {
+      "espnId": "4432735",
+      "nbaId": "1641727",
+      "name": "Dariq Whitehead"
+    },
+    {
+      "espnId": "3978",
+      "nbaId": "201942",
+      "name": "DeMar DeRozan"
+    },
+    {
+      "espnId": "4432646",
+      "nbaId": "1631113",
+      "name": "Kennedy Chandler"
+    },
+    {
+      "espnId": "1966",
+      "nbaId": "2544",
+      "name": "LeBron James"
+    },
+    {
+      "espnId": "3468",
+      "nbaId": "201566",
+      "name": "Russell Westbrook"
+    }
+  ],
+  "unmatchedNba": [],
+  "byEspnId": {
+    "1966": "2544",
+    "3202": "201142",
+    "3468": "201566",
+    "3975": "201939",
+    "3978": "201942",
+    "3992": "201935",
+    "3995": "201950",
+    "4251": "202331",
+    "6430": "202710",
+    "6450": "202695",
+    "6478": "202696",
+    "6583": "203076",
+    "2490149": "203468",
+    "2595516": "1626181",
+    "2991070": "203924",
+    "3032977": "203507",
+    "3059318": "203954",
+    "3059319": "203952",
+    "3064290": "203932",
+    "3064440": "203897",
+    "3064514": "203944",
+    "3078576": "1628401",
+    "3102531": "204001",
+    "3112335": "203999",
+    "3133603": "1626162",
+    "3135045": "1628960",
+    "3136193": "1626164",
+    "3136195": "1626157",
+    "3147657": "1628969",
+    "3149673": "1627783",
+    "3155526": "1628415",
+    "3155942": "1627734",
+    "3907497": "1627749",
+    "3908809": "1628378",
+    "3913176": "1627742",
+    "3917376": "1627759",
+    "3934672": "1628973",
+    "3934719": "1628384",
+    "3936299": "1627750",
+    "3945274": "1629029",
+    "4017837": "1627826",
+    "4065648": "1628369",
+    "4065733": "1629660",
+    "4066259": "1628368",
+    "4066261": "1628389",
+    "4066320": "1630217",
+    "4066328": "1628386",
+    "4066336": "1628374",
+    "4066354": "1630202",
+    "4066383": "1628970",
+    "4066457": "1630559",
+    "4277811": "1629012",
+    "4277905": "1629027",
+    "4277961": "1628991",
+    "4278039": "1629638",
+    "4278073": "1628983",
+    "4278078": "1629023",
+    "4278104": "1629008",
+    "4278594": "1630230",
+    "4279888": "1629630",
+    "4351851": "1629014",
+    "4395625": "1629628",
+    "4395626": "1630200",
+    "4395628": "1629627",
+    "4395630": "1630170",
+    "4395651": "1629632",
+    "4395712": "1629614",
+    "4395724": "1630193",
+    "4395725": "1629639",
+    "4396907": "1629636",
+    "4397002": "1630245",
+    "4397114": "1642504",
+    "4397136": "1630180",
+    "4397140": "1629645",
+    "4397688": "1630530",
+    "4431671": "1630183",
+    "4431678": "1630178",
+    "4431680": "1630168",
+    "4432158": "1630596",
+    "4432166": "1630595",
+    "4432573": "1631094",
+    "4432639": "1631095",
+    "4432646": "1631113",
+    "4432735": "1641727",
+    "4432816": "1630163",
+    "4432848": "1631170",
+    "4433134": "1630567",
+    "4433136": "1631117",
+    "4433255": "1631096",
+    "4433287": "1641706",
+    "4433621": "1631105",
+    "4433627": "1641718",
+    "4437244": "1630224",
+    "4566434": "1630532",
+    "4576087": "1631212",
+    "4591725": "1631157",
+    "4593125": "1630583",
+    "4593803": "1631114",
+    "4594268": "1630162",
+    "4594327": "1631099",
+    "4683021": "1630166",
+    "4683634": "1631097",
+    "4683678": "1630703",
+    "4684740": "1641708",
+    "4701230": "1630552",
+    "4709138": "1641764",
+    "4711294": "1641824",
+    "4712849": "1641710",
+    "4845367": "1642264",
+    "4871144": "1630578",
+    "4871145": "1630581",
+    "4914336": "1631101",
+    "5041939": "1642843",
+    "5061575": "1642851",
+    "5104157": "1641705",
+    "5105839": "1641729",
+    "5124612": "1642845",
+    "5144091": "1642847",
+    "5160992": "1642259",
+    "5174563": "1642273"
+  }
+}

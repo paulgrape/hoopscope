@@ -1,0 +1,967 @@
+{
+  "season": "2025-26",
+  "seasonType": "Regular Season",
+  "generatedAt": "2026-07-14T15:53:21.149Z",
+  "players": [
+    {
+      "id": "203932",
+      "name": "Aaron Gordon",
+      "file": "203932.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 398
+    },
+    {
+      "id": "1642259",
+      "name": "Alex Sarr",
+      "file": "1642259.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 656
+    },
+    {
+      "id": "1630578",
+      "name": "Alperen Sengun",
+      "file": "1630578.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 1123
+    },
+    {
+      "id": "1641708",
+      "name": "Amen Thompson",
+      "file": "1641708.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 1044
+    },
+    {
+      "id": "1629614",
+      "name": "Andrew Nembhard",
+      "file": "1629614.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 753
+    },
+    {
+      "id": "203952",
+      "name": "Andrew Wiggins",
+      "file": "203952.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 821
+    },
+    {
+      "id": "1629014",
+      "name": "Anfernee Simons",
+      "file": "1629014.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 648
+    },
+    {
+      "id": "1641710",
+      "name": "Anthony Black",
+      "file": "1641710.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 772
+    },
+    {
+      "id": "203076",
+      "name": "Anthony Davis",
+      "file": "203076.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 334
+    },
+    {
+      "id": "1630162",
+      "name": "Anthony Edwards",
+      "file": "1630162.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 1231
+    },
+    {
+      "id": "1630559",
+      "name": "Austin Reaves",
+      "file": "1630559.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 762
+    },
+    {
+      "id": "1630245",
+      "name": "Ayo Dosunmu",
+      "file": "1630245.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 747
+    },
+    {
+      "id": "1628389",
+      "name": "Bam Adebayo",
+      "file": "1628389.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 1145
+    },
+    {
+      "id": "1631097",
+      "name": "Bennedict Mathurin",
+      "file": "1631097.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 677
+    },
+    {
+      "id": "1641764",
+      "name": "Brandin Podziemski",
+      "file": "1641764.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 866
+    },
+    {
+      "id": "1627742",
+      "name": "Brandon Ingram",
+      "file": "1627742.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 1288
+    },
+    {
+      "id": "1641706",
+      "name": "Brandon Miller",
+      "file": "1641706.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 1044
+    },
+    {
+      "id": "1641729",
+      "name": "Brice Sensabaugh",
+      "file": "1641729.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 857
+    },
+    {
+      "id": "1630595",
+      "name": "Cade Cunningham",
+      "file": "1630595.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 1189
+    },
+    {
+      "id": "1631096",
+      "name": "Chet Holmgren",
+      "file": "1631096.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 779
+    },
+    {
+      "id": "203468",
+      "name": "CJ McCollum",
+      "file": "203468.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 1154
+    },
+    {
+      "id": "1629632",
+      "name": "Coby White",
+      "file": "1629632.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 623
+    },
+    {
+      "id": "1629012",
+      "name": "Collin Sexton",
+      "file": "1629012.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 742
+    },
+    {
+      "id": "1642843",
+      "name": "Cooper Flagg",
+      "file": "1642843.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 1194
+    },
+    {
+      "id": "1642504",
+      "name": "Cormac Ryan",
+      "file": "1642504.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 102
+    },
+    {
+      "id": "1641727",
+      "name": "Dariq Whitehead",
+      "file": "1641727.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 93
+    },
+    {
+      "id": "1629636",
+      "name": "Darius Garland",
+      "file": "1629636.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 672
+    },
+    {
+      "id": "1628368",
+      "name": "De'Aaron Fox",
+      "file": "1628368.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 1047
+    },
+    {
+      "id": "1627749",
+      "name": "Dejounte Murray",
+      "file": "1627749.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 182
+    },
+    {
+      "id": "201942",
+      "name": "DeMar DeRozan",
+      "file": "201942.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 1005
+    },
+    {
+      "id": "1630166",
+      "name": "Deni Avdija",
+      "file": "1630166.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 1064
+    },
+    {
+      "id": "1628401",
+      "name": "Derrick White",
+      "file": "1628401.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 1108
+    },
+    {
+      "id": "1630217",
+      "name": "Desmond Bane",
+      "file": "1630217.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 1205
+    },
+    {
+      "id": "1626164",
+      "name": "Devin Booker",
+      "file": "1626164.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 1198
+    },
+    {
+      "id": "1630170",
+      "name": "Devin Vassell",
+      "file": "1630170.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 755
+    },
+    {
+      "id": "1628415",
+      "name": "Dillon Brooks",
+      "file": "1628415.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 959
+    },
+    {
+      "id": "1627734",
+      "name": "Domantas Sabonis",
+      "file": "1627734.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 221
+    },
+    {
+      "id": "1628378",
+      "name": "Donovan Mitchell",
+      "file": "1628378.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 1403
+    },
+    {
+      "id": "1630596",
+      "name": "Evan Mobley",
+      "file": "1630596.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 859
+    },
+    {
+      "id": "1630532",
+      "name": "Franz Wagner",
+      "file": "1630532.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 507
+    },
+    {
+      "id": "203507",
+      "name": "Giannis Antetokounmpo",
+      "file": "203507.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 598
+    },
+    {
+      "id": "1628960",
+      "name": "Grayson Allen",
+      "file": "1628960.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 667
+    },
+    {
+      "id": "1630193",
+      "name": "Immanuel Quickley",
+      "file": "1630193.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 905
+    },
+    {
+      "id": "1627826",
+      "name": "Ivica Zubac",
+      "file": "1627826.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 482
+    },
+    {
+      "id": "1629630",
+      "name": "Ja Morant",
+      "file": "1629630.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 322
+    },
+    {
+      "id": "1631095",
+      "name": "Jabari Smith Jr.",
+      "file": "1631095.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 975
+    },
+    {
+      "id": "1630183",
+      "name": "Jaden McDaniels",
+      "file": "1630183.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 809
+    },
+    {
+      "id": "1631170",
+      "name": "Jaime Jaquez Jr.",
+      "file": "1631170.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 915
+    },
+    {
+      "id": "1628973",
+      "name": "Jalen Brunson",
+      "file": "1628973.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 1475
+    },
+    {
+      "id": "1631105",
+      "name": "Jalen Duren",
+      "file": "1631105.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 803
+    },
+    {
+      "id": "1630224",
+      "name": "Jalen Green",
+      "file": "1630224.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 512
+    },
+    {
+      "id": "1630552",
+      "name": "Jalen Johnson",
+      "file": "1630552.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 1228
+    },
+    {
+      "id": "1631114",
+      "name": "Jalen Williams",
+      "file": "1631114.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 446
+    },
+    {
+      "id": "1627750",
+      "name": "Jamal Murray",
+      "file": "1627750.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 1360
+    },
+    {
+      "id": "201935",
+      "name": "James Harden",
+      "file": "201935.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 1123
+    },
+    {
+      "id": "1628991",
+      "name": "Jaren Jackson Jr.",
+      "file": "1628991.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 719
+    },
+    {
+      "id": "1628386",
+      "name": "Jarrett Allen",
+      "file": "1628386.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 528
+    },
+    {
+      "id": "1627759",
+      "name": "Jaylen Brown",
+      "file": "1627759.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 1543
+    },
+    {
+      "id": "1628369",
+      "name": "Jayson Tatum",
+      "file": "1628369.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 287
+    },
+    {
+      "id": "203924",
+      "name": "Jerami Grant",
+      "file": "203924.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 730
+    },
+    {
+      "id": "1642847",
+      "name": "Jeremiah Fears",
+      "file": "1642847.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 1006
+    },
+    {
+      "id": "202710",
+      "name": "Jimmy Butler III",
+      "file": "202710.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 462
+    },
+    {
+      "id": "203954",
+      "name": "Joel Embiid",
+      "file": "203954.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 697
+    },
+    {
+      "id": "1630581",
+      "name": "Josh Giddey",
+      "file": "1630581.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 717
+    },
+    {
+      "id": "201950",
+      "name": "Jrue Holiday",
+      "file": "201950.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 709
+    },
+    {
+      "id": "203944",
+      "name": "Julius Randle",
+      "file": "203944.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 1207
+    },
+    {
+      "id": "1626157",
+      "name": "Karl-Anthony Towns",
+      "file": "1626157.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 1032
+    },
+    {
+      "id": "202695",
+      "name": "Kawhi Leonard",
+      "file": "202695.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 1258
+    },
+    {
+      "id": "1631099",
+      "name": "Keegan Murray",
+      "file": "1631099.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 300
+    },
+    {
+      "id": "1626162",
+      "name": "Kelly Oubre Jr.",
+      "file": "1626162.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 544
+    },
+    {
+      "id": "1631113",
+      "name": "Kennedy Chandler",
+      "file": "1631113.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 137
+    },
+    {
+      "id": "201142",
+      "name": "Kevin Durant",
+      "file": "201142.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 1376
+    },
+    {
+      "id": "1629645",
+      "name": "Kevin Porter Jr.",
+      "file": "1629645.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 514
+    },
+    {
+      "id": "1641718",
+      "name": "Keyonte George",
+      "file": "1641718.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 881
+    },
+    {
+      "id": "1642851",
+      "name": "Kon Knueppel",
+      "file": "1642851.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 1084
+    },
+    {
+      "id": "204001",
+      "name": "Kristaps Porziņģis",
+      "file": "204001.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 388
+    },
+    {
+      "id": "1642273",
+      "name": "Kyshawn George",
+      "file": "1642273.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 577
+    },
+    {
+      "id": "1630163",
+      "name": "LaMelo Ball",
+      "file": "1630163.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 1244
+    },
+    {
+      "id": "1628374",
+      "name": "Lauri Markkanen",
+      "file": "1628374.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 805
+    },
+    {
+      "id": "2544",
+      "name": "LeBron James",
+      "file": "2544.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 919
+    },
+    {
+      "id": "1629029",
+      "name": "Luka Dončić",
+      "file": "1629029.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 1457
+    },
+    {
+      "id": "1641824",
+      "name": "Matas Buzelis",
+      "file": "1641824.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 963
+    },
+    {
+      "id": "1629008",
+      "name": "Michael Porter Jr.",
+      "file": "1629008.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 958
+    },
+    {
+      "id": "1628969",
+      "name": "Mikal Bridges",
+      "file": "1628969.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 963
+    },
+    {
+      "id": "1628970",
+      "name": "Miles Bridges",
+      "file": "1628970.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 1042
+    },
+    {
+      "id": "1630230",
+      "name": "Naji Marshall",
+      "file": "1630230.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 821
+    },
+    {
+      "id": "1629638",
+      "name": "Nickeil Alexander-Walker",
+      "file": "1629638.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 1195
+    },
+    {
+      "id": "203999",
+      "name": "Nikola Jokić",
+      "file": "203999.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 1132
+    },
+    {
+      "id": "202696",
+      "name": "Nikola Vučević",
+      "file": "202696.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 799
+    },
+    {
+      "id": "1626181",
+      "name": "Norman Powell",
+      "file": "1626181.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 895
+    },
+    {
+      "id": "1628384",
+      "name": "OG Anunoby",
+      "file": "1628384.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 804
+    },
+    {
+      "id": "1630168",
+      "name": "Onyeka Okongwu",
+      "file": "1630168.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 860
+    },
+    {
+      "id": "1629023",
+      "name": "P.J. Washington",
+      "file": "1629023.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 658
+    },
+    {
+      "id": "1631094",
+      "name": "Paolo Banchero",
+      "file": "1631094.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 1152
+    },
+    {
+      "id": "1627783",
+      "name": "Pascal Siakam",
+      "file": "1627783.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 1155
+    },
+    {
+      "id": "202331",
+      "name": "Paul George",
+      "file": "202331.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 513
+    },
+    {
+      "id": "1630202",
+      "name": "Payton Pritchard",
+      "file": "1630202.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 1091
+    },
+    {
+      "id": "1631212",
+      "name": "Peyton Watson",
+      "file": "1631212.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 581
+    },
+    {
+      "id": "1629628",
+      "name": "RJ Barrett",
+      "file": "1629628.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 816
+    },
+    {
+      "id": "201566",
+      "name": "Russell Westbrook",
+      "file": "201566.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 839
+    },
+    {
+      "id": "1631157",
+      "name": "Ryan Rollins",
+      "file": "1631157.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 1030
+    },
+    {
+      "id": "1630180",
+      "name": "Saddiq Bey",
+      "file": "1630180.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 967
+    },
+    {
+      "id": "1630583",
+      "name": "Santi Aldama",
+      "file": "1630583.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 476
+    },
+    {
+      "id": "1630703",
+      "name": "Scoot Henderson",
+      "file": "1630703.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 342
+    },
+    {
+      "id": "1630567",
+      "name": "Scottie Barnes",
+      "file": "1630567.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 1123
+    },
+    {
+      "id": "1631101",
+      "name": "Shaedon Sharpe",
+      "file": "1631101.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 868
+    },
+    {
+      "id": "1628983",
+      "name": "Shai Gilgeous-Alexander",
+      "file": "1628983.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 1321
+    },
+    {
+      "id": "201939",
+      "name": "Stephen Curry",
+      "file": "201939.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 799
+    },
+    {
+      "id": "1642264",
+      "name": "Stephon Castle",
+      "file": "1642264.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 817
+    },
+    {
+      "id": "1629027",
+      "name": "Trae Young",
+      "file": "1629027.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 177
+    },
+    {
+      "id": "1630200",
+      "name": "Tre Jones",
+      "file": "1630200.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 617
+    },
+    {
+      "id": "1630530",
+      "name": "Trey Murphy III",
+      "file": "1630530.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 1050
+    },
+    {
+      "id": "1629660",
+      "name": "Ty Jerome",
+      "file": "1629660.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 215
+    },
+    {
+      "id": "1629639",
+      "name": "Tyler Herro",
+      "file": "1629639.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 515
+    },
+    {
+      "id": "1630178",
+      "name": "Tyrese Maxey",
+      "file": "1630178.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 1501
+    },
+    {
+      "id": "1641705",
+      "name": "Victor Wembanyama",
+      "file": "1641705.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 1080
+    },
+    {
+      "id": "1642845",
+      "name": "VJ Edgecombe",
+      "file": "1642845.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 1030
+    },
+    {
+      "id": "1631117",
+      "name": "Walker Kessler",
+      "file": "1631117.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 37
+    },
+    {
+      "id": "203897",
+      "name": "Zach LaVine",
+      "file": "203897.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 547
+    },
+    {
+      "id": "1629627",
+      "name": "Zion Williamson",
+      "file": "1629627.json",
+      "season": "2025-26",
+      "seasonType": "Regular Season",
+      "fga": 807
+    }
+  ]
+}
