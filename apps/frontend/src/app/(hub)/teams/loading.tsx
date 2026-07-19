@@ -2,7 +2,11 @@ import {Skeleton} from '@/components/ui/skeleton'
 
 export default function TeamsLoading() {
   return (
-    <main className='mx-auto flex w-full max-w-7xl flex-1 flex-col gap-5 px-4 py-5 sm:gap-6 sm:px-6 sm:py-8'>
+    <main
+      id='main-content'
+      tabIndex={-1}
+      className='mx-auto flex w-full max-w-7xl flex-1 flex-col gap-5 px-4 py-5 sm:gap-6 sm:px-6 sm:py-8'
+    >
       <Skeleton className='h-8 w-40 sm:h-9 sm:w-48' />
       <section className='grid min-w-0 auto-rows-fr gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3 xl:grid-cols-4'>
         {Array.from({length: 30}).map((_, i) => (

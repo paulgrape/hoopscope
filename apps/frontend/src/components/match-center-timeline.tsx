@@ -209,10 +209,26 @@ export function MatchCenterTimeline({
       <div className='relative flex min-w-0 flex-col gap-3 sm:gap-4'>
         <div className='bg-border absolute top-2 bottom-2 left-4 hidden w-px md:block' />
 
+        <p
+          className='sr-only'
+          aria-live='polite'
+        >
+          {isLoading
+            ? `Loading games for ${selectedDateLabel}.`
+            : error
+              ? ''
+              : games.length === 0
+                ? `No NBA games for ${selectedDateLabel}.`
+                : `${games.length} ${games.length === 1 ? 'game' : 'games'} for ${selectedDateLabel}.`}
+        </p>
+
         {isLoading ? (
           Array.from({length: 4}).map((_, index) => <GameTimelineCardSkeleton key={index} />)
         ) : error ? (
-          <div className='border-destructive/40 bg-card rounded-xl border p-6 text-center'>
+          <div
+            role='alert'
+            className='border-destructive/40 bg-card rounded-xl border p-6 text-center'
+          >
             <p className='text-destructive font-medium'>Unable to load match center</p>
             <p className='text-muted-foreground mt-1 text-sm'>{error}</p>
           </div>
@@ -383,7 +399,7 @@ function TeamPanel({
 }
 
 function statusClassName(status: ScoreboardGame['status']) {
-  if (status === 'live') return 'border-red-500/30 bg-red-500/10 text-red-600 dark:text-red-300'
+  if (status === 'live') return 'border-red-500/30 bg-red-500/10 text-red-700 dark:text-red-300'
   if (status === 'final') return 'border-border bg-muted text-muted-foreground'
   return 'border-sky-500/30 bg-sky-500/10 text-sky-700 dark:text-sky-300'
 }
