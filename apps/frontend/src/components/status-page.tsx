@@ -12,7 +12,11 @@ type StatusPageProps = {
 
 export function StatusPage({code, title, description, icon: Icon, actions, details}: StatusPageProps) {
   return (
-    <main className='mx-auto flex w-full max-w-7xl flex-1 flex-col gap-5 px-4 py-5 sm:gap-6 sm:px-6 sm:py-8'>
+    <main
+      id='main-content'
+      tabIndex={-1}
+      className='mx-auto flex w-full max-w-7xl flex-1 flex-col gap-5 px-4 py-5 sm:gap-6 sm:px-6 sm:py-8'
+    >
       <div className='bg-card border-border flex flex-col items-center rounded-xl border p-6 text-center sm:p-8'>
         <div className='border-border bg-muted/50 mb-4 flex size-12 items-center justify-center rounded-full border'>
           <Icon

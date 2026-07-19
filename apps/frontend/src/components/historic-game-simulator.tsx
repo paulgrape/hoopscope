@@ -94,10 +94,22 @@ export function HistoricGameSimulator({initialGame, socketBaseUrl}: HistoricGame
 
   return (
     <section className='grid min-w-0 gap-5 sm:gap-6 lg:grid-cols-[minmax(0,1fr)_24rem]'>
+      <p
+        className='sr-only'
+        aria-live='polite'
+      >
+        {`${game.awayTeam.name} ${game.awayScore}, ${game.homeTeam.name} ${game.homeScore}. Quarter ${game.quarter}. ${game.status}.`}
+      </p>
       <div className='bg-card border-border rounded-xl border p-3 sm:p-6'>
         <div className='text-muted-foreground flex flex-wrap items-center justify-between gap-2 text-sm'>
           <span>{new Date(game.date).toLocaleString()}</span>
-          <span className='rounded-full border px-2 py-0.5 capitalize'>{connectionStatus}</span>
+          <span
+            className='rounded-full border px-2 py-0.5 capitalize'
+            aria-live='polite'
+          >
+            <span className='sr-only'>Connection status: </span>
+            {connectionStatus}
+          </span>
         </div>
 
         <div className='mt-5 grid grid-cols-4 gap-2 sm:flex sm:flex-wrap sm:items-center'>
@@ -106,6 +118,8 @@ export function HistoricGameSimulator({initialGame, socketBaseUrl}: HistoricGame
             <button
               key={playbackPace}
               type='button'
+              aria-pressed={pace === playbackPace}
+              aria-label={`Replay pace x${playbackPace}`}
               disabled={game.status === 'final'}
               onClick={() => handlePaceChange(playbackPace)}
               className={`rounded-full border px-2 py-1 text-sm transition sm:px-3 ${
@@ -171,6 +185,13 @@ export function HistoricGameSimulator({initialGame, socketBaseUrl}: HistoricGame
             {game.plays.length.toLocaleString()}
           </span>
         </div>
+
+        <p
+          className='sr-only'
+          aria-live='polite'
+        >
+          {plays[0]?.text ?? ''}
+        </p>
 
         <ol className='mt-5 flex max-h-136 flex-col gap-3 overflow-y-auto sm:pr-2'>
           {plays.map(play => (

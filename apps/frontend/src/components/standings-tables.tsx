@@ -22,7 +22,10 @@ function StandingRow({team}: {team: StandingTeam}) {
       <td className='text-muted-foreground px-2 py-2.5 text-center text-sm font-medium whitespace-nowrap tabular-nums sm:px-3'>
         {team.seed}
       </td>
-      <td className='w-full max-w-0 px-2 py-2.5 sm:px-3'>
+      <th
+        scope='row'
+        className='w-full max-w-0 px-2 py-2.5 text-left font-normal sm:px-3'
+      >
         <Link
           href={`/teams/${team.id}`}
           className='hover:text-primary flex min-w-0 items-center gap-2 transition-colors sm:gap-3'
@@ -40,7 +43,7 @@ function StandingRow({team}: {team: StandingTeam}) {
           )}
           <span className='truncate text-sm font-medium sm:text-base'>{team.shortName}</span>
         </Link>
-      </td>
+      </th>
       <td className='px-2 py-2.5 text-center text-sm whitespace-nowrap tabular-nums sm:px-3'>{team.wins}</td>
       <td className='px-2 py-2.5 text-center text-sm whitespace-nowrap tabular-nums sm:px-3'>{team.losses}</td>
       <td className='px-2 py-2.5 text-center text-sm whitespace-nowrap tabular-nums sm:px-3'>{team.winPct}</td>
@@ -67,30 +70,52 @@ function ConferenceTable({conference}: {conference: ConferenceStandings}) {
   return (
     <section className='bg-card border-border min-w-0 overflow-hidden rounded-xl border'>
       <header className='border-border border-b px-4 py-3 sm:px-5'>
-        <h2 className='text-lg font-semibold sm:text-xl'>{conference.name}</h2>
+        <h2
+          id={`standings-${conference.id}`}
+          className='text-lg font-semibold sm:text-xl'
+        >
+          {conference.name}
+        </h2>
       </header>
 
       <div className='min-w-0'>
-        <table className='w-full text-left'>
+        <table
+          aria-labelledby={`standings-${conference.id}`}
+          className='w-full text-left'
+        >
           <thead>
             <tr className='bg-muted/40 text-muted-foreground border-border border-b text-xs tracking-wide uppercase'>
-              <th className='px-2 py-2.5 text-center font-medium whitespace-nowrap sm:px-3'>#</th>
-              <th className='w-full px-2 py-2.5 font-medium whitespace-nowrap sm:px-3'>Team</th>
-              <th className='px-2 py-2.5 text-center font-medium whitespace-nowrap sm:px-3'>W</th>
-              <th className='px-2 py-2.5 text-center font-medium whitespace-nowrap sm:px-3'>L</th>
-              <th className='px-2 py-2.5 text-center font-medium whitespace-nowrap sm:px-3'>PCT</th>
-              <th className='hidden px-2 py-2.5 text-center font-medium whitespace-nowrap sm:table-cell sm:px-3'>GB</th>
-              <th className='hidden px-2 py-2.5 text-center font-medium whitespace-nowrap md:table-cell md:px-3'>
+              <th
+                scope='col'
+                aria-label='Seed'
+                className='px-2 py-2.5 text-center font-medium whitespace-nowrap sm:px-3'
+              >
+                #
+              </th>
+              <th scope='col' className='w-full px-2 py-2.5 font-medium whitespace-nowrap sm:px-3'>Team</th>
+              <th scope='col' className='px-2 py-2.5 text-center font-medium whitespace-nowrap sm:px-3'>
+                <abbr title='Wins'>W</abbr>
+              </th>
+              <th scope='col' className='px-2 py-2.5 text-center font-medium whitespace-nowrap sm:px-3'>
+                <abbr title='Losses'>L</abbr>
+              </th>
+              <th scope='col' className='px-2 py-2.5 text-center font-medium whitespace-nowrap sm:px-3'>
+                <abbr title='Win percentage'>PCT</abbr>
+              </th>
+              <th scope='col' className='hidden px-2 py-2.5 text-center font-medium whitespace-nowrap sm:table-cell sm:px-3'>
+                <abbr title='Games behind'>GB</abbr>
+              </th>
+              <th scope='col' className='hidden px-2 py-2.5 text-center font-medium whitespace-nowrap md:table-cell md:px-3'>
                 Home
               </th>
-              <th className='hidden px-2 py-2.5 text-center font-medium whitespace-nowrap md:table-cell md:px-3'>
+              <th scope='col' className='hidden px-2 py-2.5 text-center font-medium whitespace-nowrap md:table-cell md:px-3'>
                 Road
               </th>
-              <th className='hidden px-2 py-2.5 text-center font-medium whitespace-nowrap lg:table-cell lg:px-3'>
-                L10
+              <th scope='col' className='hidden px-2 py-2.5 text-center font-medium whitespace-nowrap lg:table-cell lg:px-3'>
+                <abbr title='Last 10 games'>L10</abbr>
               </th>
-              <th className='hidden px-2 py-2.5 text-center font-medium whitespace-nowrap lg:table-cell lg:px-3'>
-                STRK
+              <th scope='col' className='hidden px-2 py-2.5 text-center font-medium whitespace-nowrap lg:table-cell lg:px-3'>
+                <abbr title='Streak'>STRK</abbr>
               </th>
             </tr>
           </thead>

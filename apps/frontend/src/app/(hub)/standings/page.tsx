@@ -15,7 +15,11 @@ export default async function StandingsPage() {
   const standings = await getStandings()
 
   return (
-    <main className='mx-auto flex w-full max-w-7xl flex-1 flex-col gap-5 px-4 py-5 sm:gap-6 sm:px-6 sm:py-8'>
+    <main
+      id='main-content'
+      tabIndex={-1}
+      className='mx-auto flex w-full max-w-7xl flex-1 flex-col gap-5 px-4 py-5 sm:gap-6 sm:px-6 sm:py-8'
+    >
       <JsonLd
         data={collectionPageSchema({
           path: '/standings',

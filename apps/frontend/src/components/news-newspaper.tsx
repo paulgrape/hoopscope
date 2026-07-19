@@ -93,7 +93,7 @@ export function NewsNewspaper({ articles }: NewsNewspaperProps) {
                 <div className='border-border relative aspect-video overflow-hidden border'>
                   <Image
                     src={lead.imageUrl}
-                    alt={lead.headline}
+                    alt=''
                     fill
                     className='object-cover transition-transform duration-500 group-hover:scale-[1.02]'
                     sizes='(max-width: 1024px) 100vw, 60vw'
@@ -148,7 +148,7 @@ export function NewsNewspaper({ articles }: NewsNewspaperProps) {
                       <div className='border-border relative aspect-3/2 overflow-hidden border'>
                         <Image
                           src={article.imageUrl}
-                          alt={article.headline}
+                          alt=''
                           fill
                           className='object-cover transition-transform duration-500 group-hover:scale-[1.02]'
                           sizes='(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 30vw'
@@ -190,7 +190,7 @@ export function NewsNewspaper({ articles }: NewsNewspaperProps) {
                   <div className='border-border relative aspect-video overflow-hidden border'>
                     <Image
                       src={article.imageUrl}
-                      alt={article.headline}
+                      alt=''
                       fill
                       className='object-cover transition-transform duration-500 group-hover:scale-[1.02]'
                       sizes='(max-width: 1024px) 100vw, 30vw'
@@ -232,7 +232,7 @@ export function NewsNewspaper({ articles }: NewsNewspaperProps) {
                     <div className='border-border relative aspect-video overflow-hidden border'>
                       <Image
                         src={article.imageUrl}
-                        alt={article.headline}
+                        alt=''
                         fill
                         className='object-cover transition-transform duration-500 group-hover:scale-[1.02]'
                         sizes='(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 25vw'

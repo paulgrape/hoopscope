@@ -70,10 +70,7 @@ function buildLeagueLookup(zones: LeagueZoneAvg[]): LeagueLookup {
   let overallFga = 0
 
   for (const zone of zones) {
-    byFull.set(
-      `${zone.zoneBasic}|${zone.zoneArea}|${zone.zoneRange}`,
-      zone.fgPct,
-    )
+    byFull.set(`${zone.zoneBasic}|${zone.zoneArea}|${zone.zoneRange}`, zone.fgPct)
 
     const areaKey = `${zone.zoneBasic}|${zone.zoneArea}`
     const area = byBasicArea.get(areaKey) ?? {fgPctSum: 0, fga: 0}
@@ -102,7 +99,7 @@ function buildLeagueLookup(zones: LeagueZoneAvg[]): LeagueLookup {
     byFull,
     byBasicArea: avgMap(byBasicArea),
     byBasic: avgMap(byBasic),
-    overall: overallFga > 0 ? overallFgm / overallFga : 0.45,
+    overall: overallFga > 0 ? overallFgm / overallFga : 0.45
   }
 }
 
@@ -118,7 +115,7 @@ function leagueFgForShot(shot: ShotPoint, league: LeagueLookup): number {
 function locToCourtFeet(shot: ShotPoint): {x: number; y: number} {
   return {
     x: shot.x / 10 + COURT_WIDTH_FT / 2,
-    y: shot.y / 10 + BASKET_Y_FT,
+    y: shot.y / 10 + BASKET_Y_FT
   }
 }
 
@@ -131,7 +128,7 @@ function pixelToHex(x: number, y: number, size: number): {q: number; r: number} 
 function hexToPixel(q: number, r: number, size: number): {x: number; y: number} {
   return {
     x: size * (SQRT3 * q + (SQRT3 / 2) * r),
-    y: size * ((3 / 2) * r),
+    y: size * ((3 / 2) * r)
   }
 }
 
@@ -158,9 +155,7 @@ function hexagonPath(cx: number, cy: number, size: number): string {
   const points: string[] = []
   for (let i = 0; i < 6; i++) {
     const angle = (Math.PI / 180) * (60 * i - 30)
-    points.push(
-      `${cx + size * Math.cos(angle)},${cy + size * Math.sin(angle)}`,
-    )
+    points.push(`${cx + size * Math.cos(angle)},${cy + size * Math.sin(angle)}`)
   }
   return points.join(' ')
 }
@@ -172,12 +167,7 @@ function buildCourtGrid(): HexCell[] {
   for (let r = -2; r < 30; r++) {
     for (let q = -15; q < 30; q++) {
       const {x: cx, y: cy} = hexToPixel(q, r, HEX_SIZE)
-      if (
-        cx < -pad ||
-        cx > COURT_WIDTH_FT + pad ||
-        cy < -pad ||
-        cy > COURT_LENGTH_FT + pad
-      ) {
+      if (cx < -pad || cx > COURT_WIDTH_FT + pad || cy < -pad || cy > COURT_LENGTH_FT + pad) {
         continue
       }
       if (cx < 0 || cx > COURT_WIDTH_FT || cy < 0 || cy > COURT_LENGTH_FT) {
@@ -192,7 +182,7 @@ function buildCourtGrid(): HexCell[] {
         attempts: 0,
         makes: 0,
         threeAttempts: 0,
-        leagueRateSum: 0,
+        leagueRateSum: 0
       })
     }
   }
@@ -223,7 +213,7 @@ function buildHexCells(shots: ShotPoint[], league: LeagueLookup): HexCell[] {
         attempts: 0,
         makes: 0,
         threeAttempts: 0,
-        leagueRateSum: 0,
+        leagueRateSum: 0
       }
       byKey.set(key, cell)
       cells.push(cell)
@@ -243,11 +233,7 @@ function shrinkRate(makes: number, attempts: number, leagueFg: number): number {
   return (makes + SHRINKAGE_K * leagueFg) / (attempts + SHRINKAGE_K)
 }
 
-function relativeEfficiency(
-  makes: number,
-  attempts: number,
-  leagueFg: number,
-): {adjustedFg: number; relative: number} {
+function relativeEfficiency(makes: number, attempts: number, leagueFg: number): {adjustedFg: number; relative: number} {
   const adjustedFg = shrinkRate(makes, attempts, leagueFg)
   return {adjustedFg, relative: adjustedFg - leagueFg}
 }
@@ -263,18 +249,12 @@ function volumeTForAttempts(attempts: number, isThreeHeavy: boolean): number {
 }
 
 /** Diverging blue (below league) → white → red (above league). */
-function relativeRgb(
-  relative: number,
-  volumeT: number,
-  opts: {boost?: boolean} = {},
-): [number, number, number] {
+function relativeRgb(relative: number, volumeT: number, opts: {boost?: boolean} = {}): [number, number, number] {
   const boost = opts.boost ?? false
   // Steeper response for cloud contrast
   const clip = boost ? REL_CLIP * 0.7 : REL_CLIP
   const t = Math.max(-1, Math.min(1, relative / clip))
-  const bright = boost
-    ? 0.62 + volumeWeight(volumeT) * 0.38
-    : 0.4 + volumeWeight(volumeT) * 0.6
+  const bright = boost ? 0.62 + volumeWeight(volumeT) * 0.38 : 0.4 + volumeWeight(volumeT) * 0.6
 
   let r: number
   let g: number
@@ -398,7 +378,7 @@ function HeatmapLegend({hover}: {hover: HoverInfo | null}) {
           <span
             className='border-border/40 inline-block h-2 w-20 rounded-full border'
             style={{
-              background: `linear-gradient(90deg, ${relativeColor(-REL_CLIP, 1)}, ${relativeColor(0, 1)}, ${relativeColor(REL_CLIP, 1)})`,
+              background: `linear-gradient(90deg, ${relativeColor(-REL_CLIP, 1)}, ${relativeColor(0, 1)}, ${relativeColor(REL_CLIP, 1)})`
             }}
           />
           <span>Above league</span>
@@ -408,7 +388,7 @@ function HeatmapLegend({hover}: {hover: HoverInfo | null}) {
           <span
             className='border-border/40 inline-block h-2 w-16 rounded-full border'
             style={{
-              background: `linear-gradient(90deg, ${relativeColor(0.05, 0)}, ${relativeColor(0.05, 1)})`,
+              background: `linear-gradient(90deg, ${relativeColor(0.05, 0)}, ${relativeColor(0.05, 1)})`
             }}
           />
           <span>Bright</span>
@@ -419,8 +399,7 @@ function HeatmapLegend({hover}: {hover: HoverInfo | null}) {
           {hover.kind === 'cloud' ? (
             <>
               dens. {hover.attempts.toFixed(1)} · ~{(hover.rawFg * 100).toFixed(0)}% raw →{' '}
-              {(hover.adjustedFg * 100).toFixed(0)}% shrunk · league{' '}
-              {(hover.leagueFg * 100).toFixed(0)}% ·{' '}
+              {(hover.adjustedFg * 100).toFixed(0)}% shrunk · league {(hover.leagueFg * 100).toFixed(0)}% ·{' '}
               {hover.relative >= 0 ? '+' : ''}
               {(hover.relative * 100).toFixed(1)} pts
               {hover.threeHeavy ? ' (3pt)' : ' (2pt)'}
@@ -428,8 +407,8 @@ function HeatmapLegend({hover}: {hover: HoverInfo | null}) {
           ) : (
             <>
               {hover.makes}/{hover.attempts} ({(hover.rawFg * 100).toFixed(0)}% raw →{' '}
-              {(hover.adjustedFg * 100).toFixed(0)}% shrunk) · league{' '}
-              {(hover.leagueFg * 100).toFixed(0)}% · {hover.relative >= 0 ? '+' : ''}
+              {(hover.adjustedFg * 100).toFixed(0)}% shrunk) · league {(hover.leagueFg * 100).toFixed(0)}% ·{' '}
+              {hover.relative >= 0 ? '+' : ''}
               {(hover.relative * 100).toFixed(1)} pts
               {hover.threeHeavy ? ', 3pt' : ', 2pt'}
             </>
@@ -437,8 +416,8 @@ function HeatmapLegend({hover}: {hover: HoverInfo | null}) {
         </p>
       ) : (
         <p>
-          Color = shrink-adjusted FG% vs zone league avg (clip ±{(REL_CLIP * 100).toFixed(0)} pts)
-          · brightness = volume (≤2 att. = max dim; caps 20/15)
+          Color = shrink-adjusted FG% vs zone league avg (clip ±{(REL_CLIP * 100).toFixed(0)} pts) · brightness = volume
+          (≤2 att. = max dim; caps 20/15)
         </p>
       )}
     </div>
@@ -448,7 +427,7 @@ function HeatmapLegend({hover}: {hover: HoverInfo | null}) {
 function HexHeatmap({
   shots,
   league,
-  onHover,
+  onHover
 }: {
   shots: ShotPoint[]
   league: LeagueLookup
@@ -497,11 +476,7 @@ function HexHeatmap({
           const isThreeHeavy = cell.threeAttempts * 2 >= cell.attempts
           const leagueFg = cell.leagueRateSum / cell.attempts
           const rawFg = cell.makes / cell.attempts
-          const {adjustedFg, relative} = relativeEfficiency(
-            cell.makes,
-            cell.attempts,
-            leagueFg,
-          )
+          const {adjustedFg, relative} = relativeEfficiency(cell.makes, cell.attempts, leagueFg)
           const volumeT = volumeTForAttempts(cell.attempts, isThreeHeavy)
 
           return (
@@ -523,7 +498,7 @@ function HexHeatmap({
                   adjustedFg,
                   leagueFg,
                   relative,
-                  threeHeavy: isThreeHeavy,
+                  threeHeavy: isThreeHeavy
                 })
               }}
               onMouseLeave={() => {
@@ -601,7 +576,7 @@ function buildCloudField(shots: ShotPoint[], league: LeagueLookup): CloudField {
 function CloudHeatmap({
   shots,
   league,
-  onHover,
+  onHover
 }: {
   shots: ShotPoint[]
   league: LeagueLookup
@@ -690,11 +665,7 @@ function CloudHeatmap({
           }
           const leagueFg = fieldData.expected[idx] / a
           const rawFg = fieldData.makes[idx] / a
-          const {adjustedFg, relative} = relativeEfficiency(
-            fieldData.makes[idx],
-            a,
-            leagueFg,
-          )
+          const {adjustedFg, relative} = relativeEfficiency(fieldData.makes[idx], a, leagueFg)
           onHoverRef.current({
             kind: 'cloud',
             makes: fieldData.makes[idx],
@@ -703,7 +674,7 @@ function CloudHeatmap({
             adjustedFg,
             leagueFg,
             relative,
-            threeHeavy: fieldData.three[idx] * 2 >= a,
+            threeHeavy: fieldData.three[idx] * 2 >= a
           })
         }}
         onMouseLeave={() => onHoverRef.current(null)}
@@ -716,6 +687,63 @@ function CloudHeatmap({
         <CourtLinesOverlay />
       </svg>
     </div>
+  )
+}
+
+function ZoneSummaryTable({shots, league}: {shots: ShotPoint[]; league: LeagueLookup}) {
+  const rows = useMemo(() => {
+    const byZone = new Map<string, {attempts: number; makes: number; leagueSum: number}>()
+
+    for (const shot of shots) {
+      const agg = byZone.get(shot.zoneBasic) ?? {attempts: 0, makes: 0, leagueSum: 0}
+      agg.attempts += 1
+      if (shot.made) agg.makes += 1
+      agg.leagueSum += leagueFgForShot(shot, league)
+      byZone.set(shot.zoneBasic, agg)
+    }
+
+    return [...byZone.entries()]
+      .map(([zone, agg]) => {
+        const leagueFg = agg.attempts > 0 ? agg.leagueSum / agg.attempts : league.overall
+        const {adjustedFg, relative} = relativeEfficiency(agg.makes, agg.attempts, leagueFg)
+        return {zone, ...agg, leagueFg, adjustedFg, relative}
+      })
+      .sort((a, b) => b.attempts - a.attempts)
+  }, [shots, league])
+
+  if (rows.length === 0) {
+    return null
+  }
+
+  return (
+    <table className='sr-only'>
+      <caption>Shot efficiency by court zone versus league average</caption>
+      <thead>
+        <tr>
+          <th scope='col'>Zone</th>
+          <th scope='col'>Attempts</th>
+          <th scope='col'>Makes</th>
+          <th scope='col'>Adjusted field goal percentage</th>
+          <th scope='col'>League average</th>
+          <th scope='col'>Difference vs league</th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map(row => (
+          <tr key={row.zone}>
+            <th scope='row'>{row.zone}</th>
+            <td>{row.attempts}</td>
+            <td>{row.makes}</td>
+            <td>{(row.adjustedFg * 100).toFixed(0)}%</td>
+            <td>{(row.leagueFg * 100).toFixed(0)}%</td>
+            <td>
+              {row.relative >= 0 ? '+' : ''}
+              {(row.relative * 100).toFixed(1)} pts
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   )
 }
 
@@ -734,6 +762,7 @@ export function ShotHeatmapCourt({shots, leagueZones}: ShotHeatmapCourtProps) {
         <Button
           type='button'
           size='sm'
+          aria-pressed={mode === 'cloud'}
           variant={mode === 'cloud' ? 'secondary' : 'ghost'}
           className={cn(mode === 'cloud' && 'bg-muted')}
           onClick={() => {
@@ -746,6 +775,7 @@ export function ShotHeatmapCourt({shots, leagueZones}: ShotHeatmapCourtProps) {
         <Button
           type='button'
           size='sm'
+          aria-pressed={mode === 'hex'}
           variant={mode === 'hex' ? 'secondary' : 'ghost'}
           className={cn(mode === 'hex' && 'bg-muted')}
           onClick={() => {
@@ -756,6 +786,11 @@ export function ShotHeatmapCourt({shots, leagueZones}: ShotHeatmapCourtProps) {
           Hex
         </Button>
       </div>
+
+      <ZoneSummaryTable
+        shots={shots}
+        league={league}
+      />
 
       <div className='flex flex-col gap-4 sm:flex-row sm:items-start'>
         <div className='w-full max-w-md shrink-0'>
@@ -774,7 +809,7 @@ export function ShotHeatmapCourt({shots, leagueZones}: ShotHeatmapCourtProps) {
           )}
         </div>
 
-        <div className='sm:min-w-48 sm:max-w-xs sm:sticky sm:top-4'>
+        <div className='sm:sticky sm:top-4 sm:max-w-xs sm:min-w-48'>
           <HeatmapLegend hover={hover} />
         </div>
       </div>

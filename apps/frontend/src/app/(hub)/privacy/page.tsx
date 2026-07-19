@@ -14,7 +14,11 @@ const LAST_UPDATED = 'June 9, 2026'
 
 export default function PrivacyPage() {
   return (
-    <main className='mx-auto flex w-full max-w-3xl flex-1 flex-col gap-8 px-4 py-5 sm:px-6 sm:py-8'>
+    <main
+      id='main-content'
+      tabIndex={-1}
+      className='mx-auto flex w-full max-w-3xl flex-1 flex-col gap-8 px-4 py-5 sm:px-6 sm:py-8'
+    >
       <JsonLd
         data={webPageSchema({
           path: '/privacy',
