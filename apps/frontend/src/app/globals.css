@@ -126,6 +126,10 @@
   }
   html {
     @apply font-sans;
+    scroll-padding-top: 3.5rem;
+  }
+  #main-content {
+    scroll-margin-top: 3.5rem;
   }
 }
 

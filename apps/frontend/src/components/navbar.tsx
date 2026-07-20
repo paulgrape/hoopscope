@@ -17,6 +17,7 @@ const navLinks = [
   {href: '/historic-games', label: 'Historic Games'},
   {href: '/teams', label: 'Teams'},
   {href: '/standings', label: 'Standings'},
+  {href: '/about', label: 'About'},
   {href: '/privacy', label: 'Privacy Policy'}
 ]
 
