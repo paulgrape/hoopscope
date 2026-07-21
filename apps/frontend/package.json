@@ -2,6 +2,8 @@
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
+  "license": "MIT",
+  "author": "Pavel Vinogradov <vin.pavel13@gmail.com>",
   "scripts": {
     "dev": "next dev -p 3001",
     "build": "npm run generate:llms && next build",
