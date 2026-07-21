@@ -10,8 +10,8 @@
     "build": "npm run build -w apps/backend && npm run build -w apps/frontend"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Pavel Vinogradov <vin.pavel13@gmail.com>",
+  "license": "MIT",
   "type": "module",
   "dependencies": {
     "@nestjs/common": "^11.1.23",
