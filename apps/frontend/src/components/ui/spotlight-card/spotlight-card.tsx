@@ -1,6 +1,6 @@
+import {cn} from '@/lib/utils'
 import React, {useRef} from 'react'
 
-import {cn} from '@/shared/lib/utils'
 import './spotlight-card.css'
 
 interface SpotlightCardProps extends React.ComponentPropsWithoutRef<'div'> {

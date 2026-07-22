@@ -1,16 +1,17 @@
-import Image from 'next/image'
-import Link from 'next/link'
-
-import {JsonLd} from '@/components/json-ld'
+import {JsonLd} from '@/components/seo/json-ld'
 import {getHistoricGames} from '@/lib/games-api'
 import {collectionPageSchema} from '@/lib/seo-schema'
 import {createPageMetadata} from '@/lib/site'
+import Image from 'next/image'
+import Link from 'next/link'
+
+export const dynamic = 'force-dynamic'
 
 export const metadata = createPageMetadata({
   title: 'Historic Games - Classic NBA Replays',
   description:
     'Relive classic pro basketball matchups on Hoopscope, replayed tick-by-tick from saved ESPN play-by-play feeds for memorable games from the archives.',
-  path: '/historic-games',
+  path: '/historic-games'
 })
 
 export default async function HistoricGamesPage() {
@@ -29,12 +30,12 @@ export default async function HistoricGamesPage() {
           description: 'Replay classic matchups with saved play-by-play feeds.',
           items: games.map(game => ({
             name: game.name,
-            url: `/historic-games/${game.id}`,
-          })),
+            url: `/historic-games/${game.id}`
+          }))
         })}
       />
       <header className='flex flex-col gap-2'>
-        <p className='text-muted-foreground text-sm uppercase tracking-wider'>Replay archive</p>
+        <p className='text-muted-foreground text-sm tracking-wider uppercase'>Replay archive</p>
         <h1 className='text-2xl font-semibold sm:text-3xl'>Historic NBA Games</h1>
         <p className='text-muted-foreground max-w-2xl text-sm sm:text-base'>
           Pick a saved ESPN play-by-play feed and watch it replay through live websocket ticks.
@@ -63,7 +64,7 @@ export default async function HistoricGamesPage() {
                 <p className='text-2xl font-semibold sm:text-3xl'>
                   {game.awayScore} - {game.homeScore}
                 </p>
-                <p className='text-muted-foreground mt-1 text-xs uppercase tracking-wider'>Final</p>
+                <p className='text-muted-foreground mt-1 text-xs tracking-wider uppercase'>Final</p>
               </div>
               <TeamBlock
                 name={game.homeTeam.name}
@@ -90,7 +91,7 @@ function TeamBlock({
   name,
   abbreviation,
   logo,
-  align = 'left',
+  align = 'left'
 }: {
   name: string
   abbreviation: string

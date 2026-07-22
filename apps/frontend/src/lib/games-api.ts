@@ -1,4 +1,6 @@
-const API_BASE_URL = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000'
+import {apiFetch, apiFetchOrNull, proxyFetch, proxyFetchOrNull} from '@/lib/api-client'
+
+export {SOCKET_BASE_URL} from '@/lib/api-client'
 
 export type GameTeam = {
   id: string
@@ -123,107 +125,55 @@ export type GameSummary = {
   leaders: GameLeader[]
 }
 
-export const SOCKET_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000'
-
 const DATE_KEY_PATTERN = /^\d{4}-\d{2}-\d{2}$/
 
-async function request<T>(path: string): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    cache: 'no-store',
-  })
-
-  if (!response.ok) {
-    throw new Error(`Failed to load ${path}: ${response.status}`)
-  }
-
-  return response.json() as Promise<T>
-}
-
 export async function getHistoricGames(): Promise<LiveGameState[]> {
-  return request<LiveGameState[]>('/games/live')
+  return apiFetch<LiveGameState[]>('/games/live')
 }
 
 export async function getHistoricGame(gameId: string): Promise<LiveGameState | null> {
-  return request<LiveGameState | null>(`/games/live/${gameId}`)
+  return apiFetch<LiveGameState | null>(`/games/live/${gameId}`)
 }
 
 export async function getSchedule(date: string, offsetMinutes: number): Promise<ScoreboardGame[]> {
   const params = new URLSearchParams({
     date,
-    offsetMinutes: String(offsetMinutes),
+    offsetMinutes: String(offsetMinutes)
   })
 
-  const response = await fetch(`/api/games/schedule?${params.toString()}`, {
-    cache: 'no-store',
-  })
-
-  if (!response.ok) {
-    throw new Error(`Failed to load /games/schedule: ${response.status}`)
-  }
-
-  return response.json() as Promise<ScoreboardGame[]>
+  return proxyFetch<ScoreboardGame[]>(`/api/games/schedule?${params.toString()}`)
 }
 
-export async function getServerSchedule(
-  date: string,
-  offsetMinutes: number,
-): Promise<ScoreboardGame[]> {
+export async function getServerSchedule(date: string, offsetMinutes: number): Promise<ScoreboardGame[]> {
   const params = new URLSearchParams({
     date,
-    offsetMinutes: String(offsetMinutes),
+    offsetMinutes: String(offsetMinutes)
   })
 
-  return request<ScoreboardGame[]>(`/games/schedule?${params.toString()}`)
+  return apiFetch<ScoreboardGame[]>(`/games/schedule?${params.toString()}`)
 }
 
 export async function getNearestScheduleDate(
   date: string,
   offsetMinutes: number,
-  direction: 'before' | 'after' = 'before',
+  direction: 'before' | 'after' = 'before'
 ): Promise<string | null> {
   const params = new URLSearchParams({
     date,
     offsetMinutes: String(offsetMinutes),
-    direction,
+    direction
   })
 
-  const response = await fetch(`/api/games/schedule/nearest?${params.toString()}`, {
-    cache: 'no-store',
-  })
-
-  if (response.status === 404) return null
-  if (!response.ok) {
-    throw new Error(`Failed to load /games/schedule/nearest: ${response.status}`)
-  }
-
-  const payload = (await response.json()) as {date: string}
-  return payload.date
+  const payload = await proxyFetchOrNull<{date: string}>(`/api/games/schedule/nearest?${params.toString()}`)
+  return payload?.date ?? null
 }
 
 export async function getServerGameSummary(gameId: string): Promise<GameSummary | null> {
-  const response = await fetch(`${API_BASE_URL}/games/${gameId}`, {
-    cache: 'no-store',
-  })
-
-  if (response.status === 404) return null
-  if (!response.ok) {
-    throw new Error(`Failed to load /games/${gameId}: ${response.status}`)
-  }
-
-  return response.json() as Promise<GameSummary>
+  return apiFetchOrNull<GameSummary>(`/games/${gameId}`)
 }
 
 export async function getGameSummary(gameId: string): Promise<GameSummary | null> {
-  const response = await fetch(`/api/games/${gameId}`, {
-    cache: 'no-store',
-  })
-
-  if (response.status === 404) return null
-  if (!response.ok) {
-    throw new Error(`Failed to load /api/games/${gameId}: ${response.status}`)
-  }
-
-  return response.json() as Promise<GameSummary>
+  return proxyFetchOrNull<GameSummary>(`/api/games/${gameId}`)
 }
 
 export function getTodayDateKey(): string {
@@ -237,10 +187,7 @@ export function getOffsetMinutesForDate(dateKey: string): number {
 export function isValidDateKey(dateKey: string | null | undefined): dateKey is string {
   if (!dateKey || !DATE_KEY_PATTERN.test(dateKey)) return false
   const date = parseLocalDateKey(dateKey)
-  return (
-    Number.isFinite(date.getTime()) &&
-    formatDateKey(date) === dateKey
-  )
+  return Number.isFinite(date.getTime()) && formatDateKey(date) === dateKey
 }
 
 export function addDaysToDateKey(dateKey: string, days: number): string {
@@ -265,6 +212,6 @@ export function formatCompactDateLabel(dateKey: string, locale = 'en-US'): strin
   return new Intl.DateTimeFormat(locale, {
     weekday: 'short',
     month: 'long',
-    day: 'numeric',
+    day: 'numeric'
   }).format(parseLocalDateKey(dateKey))
 }

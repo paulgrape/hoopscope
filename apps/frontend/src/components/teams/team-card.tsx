@@ -1,13 +1,12 @@
 'use client'
 
+import SpotlightCard from '@/components/ui/spotlight-card/spotlight-card'
+import {getSpotlightColor} from '@/lib/colors'
+import {type TeamSummary} from '@/lib/teams-api'
 import {useTheme} from 'next-themes'
 import Image from 'next/image'
 import Link from 'next/link'
 import {useMemo} from 'react'
-
-import SpotlightCard from '@/components/ui/spotlight-card/spotlight-card'
-import {type TeamSummary} from '@/lib/teams-api'
-import {getSpotlightColor} from '@/shared/lib/utils'
 
 type TeamCardProps = {
   team: TeamSummary

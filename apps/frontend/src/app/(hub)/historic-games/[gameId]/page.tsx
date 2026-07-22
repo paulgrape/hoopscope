@@ -1,12 +1,11 @@
-import Link from 'next/link'
-import {notFound} from 'next/navigation'
-
-import {JsonLd} from '@/components/json-ld'
-import {HistoricGameSimulator} from '@/components/historic-game-simulator'
-import {breadcrumbSchema, sportsEventSchema} from '@/lib/seo-schema'
+import {HistoricGameSimulator} from '@/components/match/historic-game-simulator'
+import {JsonLd} from '@/components/seo/json-ld'
 import {SOCKET_BASE_URL, getHistoricGame} from '@/lib/games-api'
+import {breadcrumbSchema, sportsEventSchema} from '@/lib/seo-schema'
 import {createPageMetadata} from '@/lib/site'
 import type {Metadata} from 'next'
+import Link from 'next/link'
+import {notFound} from 'next/navigation'
 
 type HistoricGamePageProps = {
   params: Promise<{
@@ -21,15 +20,16 @@ export async function generateMetadata({params}: HistoricGamePageProps): Promise
   if (!game) {
     return createPageMetadata({
       title: 'Historic Game - Classic NBA Replay',
-      description: 'Replay a classic pro basketball matchup tick-by-tick from saved ESPN play-by-play data on Hoopscope.',
-      path: `/historic-games/${gameId}`,
+      description:
+        'Replay a classic pro basketball matchup tick-by-tick from saved ESPN play-by-play data on Hoopscope.',
+      path: `/historic-games/${gameId}`
     })
   }
 
   return createPageMetadata({
     title: `${game.name} - Play-by-Play Replay`,
     description: `Replay ${game.name} on Hoopscope with a simulated, tick-by-tick play-by-play feed recreated from the original ESPN game data.`,
-    path: `/historic-games/${gameId}`,
+    path: `/historic-games/${gameId}`
   })
 }
 
@@ -57,12 +57,12 @@ export default async function HistoricGamePage({params}: HistoricGamePageProps) 
             awayTeam: game.awayTeam.name,
             homeScore: game.homeScore,
             awayScore: game.awayScore,
-            status: game.status,
+            status: game.status
           }),
           breadcrumbSchema([
             {name: 'Historic Games', path: '/historic-games'},
-            {name: game.name, path: `/historic-games/${gameId}`},
-          ]),
+            {name: game.name, path: `/historic-games/${gameId}`}
+          ])
         ]}
       />
       <Link
@@ -73,7 +73,7 @@ export default async function HistoricGamePage({params}: HistoricGamePageProps) 
       </Link>
 
       <header className='flex flex-col gap-2'>
-        <p className='text-muted-foreground text-sm uppercase tracking-wider'>Live replay</p>
+        <p className='text-muted-foreground text-sm tracking-wider uppercase'>Live replay</p>
         <h1 className='text-2xl font-semibold sm:text-3xl'>{game.name}</h1>
         <p className='text-muted-foreground max-w-2xl text-sm sm:text-base'>
           This replay follows the saved ESPN play-by-play feed and updates as websocket ticks arrive.

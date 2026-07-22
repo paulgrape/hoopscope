@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000'
+import {apiFetch} from '@/lib/api-client'
 
 export type TeamSummary = {
   id: string
@@ -72,28 +72,16 @@ export function buildSeasonOptions(currentSeason: number): SeasonOption[] {
   })
 }
 
-async function request<T>(path: string): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    cache: 'no-store',
-  })
-
-  if (!response.ok) {
-    throw new Error(`Failed to load ${path}: ${response.status}`)
-  }
-
-  return response.json() as Promise<T>
-}
-
 export async function getTeams(): Promise<TeamSummary[]> {
-  return request<TeamSummary[]>('/teams')
+  return apiFetch<TeamSummary[]>('/teams', {revalidate: 3600})
 }
 
 export async function getTeam(teamId: string): Promise<TeamDetails> {
-  return request<TeamDetails>(`/teams/${teamId}`)
+  return apiFetch<TeamDetails>(`/teams/${teamId}`, {revalidate: 3600})
 }
 
 export async function getTeamRoster(teamId: string): Promise<TeamRosterPlayer[]> {
-  return request<TeamRosterPlayer[]>(`/teams/${teamId}/roster`)
+  return apiFetch<TeamRosterPlayer[]>(`/teams/${teamId}/roster`, {revalidate: 3600})
 }
 
 type TeamSeasonStatsOptions = {
@@ -103,7 +91,7 @@ type TeamSeasonStatsOptions = {
 
 export async function getTeamSeasonStats(
   teamId: string,
-  options: TeamSeasonStatsOptions = {},
+  options: TeamSeasonStatsOptions = {}
 ): Promise<TeamSeasonStatsResponse> {
   const params = new URLSearchParams()
   if (options.season != null) params.set('season', String(options.season))
@@ -111,5 +99,5 @@ export async function getTeamSeasonStats(
 
   const query = params.toString()
   const path = query ? `/teams/${teamId}/stats?${query}` : `/teams/${teamId}/stats`
-  return request<TeamSeasonStatsResponse>(path)
+  return apiFetch<TeamSeasonStatsResponse>(path, {revalidate: 1800})
 }

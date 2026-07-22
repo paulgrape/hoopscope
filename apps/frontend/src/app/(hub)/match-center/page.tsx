@@ -1,22 +1,16 @@
-import {Suspense} from 'react'
-
-import {JsonLd} from '@/components/json-ld'
-import {MatchCenterTimeline} from '@/components/match-center-timeline'
+import {MatchCenterTimeline} from '@/components/match/match-center-timeline'
+import {JsonLd} from '@/components/seo/json-ld'
 import {Skeleton} from '@/components/ui/skeleton'
+import {getOffsetMinutesForDate, getServerSchedule, getTodayDateKey, isValidDateKey} from '@/lib/games-api'
 import {webPageSchema} from '@/lib/seo-schema'
-import {
-  getOffsetMinutesForDate,
-  getServerSchedule,
-  getTodayDateKey,
-  isValidDateKey,
-} from '@/lib/games-api'
 import {createPageMetadata} from '@/lib/site'
+import {Suspense} from 'react'
 
 export const metadata = createPageMetadata({
   title: 'Match Center - Live NBA Scores & Schedule',
   description:
     'Browse pro basketball games by your local calendar date, including live scoreboards, final results, and upcoming tip-offs across the league.',
-  path: '/match-center',
+  path: '/match-center'
 })
 
 type MatchCenterPageProps = {
@@ -27,10 +21,7 @@ export default async function MatchCenterPage({searchParams}: MatchCenterPagePro
   const params = await searchParams
   const today = getTodayDateKey()
   const initialDate = isValidDateKey(params.date) ? params.date : today
-  const initialGames = await getServerSchedule(
-    initialDate,
-    getOffsetMinutesForDate(initialDate),
-  ).catch(() => [])
+  const initialGames = await getServerSchedule(initialDate, getOffsetMinutesForDate(initialDate)).catch(() => [])
 
   return (
     <main
@@ -43,20 +34,23 @@ export default async function MatchCenterPage({searchParams}: MatchCenterPagePro
           path: '/match-center',
           title: 'Match Center',
           description:
-            'Browse NBA games by your local calendar date, including completed scoreboards, live game state, and upcoming tip-off times.',
+            'Browse NBA games by your local calendar date, including completed scoreboards, live game state, and upcoming tip-off times.'
         })}
       />
       <header className='flex flex-col gap-2'>
-        <p className='text-muted-foreground text-sm uppercase tracking-wider'>Live schedule</p>
+        <p className='text-muted-foreground text-sm tracking-wider uppercase'>Live schedule</p>
         <h1 className='text-2xl font-semibold sm:text-3xl'>Match Center</h1>
         <p className='text-muted-foreground max-w-2xl text-sm sm:text-base'>
-          Browse NBA games by your local calendar date, including completed scoreboards, live game
-          state, and upcoming tip-off times.
+          Browse NBA games by your local calendar date, including completed scoreboards, live game state, and upcoming
+          tip-off times.
         </p>
       </header>
 
       <Suspense fallback={<MatchCenterTimelineFallback />}>
-        <MatchCenterTimeline initialDate={initialDate} initialGames={initialGames} />
+        <MatchCenterTimeline
+          initialDate={initialDate}
+          initialGames={initialGames}
+        />
       </Suspense>
     </main>
   )
@@ -71,7 +65,10 @@ function MatchCenterTimelineFallback() {
         <Skeleton className='size-8 rounded-lg' />
       </div>
       {Array.from({length: 3}).map((_, index) => (
-        <Skeleton key={index} className='h-40 w-full rounded-xl' />
+        <Skeleton
+          key={index}
+          className='h-40 w-full rounded-xl'
+        />
       ))}
     </section>
   )

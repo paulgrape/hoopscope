@@ -1,8 +1,7 @@
-import Image from 'next/image'
-import Link from 'next/link'
-
 import type {ConferenceStandings, PlayoffStatus, StandingTeam} from '@/lib/standings-api'
 import {cn} from '@/lib/utils'
+import Image from 'next/image'
+import Link from 'next/link'
 
 const playoffRowClass: Record<PlayoffStatus, string> = {
   playoff: 'border-l-emerald-500 bg-emerald-500/10',
@@ -92,29 +91,58 @@ function ConferenceTable({conference}: {conference: ConferenceStandings}) {
               >
                 #
               </th>
-              <th scope='col' className='w-full px-2 py-2.5 font-medium whitespace-nowrap sm:px-3'>Team</th>
-              <th scope='col' className='px-2 py-2.5 text-center font-medium whitespace-nowrap sm:px-3'>
+              <th
+                scope='col'
+                className='w-full px-2 py-2.5 font-medium whitespace-nowrap sm:px-3'
+              >
+                Team
+              </th>
+              <th
+                scope='col'
+                className='px-2 py-2.5 text-center font-medium whitespace-nowrap sm:px-3'
+              >
                 <abbr title='Wins'>W</abbr>
               </th>
-              <th scope='col' className='px-2 py-2.5 text-center font-medium whitespace-nowrap sm:px-3'>
+              <th
+                scope='col'
+                className='px-2 py-2.5 text-center font-medium whitespace-nowrap sm:px-3'
+              >
                 <abbr title='Losses'>L</abbr>
               </th>
-              <th scope='col' className='px-2 py-2.5 text-center font-medium whitespace-nowrap sm:px-3'>
+              <th
+                scope='col'
+                className='px-2 py-2.5 text-center font-medium whitespace-nowrap sm:px-3'
+              >
                 <abbr title='Win percentage'>PCT</abbr>
               </th>
-              <th scope='col' className='hidden px-2 py-2.5 text-center font-medium whitespace-nowrap sm:table-cell sm:px-3'>
+              <th
+                scope='col'
+                className='hidden px-2 py-2.5 text-center font-medium whitespace-nowrap sm:table-cell sm:px-3'
+              >
                 <abbr title='Games behind'>GB</abbr>
               </th>
-              <th scope='col' className='hidden px-2 py-2.5 text-center font-medium whitespace-nowrap md:table-cell md:px-3'>
+              <th
+                scope='col'
+                className='hidden px-2 py-2.5 text-center font-medium whitespace-nowrap md:table-cell md:px-3'
+              >
                 Home
               </th>
-              <th scope='col' className='hidden px-2 py-2.5 text-center font-medium whitespace-nowrap md:table-cell md:px-3'>
+              <th
+                scope='col'
+                className='hidden px-2 py-2.5 text-center font-medium whitespace-nowrap md:table-cell md:px-3'
+              >
                 Road
               </th>
-              <th scope='col' className='hidden px-2 py-2.5 text-center font-medium whitespace-nowrap lg:table-cell lg:px-3'>
+              <th
+                scope='col'
+                className='hidden px-2 py-2.5 text-center font-medium whitespace-nowrap lg:table-cell lg:px-3'
+              >
                 <abbr title='Last 10 games'>L10</abbr>
               </th>
-              <th scope='col' className='hidden px-2 py-2.5 text-center font-medium whitespace-nowrap lg:table-cell lg:px-3'>
+              <th
+                scope='col'
+                className='hidden px-2 py-2.5 text-center font-medium whitespace-nowrap lg:table-cell lg:px-3'
+              >
                 <abbr title='Streak'>STRK</abbr>
               </th>
             </tr>

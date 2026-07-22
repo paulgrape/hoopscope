@@ -1,9 +1,8 @@
-import {FileQuestion} from 'lucide-react'
-import Link from 'next/link'
-
-import {StatusPage} from '@/components/status-page'
+import {StatusPage} from '@/components/layout/status-page'
 import {buttonVariants} from '@/components/ui/button'
 import {cn} from '@/lib/utils'
+import {FileQuestion} from 'lucide-react'
+import Link from 'next/link'
 
 export function NotFoundContent() {
   return (

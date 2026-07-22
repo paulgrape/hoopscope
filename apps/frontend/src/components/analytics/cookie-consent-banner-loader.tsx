@@ -3,10 +3,7 @@
 import dynamic from 'next/dynamic'
 
 const CookieConsentBannerClient = dynamic(
-  () =>
-    import('@/components/cookie-consent-banner').then(
-      module => module.CookieConsentBannerClient
-    ),
+  () => import('@/components/analytics/cookie-consent-banner').then(module => module.CookieConsentBannerClient),
   {ssr: false}
 )
 

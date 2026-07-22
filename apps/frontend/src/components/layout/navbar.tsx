@@ -1,15 +1,14 @@
 'use client'
 
+import {Button} from '@/components/ui/button'
+import {SITE_NAME} from '@/lib/site'
+import {cn} from '@/lib/utils'
 import {Menu, Moon, Sun, X} from 'lucide-react'
 import {useTheme} from 'next-themes'
 import Image from 'next/image'
 import Link from 'next/link'
 import {usePathname} from 'next/navigation'
 import {useEffect, useRef, useState} from 'react'
-
-import {Button} from '@/components/ui/button'
-import {SITE_NAME} from '@/lib/site'
-import {cn} from '@/lib/utils'
 
 const navLinks = [
   {href: '/', label: 'Home'},

@@ -37,6 +37,9 @@ export default function GlobalError({error, reset}: GlobalErrorProps) {
               >
                 Try again
               </button>
+              {/* global-error replaces the root layout, so the router may be
+                  broken here; a full-page navigation is intentional. */}
+              {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
               <a
                 href='/'
                 className='border-border bg-background hover:bg-muted inline-flex h-8 items-center justify-center rounded-lg border px-2.5 text-sm font-medium transition-colors'

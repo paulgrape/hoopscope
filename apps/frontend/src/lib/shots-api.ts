@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000'
+import {apiFetch} from '@/lib/api-client'
 
 export type ShotPoint = {
   x: number
@@ -35,27 +35,15 @@ type ShotHeatmapOptions = {
   seasonType?: string
 }
 
-async function request<T>(path: string): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    cache: 'no-store',
-  })
-
-  if (!response.ok) {
-    throw new Error(`Failed to load ${path}: ${response.status}`)
-  }
-
-  return response.json() as Promise<T>
-}
-
-export async function getShotHeatmap(
-  options: ShotHeatmapOptions,
-): Promise<ShotHeatmapResponse> {
+export async function getShotHeatmap(options: ShotHeatmapOptions): Promise<ShotHeatmapResponse> {
   const params = new URLSearchParams({
-    playerId: options.playerId,
+    playerId: options.playerId
   })
 
   if (options.season) params.set('season', options.season)
   if (options.seasonType) params.set('seasonType', options.seasonType)
 
-  return request<ShotHeatmapResponse>(`/shots/heatmap?${params.toString()}`)
+  return apiFetch<ShotHeatmapResponse>(`/shots/heatmap?${params.toString()}`, {
+    revalidate: 3600
+  })
 }

@@ -1,12 +1,11 @@
-import Image from 'next/image'
-import Link from 'next/link'
-
-import {JsonLd} from '@/components/json-ld'
-import {TeamSeasonStats} from '@/components/team-season-stats'
+import {JsonLd} from '@/components/seo/json-ld'
+import {TeamSeasonStats} from '@/components/teams/team-season-stats'
 import {breadcrumbSchema, sportsTeamSchema} from '@/lib/seo-schema'
 import {SITE_NAME, createPageMetadata} from '@/lib/site'
-import {getTeam, getTeamRoster, getTeamSeasonStats, type TeamRosterPlayer} from '@/lib/teams-api'
+import {getTeam, getTeamSeasonStats} from '@/lib/teams-api'
 import type {Metadata} from 'next'
+import Image from 'next/image'
+import Link from 'next/link'
 
 type TeamDetailsPageProps = {
   params: Promise<{
@@ -22,15 +21,14 @@ export async function generateMetadata({params}: TeamDetailsPageProps): Promise<
     title: `${team.displayName} - Roster, Stats & Schedule`,
     description: `Follow the ${team.displayName} on ${SITE_NAME}: full roster, season record, team details, and regular season and playoff statistics.`,
     path: `/teams/${teamId}`,
-    image: team.logo,
+    image: team.logo
   })
 }
 
 export default async function TeamDetailsPage({params}: TeamDetailsPageProps) {
   const {teamId} = await params
-  const [team, roster, regularStats, playoffStats] = await Promise.all([
+  const [team, regularStats, playoffStats] = await Promise.all([
     getTeam(teamId),
-    getTeamRoster(teamId),
     getTeamSeasonStats(teamId, {seasonType: 'regular'}),
     getTeamSeasonStats(teamId, {seasonType: 'playoffs'})
   ])
@@ -48,12 +46,12 @@ export default async function TeamDetailsPage({params}: TeamDetailsPageProps) {
             name: team.displayName,
             location: team.location,
             logo: team.logo,
-            record: team.record,
+            record: team.record
           }),
           breadcrumbSchema([
             {name: 'Teams', path: '/teams'},
-            {name: team.displayName, path: `/teams/${teamId}`},
-          ]),
+            {name: team.displayName, path: `/teams/${teamId}`}
+          ])
         ]}
       />
       <Link
@@ -90,54 +88,6 @@ export default async function TeamDetailsPage({params}: TeamDetailsPageProps) {
         playoffStats={playoffStats}
         teamId={teamId}
       />
-
-      {/* <section className='bg-card border-border rounded-xl border p-3 sm:p-5'>
-        <h2 className='text-card-foreground text-lg font-semibold sm:text-xl'>Roster</h2>
-        {roster.length === 0 ? (
-          <p className='text-muted-foreground mt-4 rounded-lg border border-dashed px-4 py-6 text-sm'>
-            No roster data available.
-          </p>
-        ) : (
-          <div className='mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3'>
-            {roster.map((player) => (
-              <Link
-                key={player.id}
-                href={getPlayerHref(player.id, teamId)}
-                className='hover:bg-background/60 block transition-colors'
-              >
-                <RosterPlayerCard player={player} />
-              </Link>
-            ))}
-          </div>
-        )}
-      </section> */}
     </main>
-  )
-}
-
-function RosterPlayerCard({player}: {player: TeamRosterPlayer}) {
-  return (
-    <article className='bg-background/40 border-border flex items-center gap-3 rounded-lg border p-3'>
-      {player.headshot ? (
-        <Image
-          src={player.headshot}
-          alt={player.fullName}
-          width={56}
-          height={56}
-          className='h-14 w-14 shrink-0 rounded-full object-cover'
-        />
-      ) : (
-        <div className='bg-muted h-14 w-14 shrink-0 rounded-full' />
-      )}
-      <div className='min-w-0 flex-1'>
-        <p className='text-card-foreground truncate font-semibold'>{player.fullName}</p>
-        <div className='text-muted-foreground mt-1 flex flex-wrap gap-x-3 gap-y-1 text-sm'>
-          <span>#{player.jersey ?? '-'}</span>
-          <span>{player.position ?? '-'}</span>
-          <span>Age {player.age ?? '-'}</span>
-          <span>{player.experience} yrs</span>
-        </div>
-      </div>
-    </article>
   )
 }

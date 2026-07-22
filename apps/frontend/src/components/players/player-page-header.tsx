@@ -1,7 +1,6 @@
+import type {PlayerProfile} from '@/lib/players-api'
 import Image from 'next/image'
 import Link from 'next/link'
-
-import type {PlayerProfile} from '@/lib/players-api'
 
 type PlayerPageHeaderProps = {
   player: PlayerProfile
@@ -60,9 +59,7 @@ export function PlayerPageHeader({player}: PlayerPageHeaderProps) {
           ) : null}
         </div>
 
-        {player.injury?.detail ? (
-          <p className='text-muted-foreground mt-3 text-sm'>{player.injury.detail}</p>
-        ) : null}
+        {player.injury?.detail ? <p className='text-muted-foreground mt-3 text-sm'>{player.injury.detail}</p> : null}
       </div>
     </header>
   )
@@ -82,9 +79,9 @@ export function PlayerBioGrid({player}: PlayerBioGridProps) {
     {label: 'Experience', value: `${player.experience} yrs`},
     {
       label: 'Active',
-      value: player.active == null ? null : player.active ? 'Yes' : 'No',
-    },
-  ].filter((item) => item.value)
+      value: player.active == null ? null : player.active ? 'Yes' : 'No'
+    }
+  ].filter(item => item.value)
 
   if (items.length === 0) return null
 
@@ -92,7 +89,7 @@ export function PlayerBioGrid({player}: PlayerBioGridProps) {
     <section className='bg-card border-border rounded-xl border p-3 sm:p-5'>
       <h2 className='text-card-foreground text-lg font-semibold sm:text-xl'>Bio</h2>
       <dl className='mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6'>
-        {items.map((item) => (
+        {items.map(item => (
           <div
             key={item.label}
             className='bg-background/40 border-border rounded-lg border px-3 py-2.5'

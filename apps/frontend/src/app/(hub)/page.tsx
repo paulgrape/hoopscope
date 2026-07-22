@@ -1,5 +1,5 @@
-import {JsonLd} from '@/components/json-ld'
-import {NewsNewspaper} from '@/components/news-newspaper'
+import {NewsNewspaper} from '@/components/news/news-newspaper'
+import {JsonLd} from '@/components/seo/json-ld'
 import {getNews} from '@/lib/news-api'
 import {collectionPageSchema} from '@/lib/seo-schema'
 import {SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE, createPageMetadata} from '@/lib/site'

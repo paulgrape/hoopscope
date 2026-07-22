@@ -1,14 +1,16 @@
-import {JsonLd} from '@/components/json-ld'
-import {TeamCard} from '@/components/team-card'
+import {JsonLd} from '@/components/seo/json-ld'
+import {TeamCard} from '@/components/teams/team-card'
 import {collectionPageSchema} from '@/lib/seo-schema'
 import {createPageMetadata} from '@/lib/site'
 import {getTeams} from '@/lib/teams-api'
+
+export const dynamic = 'force-dynamic'
 
 export const metadata = createPageMetadata({
   title: 'NBA Teams - Rosters, Records & Season Stats',
   description:
     'Explore all 30 pro basketball franchises on Hoopscope, with current rosters, win-loss records, team details, and full season statistics in one place.',
-  path: '/teams',
+  path: '/teams'
 })
 
 export default async function TeamsPage() {
@@ -27,8 +29,8 @@ export default async function TeamsPage() {
           description: 'All 30 pro basketball franchises with rosters and team details.',
           items: teams.map(team => ({
             name: team.displayName,
-            url: `/teams/${team.id}`,
-          })),
+            url: `/teams/${team.id}`
+          }))
         })}
       />
       <h1 className='text-2xl font-semibold sm:text-3xl'>NBA Teams</h1>

@@ -1,10 +1,9 @@
 'use client'
 
-import {useEffect, useMemo, useRef, useState} from 'react'
-
 import {Button} from '@/components/ui/button'
 import type {LeagueZoneAvg, ShotPoint} from '@/lib/shots-api'
 import {cn} from '@/lib/utils'
+import {useEffect, useMemo, useRef, useState} from 'react'
 
 /** NBA half-court in feet (stats.nba LOC_* are tenths of a foot). */
 const COURT_WIDTH_FT = 50
@@ -436,7 +435,9 @@ function HexHeatmap({
   const [hoverKey, setHoverKey] = useState<string | null>(null)
   const cells = useMemo(() => buildHexCells(shots, league), [shots, league])
   const onHoverRef = useRef(onHover)
-  onHoverRef.current = onHover
+  useEffect(() => {
+    onHoverRef.current = onHover
+  }, [onHover])
 
   return (
     <svg
@@ -585,10 +586,14 @@ function CloudHeatmap({
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const fieldRef = useRef<CloudField | null>(null)
   const onHoverRef = useRef(onHover)
-  onHoverRef.current = onHover
+  useEffect(() => {
+    onHoverRef.current = onHover
+  }, [onHover])
 
   const field = useMemo(() => buildCloudField(shots, league), [shots, league])
-  fieldRef.current = field
+  useEffect(() => {
+    fieldRef.current = field
+  }, [field])
 
   useEffect(() => {
     const canvas = canvasRef.current

@@ -1,12 +1,11 @@
 'use client'
 
+import {StatusPage} from '@/components/layout/status-page'
+import {Button, buttonVariants} from '@/components/ui/button'
+import {cn} from '@/lib/utils'
 import {CircleAlert} from 'lucide-react'
 import Link from 'next/link'
 import {useEffect} from 'react'
-
-import {StatusPage} from '@/components/status-page'
-import {Button, buttonVariants} from '@/components/ui/button'
-import {cn} from '@/lib/utils'
 
 type ErrorPageContentProps = {
   error: Error & {digest?: string}

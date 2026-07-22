@@ -1,12 +1,13 @@
-import {ConsentDefaultsScript} from '@/components/consent-defaults-script'
-import {CookieConsentBanner} from '@/components/cookie-consent-banner-loader'
-import {GoogleTagManagerScript} from '@/components/google-tag-manager'
-import {JsonLd} from '@/components/json-ld'
-import {ThemeProvider} from '@/components/theme-provider'
+import {ConsentDefaultsScript} from '@/components/analytics/consent-defaults-script'
+import {CookieConsentBanner} from '@/components/analytics/cookie-consent-banner-loader'
+import {GoogleTagManagerScript} from '@/components/analytics/google-tag-manager'
+import {ThemeProvider} from '@/components/layout/theme-provider'
+import {JsonLd} from '@/components/seo/json-ld'
 import {isCookieConsentEnabled} from '@/lib/analytics'
 import {organizationSchema, websiteSchema} from '@/lib/seo-schema'
 import {rootMetadata} from '@/lib/site'
 import {Fraunces, IBM_Plex_Mono, Urbanist} from 'next/font/google'
+
 import './globals.css'
 
 const urbanist = Urbanist({

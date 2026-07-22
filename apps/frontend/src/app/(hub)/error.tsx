@@ -1,6 +1,6 @@
 'use client'
 
-import {ErrorPageContent} from '@/components/error-page-content'
+import {ErrorPageContent} from '@/components/layout/error-page-content'
 
 type HubErrorProps = {
   error: Error & {digest?: string}
@@ -8,5 +8,10 @@ type HubErrorProps = {
 }
 
 export default function HubError({error, reset}: HubErrorProps) {
-  return <ErrorPageContent error={error} reset={reset} />
+  return (
+    <ErrorPageContent
+      error={error}
+      reset={reset}
+    />
+  )
 }

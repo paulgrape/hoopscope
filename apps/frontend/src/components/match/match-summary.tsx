@@ -1,19 +1,18 @@
 'use client'
 
-import Image from 'next/image'
-import Link from 'next/link'
-import {useEffect, useState} from 'react'
-
 import {Tabs, TabsContent, TabsList, TabsTrigger} from '@/components/ui/tabs'
 import {
-  getGameSummary,
   type BoxScorePlayer,
   type GameLeader,
   type GameSummary,
   type ScoreboardTeam,
   type TeamStatLine,
+  getGameSummary
 } from '@/lib/games-api'
 import {cn} from '@/lib/utils'
+import Image from 'next/image'
+import Link from 'next/link'
+import {useEffect, useState} from 'react'
 
 const REFRESH_INTERVAL_MS = 60_000
 const DISPLAY_LOCALE = 'en-US'
@@ -25,9 +24,11 @@ type MatchSummaryProps = {
 export function MatchSummary({initialSummary}: MatchSummaryProps) {
   const [summary, setSummary] = useState(initialSummary)
 
-  useEffect(() => {
+  const [prevInitialSummary, setPrevInitialSummary] = useState(initialSummary)
+  if (initialSummary !== prevInitialSummary) {
+    setPrevInitialSummary(initialSummary)
     setSummary(initialSummary)
-  }, [initialSummary])
+  }
 
   useEffect(() => {
     if (summary.status !== 'live') return
@@ -57,7 +58,7 @@ export function MatchSummary({initialSummary}: MatchSummaryProps) {
     day: 'numeric',
     hour: 'numeric',
     minute: '2-digit',
-    timeZoneName: 'short',
+    timeZoneName: 'short'
   }).format(new Date(summary.date))
 
   return (
@@ -72,8 +73,11 @@ export function MatchSummary({initialSummary}: MatchSummaryProps) {
         </div>
 
         <div className='mt-6 grid gap-3 md:grid-cols-[1fr_auto_1fr] md:items-center md:gap-4'>
-          <TeamScorePanel team={summary.awayTeam} score={showScore ? summary.awayScore : null} />
-          <div className='text-muted-foreground py-0.5 text-center text-xs font-semibold uppercase tracking-wider md:text-sm'>
+          <TeamScorePanel
+            team={summary.awayTeam}
+            score={showScore ? summary.awayScore : null}
+          />
+          <div className='text-muted-foreground py-0.5 text-center text-xs font-semibold tracking-wider uppercase md:text-sm'>
             {summary.status === 'scheduled' ? 'vs' : 'at'}
           </div>
           <TeamScorePanel
@@ -110,7 +114,10 @@ export function MatchSummary({initialSummary}: MatchSummaryProps) {
           <h2 className='text-lg font-semibold'>Leaders</h2>
           <div className='border-border divide-border grid divide-y rounded-xl border sm:grid-cols-3 sm:divide-x sm:divide-y-0'>
             {summary.leaders.map(leader => (
-              <LeaderCard key={`${leader.category}-${leader.athleteId}`} leader={leader} />
+              <LeaderCard
+                key={`${leader.category}-${leader.athleteId}`}
+                leader={leader}
+              />
             ))}
           </div>
         </section>
@@ -131,8 +138,7 @@ function StatusPill({summary}: {summary: GameSummary}) {
         'w-fit rounded-full border px-3 py-1 text-sm font-medium',
         summary.status === 'live' && 'border-red-500/30 bg-red-500/10 text-red-600 dark:text-red-300',
         summary.status === 'final' && 'border-border bg-muted text-muted-foreground',
-        summary.status === 'scheduled' &&
-          'border-sky-500/30 bg-sky-500/10 text-sky-700 dark:text-sky-300',
+        summary.status === 'scheduled' && 'border-sky-500/30 bg-sky-500/10 text-sky-700 dark:text-sky-300'
       )}
     >
       {label}
@@ -143,7 +149,7 @@ function StatusPill({summary}: {summary: GameSummary}) {
 function TeamScorePanel({
   team,
   score,
-  align = 'left',
+  align = 'left'
 }: {
   team: ScoreboardTeam | null
   score: number | null
@@ -178,7 +184,7 @@ function TeamScorePanel({
 
   const className = cn(
     'bg-muted/30 flex min-w-0 items-center gap-3 rounded-lg p-3 md:bg-transparent md:p-0',
-    align === 'right' && 'md:flex-row-reverse',
+    align === 'right' && 'md:flex-row-reverse'
   )
 
   const body = (
@@ -193,7 +199,10 @@ function TeamScorePanel({
   }
 
   return (
-    <Link href={`/teams/${team.id}`} className={cn(className, 'hover:opacity-90')}>
+    <Link
+      href={`/teams/${team.id}`}
+      className={cn(className, 'hover:opacity-90')}
+    >
       {body}
     </Link>
   )
@@ -205,9 +214,7 @@ function LineScore({summary}: {summary: GameSummary}) {
   const periodCount = Math.max(awayPeriods.length, homePeriods.length)
   if (periodCount === 0) return null
 
-  const headers = Array.from({length: periodCount}, (_, index) =>
-    index < 4 ? `Q${index + 1}` : `OT${index - 3}`,
-  )
+  const headers = Array.from({length: periodCount}, (_, index) => (index < 4 ? `Q${index + 1}` : `OT${index - 3}`))
 
   return (
     <div className='border-border mt-6 overflow-x-auto rounded-lg border'>
@@ -216,7 +223,10 @@ function LineScore({summary}: {summary: GameSummary}) {
           <tr>
             <th className='px-3 py-2 text-left font-medium'>Team</th>
             {headers.map(label => (
-              <th key={label} className='px-2 py-2 text-center font-medium'>
+              <th
+                key={label}
+                className='px-2 py-2 text-center font-medium'
+              >
                 {label}
               </th>
             ))}
@@ -246,7 +256,7 @@ function LineScoreRow({
   team,
   periods,
   periodCount,
-  total,
+  total
 }: {
   team: ScoreboardTeam | null
   periods: number[]
@@ -257,7 +267,10 @@ function LineScoreRow({
     <tr className='border-border border-t'>
       <td className='px-3 py-2 font-medium'>{team?.abbreviation ?? '—'}</td>
       {Array.from({length: periodCount}, (_, index) => (
-        <td key={index} className='px-2 py-2 text-center tabular-nums'>
+        <td
+          key={index}
+          className='px-2 py-2 text-center tabular-nums'
+        >
           {periods[index] ?? '—'}
         </td>
       ))}
@@ -269,42 +282,48 @@ function LineScoreRow({
 function BoxScoreTabs({summary}: {summary: GameSummary}) {
   const awayLabel = summary.awayTeam?.abbreviation ?? 'Away'
   const homeLabel = summary.homeTeam?.abbreviation ?? 'Home'
-  const defaultTab =
-    summary.awayPlayers.length > 0 ? 'away' : summary.homePlayers.length > 0 ? 'home' : 'away'
+  const defaultTab = summary.awayPlayers.length > 0 ? 'away' : summary.homePlayers.length > 0 ? 'home' : 'away'
 
   return (
-    <Tabs defaultValue={defaultTab} className='gap-3'>
+    <Tabs
+      defaultValue={defaultTab}
+      className='gap-3'
+    >
       <TabsList className='w-full sm:w-fit'>
-        <TabsTrigger value='away' className='flex-1 sm:flex-none' disabled={summary.awayPlayers.length === 0}>
+        <TabsTrigger
+          value='away'
+          className='flex-1 sm:flex-none'
+          disabled={summary.awayPlayers.length === 0}
+        >
           {awayLabel}
         </TabsTrigger>
-        <TabsTrigger value='home' className='flex-1 sm:flex-none' disabled={summary.homePlayers.length === 0}>
+        <TabsTrigger
+          value='home'
+          className='flex-1 sm:flex-none'
+          disabled={summary.homePlayers.length === 0}
+        >
           {homeLabel}
         </TabsTrigger>
       </TabsList>
       <TabsContent value='away'>
-        <BoxScoreTable team={summary.awayTeam} players={summary.awayPlayers} />
+        <BoxScoreTable
+          team={summary.awayTeam}
+          players={summary.awayPlayers}
+        />
       </TabsContent>
       <TabsContent value='home'>
-        <BoxScoreTable team={summary.homeTeam} players={summary.homePlayers} />
+        <BoxScoreTable
+          team={summary.homeTeam}
+          players={summary.homePlayers}
+        />
       </TabsContent>
     </Tabs>
   )
 }
 
-function BoxScoreTable({
-  team,
-  players,
-}: {
-  team: ScoreboardTeam | null
-  players: BoxScorePlayer[]
-}) {
+function BoxScoreTable({team, players}: {team: ScoreboardTeam | null; players: BoxScorePlayer[]}) {
   if (players.length === 0) {
-    return (
-      <p className='text-muted-foreground text-sm'>
-        No box score yet for {team?.displayName ?? 'this team'}.
-      </p>
-    )
+    return <p className='text-muted-foreground text-sm'>No box score yet for {team?.displayName ?? 'this team'}.</p>
   }
 
   const starters = players.filter(player => player.starter)
@@ -332,17 +351,29 @@ function BoxScoreTable({
         <tbody>
           {starters.length > 0 ? (
             <>
-              <BoxScoreGroupLabel colSpan={12} label='Starters' />
+              <BoxScoreGroupLabel
+                colSpan={12}
+                label='Starters'
+              />
               {starters.map(player => (
-                <BoxScoreRow key={player.athleteId ?? player.name} player={player} />
+                <BoxScoreRow
+                  key={player.athleteId ?? player.name}
+                  player={player}
+                />
               ))}
             </>
           ) : null}
           {bench.length > 0 ? (
             <>
-              <BoxScoreGroupLabel colSpan={12} label='Bench' />
+              <BoxScoreGroupLabel
+                colSpan={12}
+                label='Bench'
+              />
               {bench.map(player => (
-                <BoxScoreRow key={player.athleteId ?? player.name} player={player} />
+                <BoxScoreRow
+                  key={player.athleteId ?? player.name}
+                  player={player}
+                />
               ))}
             </>
           ) : null}
@@ -355,7 +386,10 @@ function BoxScoreTable({
 function BoxScoreGroupLabel({colSpan, label}: {colSpan: number; label: string}) {
   return (
     <tr className='bg-muted/20'>
-      <td colSpan={colSpan} className='text-muted-foreground px-3 py-1.5 text-xs font-medium tracking-wider uppercase'>
+      <td
+        colSpan={colSpan}
+        className='text-muted-foreground px-3 py-1.5 text-xs font-medium tracking-wider uppercase'
+      >
         {label}
       </td>
     </tr>
@@ -367,9 +401,7 @@ function BoxScoreRow({player}: {player: BoxScorePlayer}) {
   const nameCell = (
     <span className='flex min-w-0 items-baseline gap-1.5'>
       <span className='truncate font-medium'>{name}</span>
-      {player.position ? (
-        <span className='text-muted-foreground shrink-0 text-xs'>{player.position}</span>
-      ) : null}
+      {player.position ? <span className='text-muted-foreground shrink-0 text-xs'>{player.position}</span> : null}
     </span>
   )
 
@@ -377,7 +409,10 @@ function BoxScoreRow({player}: {player: BoxScorePlayer}) {
     <tr className='border-border border-t'>
       <td className='max-w-40 px-3 py-2'>
         {player.athleteId ? (
-          <Link href={`/players/${player.athleteId}`} className='hover:underline'>
+          <Link
+            href={`/players/${player.athleteId}`}
+            className='hover:underline'
+          >
             {nameCell}
           </Link>
         ) : (
@@ -403,7 +438,7 @@ function TeamTotalsComparison({
   awayTeam,
   homeTeam,
   awayTotals,
-  homeTotals,
+  homeTotals
 }: {
   awayTeam: ScoreboardTeam | null
   homeTeam: ScoreboardTeam | null
@@ -434,23 +469,9 @@ function TeamTotalsComparison({
               key={stat.name}
               className='border-border grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 border-t px-3 py-2.5 text-sm sm:px-4'
             >
-              <span
-                className={cn(
-                  'text-left tabular-nums',
-                  leader === 'away' && 'font-semibold',
-                )}
-              >
-                {awayValue}
-              </span>
+              <span className={cn('text-left tabular-nums', leader === 'away' && 'font-semibold')}>{awayValue}</span>
               <span className='text-muted-foreground w-28 text-center sm:w-36'>{stat.label}</span>
-              <span
-                className={cn(
-                  'text-right tabular-nums',
-                  leader === 'home' && 'font-semibold',
-                )}
-              >
-                {homeValue}
-              </span>
+              <span className={cn('text-right tabular-nums', leader === 'home' && 'font-semibold')}>{homeValue}</span>
             </li>
           )
         })}
@@ -483,9 +504,7 @@ function LeaderCard({leader}: {leader: GameLeader}) {
             {leader.displayName}
           </p>
           <p className='truncate font-semibold'>{leader.shortName ?? leader.athleteName}</p>
-          {leader.teamAbbreviation ? (
-            <p className='text-muted-foreground text-sm'>{leader.teamAbbreviation}</p>
-          ) : null}
+          {leader.teamAbbreviation ? <p className='text-muted-foreground text-sm'>{leader.teamAbbreviation}</p> : null}
         </div>
         <p className='shrink-0 text-2xl leading-none font-semibold tabular-nums'>{leader.value}</p>
       </div>
