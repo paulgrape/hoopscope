@@ -1,4 +1,5 @@
 import { BadRequestException, Controller, Get, Query } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { NbaSeasonType } from '../nba-stats/nba-stats.service';
 import { ShotsService } from './shots.service';
@@ -13,7 +14,14 @@ const SEASON_TYPES: NbaSeasonType[] = [
 @ApiTags('shots')
 @Controller('shots')
 export class ShotsController {
-  constructor(private readonly shotsService: ShotsService) {}
+  private readonly defaultSeason: string;
+
+  constructor(
+    private readonly shotsService: ShotsService,
+    config: ConfigService,
+  ) {
+    this.defaultSeason = config.get<string>('NBA_DEFAULT_SEASON') ?? '2025-26';
+  }
 
   @Get('heatmap')
   @ApiOperation({ summary: 'Get player shot chart points for a heatmap' })
@@ -34,7 +42,7 @@ export class ShotsController {
       throw new BadRequestException('playerId is required');
     }
 
-    const resolvedSeason = season?.trim() || '2025-26';
+    const resolvedSeason = season?.trim() || this.defaultSeason;
     const resolvedSeasonType = (seasonType?.trim() ||
       'Regular Season') as NbaSeasonType;
 
