@@ -1,7 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { ThrottlerModule } from '@nestjs/throttler';
+import { APP_FILTER, APP_GUARD } from '@nestjs/core';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { CacheModule } from './cache/cache.module';
+import { AllExceptionsFilter } from './common/http-exception.filter';
 import { EspnModule } from './espn/espn.module';
 import { GamesModule } from './games/games.module';
 import { HealthModule } from './health/health.module';
@@ -26,6 +28,10 @@ import { TeamsModule } from './teams/teams.module';
     NewsModule,
     ShotsModule,
     StandingsModule,
+  ],
+  providers: [
+    { provide: APP_GUARD, useClass: ThrottlerGuard },
+    { provide: APP_FILTER, useClass: AllExceptionsFilter },
   ],
 })
 export class AppModule {}
