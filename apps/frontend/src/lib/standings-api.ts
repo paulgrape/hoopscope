@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000'
+import {apiFetch} from '@/lib/api-client'
 
 export type PlayoffStatus = 'playoff' | 'play-in' | 'out'
 
@@ -36,18 +36,6 @@ export type StandingsResponse = {
   conferences: ConferenceStandings[]
 }
 
-async function request<T>(path: string): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    cache: 'no-store',
-  })
-
-  if (!response.ok) {
-    throw new Error(`Failed to load ${path}: ${response.status}`)
-  }
-
-  return response.json() as Promise<T>
-}
-
 export async function getStandings(): Promise<StandingsResponse> {
-  return request<StandingsResponse>('/standings')
+  return apiFetch<StandingsResponse>('/standings', {revalidate: 900})
 }

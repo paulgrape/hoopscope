@@ -1,12 +1,11 @@
-import Link from 'next/link'
-import {notFound} from 'next/navigation'
-
-import {JsonLd} from '@/components/json-ld'
-import {MatchSummary} from '@/components/match-summary'
-import {breadcrumbSchema, sportsEventSchema} from '@/lib/seo-schema'
+import {MatchSummary} from '@/components/match/match-summary'
+import {JsonLd} from '@/components/seo/json-ld'
 import {getServerGameSummary, isValidDateKey} from '@/lib/games-api'
+import {breadcrumbSchema, sportsEventSchema} from '@/lib/seo-schema'
 import {createPageMetadata} from '@/lib/site'
 import type {Metadata} from 'next'
+import Link from 'next/link'
+import {notFound} from 'next/navigation'
 
 type MatchPageProps = {
   params: Promise<{gameId: string}>
@@ -21,14 +20,14 @@ export async function generateMetadata({params}: MatchPageProps): Promise<Metada
     return createPageMetadata({
       title: 'Match - NBA Game Details',
       description: 'View scoreboard, team totals, and leaders for an NBA matchup on Hoopscope.',
-      path: `/match-center/${gameId}`,
+      path: `/match-center/${gameId}`
     })
   }
 
   return createPageMetadata({
     title: `${game.shortName ?? game.name} - Match Details`,
     description: `Follow ${game.name}: live or final score, team totals, and game leaders.`,
-    path: `/match-center/${gameId}`,
+    path: `/match-center/${gameId}`
   })
 }
 
@@ -62,12 +61,12 @@ export default async function MatchPage({params, searchParams}: MatchPageProps) 
             homeScore: game.homeScore ?? 0,
             awayScore: game.awayScore ?? 0,
             status: game.status,
-            path: `/match-center/${gameId}`,
+            path: `/match-center/${gameId}`
           }),
           breadcrumbSchema([
             {name: 'Match Center', path: '/match-center'},
-            {name: game.shortName ?? game.name, path: `/match-center/${gameId}`},
-          ]),
+            {name: game.shortName ?? game.name, path: `/match-center/${gameId}`}
+          ])
         ]}
       />
 

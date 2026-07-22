@@ -1,14 +1,16 @@
-import {JsonLd} from '@/components/json-ld'
-import {StandingsTables} from '@/components/standings-tables'
+import {JsonLd} from '@/components/seo/json-ld'
+import {StandingsTables} from '@/components/standings/standings-tables'
 import {collectionPageSchema} from '@/lib/seo-schema'
-import {getStandings} from '@/lib/standings-api'
 import {createPageMetadata} from '@/lib/site'
+import {getStandings} from '@/lib/standings-api'
+
+export const dynamic = 'force-dynamic'
 
 export const metadata = createPageMetadata({
   title: 'NBA Standings - Conference & Playoff Race',
   description:
     'Live pro basketball conference standings on Hoopscope, with playoff seeding and play-in tournament positions clearly highlighted for both conferences.',
-  path: '/standings',
+  path: '/standings'
 })
 
 export default async function StandingsPage() {
@@ -28,13 +30,13 @@ export default async function StandingsPage() {
           items: standings.conferences.flatMap(conference =>
             conference.teams.map(team => ({
               name: team.displayName,
-              url: `/teams/${team.id}`,
-            })),
-          ),
+              url: `/teams/${team.id}`
+            }))
+          )
         })}
       />
       <header className='flex flex-col gap-2'>
-        <p className='text-muted-foreground text-sm uppercase tracking-wider'>{standings.season}</p>
+        <p className='text-muted-foreground text-sm tracking-wider uppercase'>{standings.season}</p>
         <h1 className='text-2xl font-semibold sm:text-3xl'>NBA Standings</h1>
         <p className='text-muted-foreground max-w-2xl text-sm sm:text-base'>
           Conference tables with playoff and play-in positions highlighted.

@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000'
+import {apiFetch} from '@/lib/api-client'
 
 export type SeasonType = 'regular' | 'playoffs'
 
@@ -91,20 +91,8 @@ export type PlayerNewsArticle = {
   teams: string[]
 }
 
-async function request<T>(path: string): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    cache: 'no-store',
-  })
-
-  if (!response.ok) {
-    throw new Error(`Failed to load ${path}: ${response.status}`)
-  }
-
-  return response.json() as Promise<T>
-}
-
 export async function getPlayer(playerId: string): Promise<PlayerProfile> {
-  return request<PlayerProfile>(`/players/${playerId}`)
+  return apiFetch<PlayerProfile>(`/players/${playerId}`, {revalidate: 3600})
 }
 
 type PlayerSeasonStatsOptions = {
@@ -114,31 +102,28 @@ type PlayerSeasonStatsOptions = {
 
 export async function getPlayerSeasonStats(
   playerId: string,
-  options: PlayerSeasonStatsOptions = {},
+  options: PlayerSeasonStatsOptions = {}
 ): Promise<PlayerSeasonStatsResponse> {
   const params = new URLSearchParams()
   if (options.season != null) params.set('season', String(options.season))
   if (options.seasonType) params.set('seasonType', options.seasonType)
 
   const query = params.toString()
-  const path = query
-    ? `/players/${playerId}/stats?${query}`
-    : `/players/${playerId}/stats`
+  const path = query ? `/players/${playerId}/stats?${query}` : `/players/${playerId}/stats`
 
-  return request<PlayerSeasonStatsResponse>(path)
+  return apiFetch<PlayerSeasonStatsResponse>(path, {revalidate: 1800})
 }
 
-export async function getPlayerCareerStats(
-  playerId: string,
-): Promise<PlayerCareerStatsResponse> {
-  return request<PlayerCareerStatsResponse>(`/players/${playerId}/stats/career`)
+export async function getPlayerCareerStats(playerId: string): Promise<PlayerCareerStatsResponse> {
+  return apiFetch<PlayerCareerStatsResponse>(`/players/${playerId}/stats/career`, {
+    revalidate: 3600
+  })
 }
 
-export async function getPlayerNews(
-  playerId: string,
-  limit = 6,
-): Promise<PlayerNewsArticle[]> {
-  return request<PlayerNewsArticle[]>(`/players/${playerId}/news?limit=${limit}`)
+export async function getPlayerNews(playerId: string, limit = 6): Promise<PlayerNewsArticle[]> {
+  return apiFetch<PlayerNewsArticle[]>(`/players/${playerId}/news?limit=${limit}`, {
+    revalidate: 600
+  })
 }
 
 export function getEspnPlayerNewsHref(playerId: string, fullName: string): string {

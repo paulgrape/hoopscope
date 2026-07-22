@@ -1,7 +1,6 @@
+import type {PlayerNewsArticle} from '@/lib/players-api'
 import {ArrowUpRight} from 'lucide-react'
 import Image from 'next/image'
-
-import type {PlayerNewsArticle} from '@/lib/players-api'
 
 type PlayerNewsSectionProps = {
   articles: PlayerNewsArticle[]

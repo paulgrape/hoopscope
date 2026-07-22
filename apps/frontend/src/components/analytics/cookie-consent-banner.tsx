@@ -86,8 +86,8 @@ export function CookieConsentBannerClient({enabled}: CookieConsentBannerProps) {
     >
       <div className='mx-auto flex w-full max-w-7xl flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
         <p className='text-muted-foreground text-sm leading-relaxed'>
-          We use cookies and similar technologies to understand how you use Hoopscope.
-          Analytics cookies are only enabled if you accept. Read our{' '}
+          We use cookies and similar technologies to understand how you use Hoopscope. Analytics cookies are only
+          enabled if you accept. Read our{' '}
           <Link
             href='/privacy'
             className='text-foreground underline-offset-4 hover:underline'

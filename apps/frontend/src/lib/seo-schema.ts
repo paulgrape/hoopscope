@@ -1,10 +1,4 @@
-import {
-  DATA_SOURCE_NAME,
-  DATA_SOURCE_URL,
-  SITE_DESCRIPTION,
-  SITE_NAME,
-  absoluteUrl,
-} from '@/lib/site'
+import {DATA_SOURCE_NAME, DATA_SOURCE_URL, SITE_DESCRIPTION, SITE_NAME, absoluteUrl} from '@/lib/site'
 
 type JsonLd = Record<string, unknown>
 
@@ -16,7 +10,7 @@ export function websiteSchema(): JsonLd {
     description: SITE_DESCRIPTION,
     url: absoluteUrl('/'),
     inLanguage: 'en-US',
-    publisher: organizationSchema(),
+    publisher: organizationSchema()
   }
 }
 
@@ -26,7 +20,7 @@ export function organizationSchema(): JsonLd {
     name: SITE_NAME,
     url: absoluteUrl('/'),
     description: SITE_DESCRIPTION,
-    sport: 'Basketball',
+    sport: 'Basketball'
   }
 }
 
@@ -38,8 +32,8 @@ export function breadcrumbSchema(items: Array<{name: string; path: string}>): Js
       '@type': 'ListItem',
       position: index + 1,
       name: item.name,
-      item: absoluteUrl(item.path),
-    })),
+      item: absoluteUrl(item.path)
+    }))
   }
 }
 
@@ -47,7 +41,7 @@ export function collectionPageSchema({
   path,
   title,
   description,
-  items,
+  items
 }: {
   path: string
   title: string
@@ -63,7 +57,7 @@ export function collectionPageSchema({
     isPartOf: {
       '@type': 'WebSite',
       name: SITE_NAME,
-      url: absoluteUrl('/'),
+      url: absoluteUrl('/')
     },
     ...(items && items.length > 0
       ? {
@@ -73,11 +67,11 @@ export function collectionPageSchema({
               '@type': 'ListItem',
               position: index + 1,
               name: item.name,
-              url: item.url.startsWith('http') ? item.url : absoluteUrl(item.url),
-            })),
-          },
+              url: item.url.startsWith('http') ? item.url : absoluteUrl(item.url)
+            }))
+          }
         }
-      : {}),
+      : {})
   }
 }
 
@@ -86,7 +80,7 @@ export function sportsTeamSchema({
   name,
   location,
   logo,
-  record,
+  record
 }: {
   id: string
   name: string
@@ -102,11 +96,11 @@ export function sportsTeamSchema({
     sport: 'Basketball',
     location: {
       '@type': 'Place',
-      name: location,
+      name: location
     },
     url: absoluteUrl(`/teams/${id}`),
     ...(logo ? {logo} : {}),
-    ...(record ? {description: `Current record: ${record}`} : {}),
+    ...(record ? {description: `Current record: ${record}`} : {})
   }
 }
 
@@ -116,7 +110,7 @@ export function personSchema({
   position,
   teamName,
   teamId,
-  image,
+  image
 }: {
   id: string
   name: string
@@ -138,10 +132,10 @@ export function personSchema({
           memberOf: {
             '@type': 'SportsTeam',
             name: teamName,
-            url: absoluteUrl(`/teams/${teamId}`),
-          },
+            url: absoluteUrl(`/teams/${teamId}`)
+          }
         }
-      : {}),
+      : {})
   }
 }
 
@@ -154,7 +148,7 @@ export function sportsEventSchema({
   homeScore,
   awayScore,
   status,
-  path,
+  path
 }: {
   id: string
   name: string
@@ -173,30 +167,22 @@ export function sportsEventSchema({
     '@id': absoluteUrl(eventPath),
     name,
     startDate: date,
-    eventStatus: status === 'final' ? 'https://schema.org/EventScheduled' : 'https://schema.org/EventScheduled',
+    eventStatus: status === 'final' ? 'https://schema.org/EventCompleted' : 'https://schema.org/EventScheduled',
     sport: 'Basketball',
     url: absoluteUrl(eventPath),
     homeTeam: {
       '@type': 'SportsTeam',
-      name: homeTeam,
+      name: homeTeam
     },
     awayTeam: {
       '@type': 'SportsTeam',
-      name: awayTeam,
+      name: awayTeam
     },
-    description: `Final score: ${awayTeam} ${awayScore}, ${homeTeam} ${homeScore}.`,
+    description: `Final score: ${awayTeam} ${awayScore}, ${homeTeam} ${homeScore}.`
   }
 }
 
-export function webPageSchema({
-  path,
-  title,
-  description,
-}: {
-  path: string
-  title: string
-  description: string
-}): JsonLd {
+export function webPageSchema({path, title, description}: {path: string; title: string; description: string}): JsonLd {
   return {
     '@context': 'https://schema.org',
     '@type': 'WebPage',
@@ -206,8 +192,8 @@ export function webPageSchema({
     isPartOf: {
       '@type': 'WebSite',
       name: SITE_NAME,
-      url: absoluteUrl('/'),
-    },
+      url: absoluteUrl('/')
+    }
   }
 }
 

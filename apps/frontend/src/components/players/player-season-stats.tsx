@@ -1,9 +1,8 @@
 'use client'
 
-import {useState} from 'react'
-
 import {Button} from '@/components/ui/button'
 import type {PlayerSeasonStatsResponse, SeasonType} from '@/lib/players-api'
+import {useState} from 'react'
 
 type PlayerSeasonStatsProps = {
   regularStats: PlayerSeasonStatsResponse
@@ -100,23 +99,14 @@ export function PlayerSeasonStats({regularStats, playoffStats}: PlayerSeasonStat
         </dl>
       ) : (
         <p className='text-muted-foreground mt-4 rounded-lg border border-dashed px-4 py-6 text-sm'>
-          No {seasonType === 'regular' ? 'regular season' : 'playoff'} stats available for{' '}
-          {stats.seasonLabel}.
+          No {seasonType === 'regular' ? 'regular season' : 'playoff'} stats available for {stats.seasonLabel}.
         </p>
       )}
     </section>
   )
 }
 
-function StatItem({
-  label,
-  value,
-  highlight = false,
-}: {
-  label: string
-  value: string
-  highlight?: boolean
-}) {
+function StatItem({label, value, highlight = false}: {label: string; value: string; highlight?: boolean}) {
   return (
     <div
       className={

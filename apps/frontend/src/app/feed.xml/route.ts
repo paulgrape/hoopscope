@@ -1,5 +1,7 @@
-import {getNews, type NewsArticle} from '@/lib/news-api'
+import {type NewsArticle, getNews} from '@/lib/news-api'
 import {SITE_DESCRIPTION, SITE_NAME, absoluteUrl} from '@/lib/site'
+
+export const dynamic = 'force-dynamic'
 
 const FEED_LIMIT = 30
 const FEED_PATH = '/feed.xml'
@@ -31,7 +33,7 @@ function buildItem(article: NewsArticle): string {
     `<link>${escapeXml(link)}</link>`,
     guid,
     `<pubDate>${formatRssDate(article.published)}</pubDate>`,
-    `<description>${escapeXml(article.description)}</description>`,
+    `<description>${escapeXml(article.description)}</description>`
   ]
 
   if (article.byline) {
@@ -43,9 +45,7 @@ function buildItem(article: NewsArticle): string {
   }
 
   if (article.imageUrl) {
-    parts.push(
-      `<enclosure url="${escapeXml(article.imageUrl)}" type="image/jpeg" length="0" />`,
-    )
+    parts.push(`<enclosure url="${escapeXml(article.imageUrl)}" type="image/jpeg" length="0" />`)
   }
 
   parts.push('</item>')
@@ -85,7 +85,7 @@ export async function GET() {
   return new Response(xml, {
     headers: {
       'content-type': 'application/rss+xml; charset=utf-8',
-      'cache-control': 's-maxage=600, stale-while-revalidate=3600',
-    },
+      'cache-control': 's-maxage=600, stale-while-revalidate=3600'
+    }
   })
 }

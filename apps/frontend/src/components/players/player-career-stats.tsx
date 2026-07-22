@@ -1,10 +1,9 @@
 'use client'
 
-import {useMemo, useState} from 'react'
-
 import {Button} from '@/components/ui/button'
 import type {PlayerCareerSeasonStats, SeasonType} from '@/lib/players-api'
 import {cn} from '@/lib/utils'
+import {useMemo, useState} from 'react'
 
 type SortColumn = keyof Pick<
   PlayerCareerSeasonStats,
@@ -23,7 +22,7 @@ const COLUMNS: Array<{key: SortColumn; label: string; numeric: boolean; classNam
   {key: 'ast', label: 'AST', numeric: true},
   {key: 'fgPct', label: 'FG%', numeric: true, className: 'hidden sm:table-cell'},
   {key: 'threePointPct', label: '3P%', numeric: true, className: 'hidden sm:table-cell'},
-  {key: 'freeThrowPct', label: 'FT%', numeric: true, className: 'hidden sm:table-cell'},
+  {key: 'freeThrowPct', label: 'FT%', numeric: true, className: 'hidden sm:table-cell'}
 ]
 
 type PlayerCareerStatsProps = {
@@ -36,13 +35,13 @@ export function PlayerCareerStats({seasons}: PlayerCareerStatsProps) {
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc')
 
   const filteredSeasons = useMemo(
-    () => seasons.filter((season) => season.seasonType === seasonType),
-    [seasons, seasonType],
+    () => seasons.filter(season => season.seasonType === seasonType),
+    [seasons, seasonType]
   )
 
   const sortedSeasons = useMemo(() => {
     const rows = [...filteredSeasons]
-    const column = COLUMNS.find((item) => item.key === sortColumn)
+    const column = COLUMNS.find(item => item.key === sortColumn)
     if (!column) return rows
 
     rows.sort((a, b) => {
@@ -62,7 +61,7 @@ export function PlayerCareerStats({seasons}: PlayerCareerStatsProps) {
 
   function handleSort(column: SortColumn) {
     if (sortColumn === column) {
-      setSortDirection((current) => (current === 'asc' ? 'desc' : 'asc'))
+      setSortDirection(current => (current === 'asc' ? 'desc' : 'asc'))
       return
     }
 
@@ -81,8 +80,7 @@ export function PlayerCareerStats({seasons}: PlayerCareerStatsProps) {
     )
   }
 
-  const showEmptyPlayoffs =
-    seasonType === 'playoffs' && filteredSeasons.length === 0
+  const showEmptyPlayoffs = seasonType === 'playoffs' && filteredSeasons.length === 0
 
   return (
     <section className='bg-card border-border min-w-0 rounded-xl border p-3 sm:p-5'>
@@ -118,7 +116,7 @@ export function PlayerCareerStats({seasons}: PlayerCareerStatsProps) {
       ) : (
         <>
           <div className='mt-4 grid gap-3 md:hidden'>
-            {sortedSeasons.map((season) => (
+            {sortedSeasons.map(season => (
               <article
                 key={`${season.season}-${season.seasonType}-${season.teamId ?? 'tot'}`}
                 className='bg-background/40 border-border rounded-lg border p-3'
@@ -167,15 +165,13 @@ export function PlayerCareerStats({seasons}: PlayerCareerStatsProps) {
             <table className='w-full min-w-xl text-left text-sm'>
               <thead className='text-muted-foreground border-b'>
                 <tr>
-                  {COLUMNS.map((column) => (
+                  {COLUMNS.map(column => (
                     <th
                       key={column.key}
                       className={cn(
                         'px-2 py-2 font-medium sm:px-3',
-                        column.key === 'seasonLabel' || column.key === 'teamAbbr'
-                          ? 'text-left'
-                          : 'text-right',
-                        column.className,
+                        column.key === 'seasonLabel' || column.key === 'teamAbbr' ? 'text-left' : 'text-right',
+                        column.className
                       )}
                     >
                       <button
@@ -183,9 +179,7 @@ export function PlayerCareerStats({seasons}: PlayerCareerStatsProps) {
                         onClick={() => handleSort(column.key)}
                         className={cn(
                           'hover:text-foreground inline-flex items-center gap-1 transition-colors',
-                          column.key !== 'seasonLabel' &&
-                            column.key !== 'teamAbbr' &&
-                            'w-full justify-end',
+                          column.key !== 'seasonLabel' && column.key !== 'teamAbbr' && 'w-full justify-end'
                         )}
                       >
                         {column.label}
@@ -198,28 +192,18 @@ export function PlayerCareerStats({seasons}: PlayerCareerStatsProps) {
                 </tr>
               </thead>
               <tbody>
-                {sortedSeasons.map((season) => (
+                {sortedSeasons.map(season => (
                   <tr
                     key={`${season.season}-${season.seasonType}-${season.teamId ?? 'tot'}`}
                     className='border-border/70 text-card-foreground border-b'
                   >
                     <td className='px-2 py-2.5 sm:px-3'>{season.seasonLabel}</td>
                     <td className='px-2 py-2.5 sm:px-3'>{season.teamAbbr ?? '-'}</td>
-                    <td className='px-2 py-2.5 text-right tabular-nums sm:px-3'>
-                      {formatStat(season.gp)}
-                    </td>
-                    <td className='px-2 py-2.5 text-right tabular-nums sm:px-3'>
-                      {formatStat(season.min)}
-                    </td>
-                    <td className='px-2 py-2.5 text-right tabular-nums sm:px-3'>
-                      {formatStat(season.pts)}
-                    </td>
-                    <td className='px-2 py-2.5 text-right tabular-nums sm:px-3'>
-                      {formatStat(season.reb)}
-                    </td>
-                    <td className='px-2 py-2.5 text-right tabular-nums sm:px-3'>
-                      {formatStat(season.ast)}
-                    </td>
+                    <td className='px-2 py-2.5 text-right tabular-nums sm:px-3'>{formatStat(season.gp)}</td>
+                    <td className='px-2 py-2.5 text-right tabular-nums sm:px-3'>{formatStat(season.min)}</td>
+                    <td className='px-2 py-2.5 text-right tabular-nums sm:px-3'>{formatStat(season.pts)}</td>
+                    <td className='px-2 py-2.5 text-right tabular-nums sm:px-3'>{formatStat(season.reb)}</td>
+                    <td className='px-2 py-2.5 text-right tabular-nums sm:px-3'>{formatStat(season.ast)}</td>
                     <td className='hidden px-2 py-2.5 text-right tabular-nums sm:table-cell sm:px-3'>
                       {formatPct(season.fgPct)}
                     </td>

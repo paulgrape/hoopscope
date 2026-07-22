@@ -1,20 +1,19 @@
-import Link from 'next/link'
-
-import {JsonLd} from '@/components/json-ld'
-import {PlayerBioGrid, PlayerPageHeader} from '@/components/player-page-header'
-import {PlayerProfileTabs} from '@/components/player-profile-tabs'
+import {PlayerBioGrid, PlayerPageHeader} from '@/components/players/player-page-header'
+import {PlayerProfileTabs} from '@/components/players/player-profile-tabs'
+import {JsonLd} from '@/components/seo/json-ld'
 import {getCachedShotHeatmapForEspnPlayer} from '@/lib/espn-nba-ids'
 import {
   getEspnPlayerNewsHref,
   getPlayer,
   getPlayerCareerStats,
   getPlayerNews,
-  getPlayerSeasonStats,
+  getPlayerSeasonStats
 } from '@/lib/players-api'
 import {breadcrumbSchema, personSchema} from '@/lib/seo-schema'
-import {getTeam} from '@/lib/teams-api'
 import {SITE_NAME, createPageMetadata} from '@/lib/site'
+import {getTeam} from '@/lib/teams-api'
 import type {Metadata} from 'next'
+import Link from 'next/link'
 
 type PlayerDetailsPageProps = {
   params: Promise<{
@@ -34,7 +33,7 @@ export async function generateMetadata({params}: PlayerDetailsPageProps): Promis
     description: `${player.fullName} player profile on ${SITE_NAME}: bio, season averages, full career statistics, and the latest related news headlines.`,
     path: `/players/${playerId}`,
     image: player.headshot,
-    type: 'profile',
+    type: 'profile'
   })
 }
 
@@ -42,16 +41,15 @@ export default async function PlayerDetailsPage({params, searchParams}: PlayerDe
   const {playerId} = await params
   const {teamId} = await searchParams
 
-  const [player, regularStats, playoffStats, careerStats, news, team, heatmap] =
-    await Promise.all([
-      getPlayer(playerId),
-      getPlayerSeasonStats(playerId, {seasonType: 'regular'}),
-      getPlayerSeasonStats(playerId, {seasonType: 'playoffs'}),
-      getPlayerCareerStats(playerId),
-      getPlayerNews(playerId),
-      teamId ? getTeam(teamId).catch(() => null) : Promise.resolve(null),
-      getCachedShotHeatmapForEspnPlayer(playerId),
-    ])
+  const [player, regularStats, playoffStats, careerStats, news, team, heatmap] = await Promise.all([
+    getPlayer(playerId),
+    getPlayerSeasonStats(playerId, {seasonType: 'regular'}),
+    getPlayerSeasonStats(playerId, {seasonType: 'playoffs'}),
+    getPlayerCareerStats(playerId),
+    getPlayerNews(playerId),
+    teamId ? getTeam(teamId).catch(() => null) : Promise.resolve(null),
+    getCachedShotHeatmapForEspnPlayer(playerId)
+  ])
 
   const backHref = teamId ? `/teams/${teamId}` : '/teams'
   const backLabel = team ? `Back to ${team.displayName}` : 'Back to teams'
@@ -59,11 +57,11 @@ export default async function PlayerDetailsPage({params, searchParams}: PlayerDe
     ? [
         {name: 'Teams', path: '/teams'},
         {name: team.displayName, path: `/teams/${team.id}`},
-        {name: player.fullName, path: `/players/${playerId}`},
+        {name: player.fullName, path: `/players/${playerId}`}
       ]
     : [
         {name: 'Teams', path: '/teams'},
-        {name: player.fullName, path: `/players/${playerId}`},
+        {name: player.fullName, path: `/players/${playerId}`}
       ]
 
   return (
@@ -80,9 +78,9 @@ export default async function PlayerDetailsPage({params, searchParams}: PlayerDe
             position: player.position,
             teamName: player.latestTeam?.displayName ?? team?.displayName,
             teamId: player.latestTeam?.id ?? team?.id,
-            image: player.headshot,
+            image: player.headshot
           }),
-          breadcrumbSchema(breadcrumbItems),
+          breadcrumbSchema(breadcrumbItems)
         ]}
       />
       <Link

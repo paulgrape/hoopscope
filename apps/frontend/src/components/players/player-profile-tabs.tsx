@@ -1,15 +1,11 @@
 'use client'
 
-import {PlayerCareerStats} from '@/components/player-career-stats'
-import {PlayerNewsSection} from '@/components/player-news-section'
-import {PlayerSeasonStats} from '@/components/player-season-stats'
-import {ShotHeatmapCourt} from '@/components/shot-heatmap-court'
+import {PlayerCareerStats} from '@/components/players/player-career-stats'
+import {PlayerNewsSection} from '@/components/players/player-news-section'
+import {PlayerSeasonStats} from '@/components/players/player-season-stats'
+import {ShotHeatmapCourt} from '@/components/players/shot-heatmap-court'
 import {Tabs, TabsContent, TabsList, TabsTrigger} from '@/components/ui/tabs'
-import type {
-  PlayerCareerSeasonStats,
-  PlayerNewsArticle,
-  PlayerSeasonStatsResponse,
-} from '@/lib/players-api'
+import type {PlayerCareerSeasonStats, PlayerNewsArticle, PlayerSeasonStatsResponse} from '@/lib/players-api'
 import type {ShotHeatmapResponse} from '@/lib/shots-api'
 
 type PlayerProfileTabsProps = {
@@ -27,7 +23,7 @@ export function PlayerProfileTabs({
   careerSeasons,
   news,
   espnNewsHref,
-  heatmap = null,
+  heatmap = null
 }: PlayerProfileTabsProps) {
   return (
     <Tabs
@@ -75,8 +71,8 @@ export function PlayerProfileTabs({
           className='flex flex-col gap-3'
         >
           <p className='text-muted-foreground text-sm'>
-            {heatmap.season} {heatmap.seasonType} — shrink-adjusted FG% vs zone league average
-            (blue below / red above); brightness is volume.
+            {heatmap.season} {heatmap.seasonType} — shrink-adjusted FG% vs zone league average (blue below / red above);
+            brightness is volume.
           </p>
           <ShotHeatmapCourt
             shots={heatmap.shots}

@@ -1,10 +1,9 @@
+import {LocalEditionDate, LocalTime} from '@/components/layout/local-time'
+import type {NewsArticle} from '@/lib/news-api'
+import {SITE_DAILY_EDITION, SITE_DAILY_TITLE} from '@/lib/site'
+import {cn} from '@/lib/utils'
 import Image from 'next/image'
 import Link from 'next/link'
-
-import { LocalEditionDate, LocalTime } from '@/components/local-time'
-import type { NewsArticle } from '@/lib/news-api'
-import { SITE_DAILY_EDITION, SITE_DAILY_TITLE } from '@/lib/site'
-import { cn } from '@/lib/utils'
 
 type NewsNewspaperProps = {
   articles: NewsArticle[]
@@ -13,7 +12,7 @@ type NewsNewspaperProps = {
 function ArticleLink({
   article,
   className,
-  children,
+  children
 }: {
   article: NewsArticle
   className?: string
@@ -35,15 +34,15 @@ function ArticleLink({
   )
 }
 
-function TeamTags({ teams }: { teams: string[] }) {
+function TeamTags({teams}: {teams: string[]}) {
   if (teams.length === 0) return null
 
   return (
     <div className='flex flex-wrap gap-1.5'>
-      {teams.slice(0, 2).map((team) => (
+      {teams.slice(0, 2).map(team => (
         <span
           key={team}
-          className='border-border text-muted-foreground rounded-sm border px-1.5 py-1 text-[10px] font-medium uppercase leading-none tracking-wider'
+          className='border-border text-muted-foreground rounded-sm border px-1.5 py-1 text-[10px] leading-none font-medium tracking-wider uppercase'
         >
           {team}
         </span>
@@ -52,7 +51,7 @@ function TeamTags({ teams }: { teams: string[] }) {
   )
 }
 
-export function NewsNewspaper({ articles }: NewsNewspaperProps) {
+export function NewsNewspaper({articles}: NewsNewspaperProps) {
   if (articles.length === 0) {
     return (
       <section className='bg-card border-border rounded-xl border p-6 text-center'>
@@ -70,14 +69,16 @@ export function NewsNewspaper({ articles }: NewsNewspaperProps) {
   return (
     <section className='bg-card border-border overflow-hidden rounded-xl border'>
       <header className='border-border border-b px-4 py-5 text-center sm:px-8 sm:py-6'>
-        <p className='text-muted-foreground text-[10px] font-medium uppercase tracking-[0.35em] sm:text-xs'>
+        <p className='text-muted-foreground text-[10px] font-medium tracking-[0.35em] uppercase sm:text-xs'>
           {SITE_DAILY_EDITION}
         </p>
-        <h2 className='font-serif mt-2 text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl'>
+        <h2 className='mt-2 font-serif text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl'>
           {SITE_DAILY_TITLE}
         </h2>
-        <div className='border-border mx-auto mt-4 flex max-w-xl flex-wrap items-center justify-center gap-x-4 gap-y-1 border-y py-2 text-[11px] uppercase tracking-[0.2em] sm:text-xs'>
-          <span><LocalEditionDate /></span>
+        <div className='border-border mx-auto mt-4 flex max-w-xl flex-wrap items-center justify-center gap-x-4 gap-y-1 border-y py-2 text-[11px] tracking-[0.2em] uppercase sm:text-xs'>
+          <span>
+            <LocalEditionDate />
+          </span>
           <span className='text-muted-foreground hidden sm:inline'>•</span>
           <span className='text-muted-foreground'>Latest from ESPN</span>
           <span className='text-muted-foreground hidden sm:inline'>•</span>
@@ -86,9 +87,12 @@ export function NewsNewspaper({ articles }: NewsNewspaperProps) {
       </header>
 
       <div className='grid lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]'>
-        <div className='border-border flex flex-col border-b lg:border-b-0 lg:border-r'>
+        <div className='border-border flex flex-col border-b lg:border-r lg:border-b-0'>
           <article className='p-4 sm:p-6'>
-            <ArticleLink article={lead} className='flex flex-col gap-4'>
+            <ArticleLink
+              article={lead}
+              className='flex flex-col gap-4'
+            >
               {lead.imageUrl ? (
                 <div className='border-border relative aspect-video overflow-hidden border'>
                   <Image
@@ -104,19 +108,17 @@ export function NewsNewspaper({ articles }: NewsNewspaperProps) {
 
               <div className='flex flex-col gap-3'>
                 <div className='flex flex-wrap items-center gap-3'>
-                  <span className='bg-foreground text-background px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.25em]'>
+                  <span className='bg-foreground text-background px-2 py-0.5 text-[10px] font-semibold tracking-[0.25em] uppercase'>
                     Lead Story
                   </span>
                   <TeamTags teams={lead.teams} />
                 </div>
 
-                <h3 className='font-serif text-2xl leading-tight font-bold sm:text-3xl lg:text-4xl'>
-                  {lead.headline}
-                </h3>
+                <h3 className='font-serif text-2xl leading-tight font-bold sm:text-3xl lg:text-4xl'>{lead.headline}</h3>
 
                 {lead.description ? (
                   <p className='text-muted-foreground max-w-3xl text-sm leading-relaxed sm:text-base'>
-                    <span className='font-serif text-foreground float-left mr-2 mt-0.5 text-4xl leading-none font-bold sm:text-5xl'>
+                    <span className='text-foreground float-left mt-0.5 mr-2 font-serif text-4xl leading-none font-bold sm:text-5xl'>
                       {lead.description.charAt(0)}
                     </span>
                     {lead.description.slice(1)}
@@ -135,8 +137,14 @@ export function NewsNewspaper({ articles }: NewsNewspaperProps) {
           {subLeads.length > 0 ? (
             <div className='border-border divide-border grid flex-1 divide-y border-t sm:grid-cols-2 sm:divide-x sm:divide-y-0'>
               {subLeads.map((article, index) => (
-                <article key={article.id} className='p-4 sm:p-5'>
-                  <ArticleLink article={article} className='flex h-full flex-col gap-3'>
+                <article
+                  key={article.id}
+                  className='p-4 sm:p-5'
+                >
+                  <ArticleLink
+                    article={article}
+                    className='flex h-full flex-col gap-3'
+                  >
                     <div className='flex items-center justify-between gap-3'>
                       <span className='text-muted-foreground font-mono text-xs'>
                         {String(index + 2).padStart(2, '0')}
@@ -163,7 +171,10 @@ export function NewsNewspaper({ articles }: NewsNewspaperProps) {
                       </p>
                     ) : null}
                     {article.published ? (
-                      <LocalTime iso={article.published} className='text-muted-foreground mt-auto pt-1 text-xs' />
+                      <LocalTime
+                        iso={article.published}
+                        className='text-muted-foreground mt-auto pt-1 text-xs'
+                      />
                     ) : null}
                   </ArticleLink>
                 </article>
@@ -178,7 +189,10 @@ export function NewsNewspaper({ articles }: NewsNewspaperProps) {
               key={article.id}
               className={cn('p-4 sm:p-5', index === sidebar.length - 1 && 'flex-1')}
             >
-              <ArticleLink article={article} className='flex h-full flex-col gap-3'>
+              <ArticleLink
+                article={article}
+                className='flex h-full flex-col gap-3'
+              >
                 <div className='flex items-center justify-between gap-3'>
                   <span className='text-muted-foreground font-mono text-xs'>
                     {String(index + 2 + subLeads.length).padStart(2, '0')}
@@ -211,7 +225,7 @@ export function NewsNewspaper({ articles }: NewsNewspaperProps) {
       {bottomRow.length > 0 ? (
         <div className='border-border border-t'>
           <div className='border-border border-b px-4 py-2 sm:px-6'>
-            <p className='text-muted-foreground text-center text-[10px] font-medium uppercase tracking-[0.3em]'>
+            <p className='text-muted-foreground text-center text-[10px] font-medium tracking-[0.3em] uppercase'>
               Around the League
             </p>
           </div>
@@ -224,10 +238,13 @@ export function NewsNewspaper({ articles }: NewsNewspaperProps) {
                   index < bottomRow.length - 1 && 'border-b sm:border-b-0',
                   index % 2 === 0 && 'sm:border-r xl:border-r',
                   index === 1 && 'xl:border-r',
-                  index === 2 && 'sm:border-r xl:border-r-0',
+                  index === 2 && 'sm:border-r xl:border-r-0'
                 )}
               >
-                <ArticleLink article={article} className='flex h-full flex-col gap-3'>
+                <ArticleLink
+                  article={article}
+                  className='flex h-full flex-col gap-3'
+                >
                   {article.imageUrl ? (
                     <div className='border-border relative aspect-video overflow-hidden border'>
                       <Image
@@ -256,16 +273,25 @@ export function NewsNewspaper({ articles }: NewsNewspaperProps) {
 
       {briefs.length > 0 ? (
         <div className='border-border border-t px-4 py-4 sm:px-6 sm:py-5'>
-          <p className='text-muted-foreground mb-3 text-center text-[10px] font-medium uppercase tracking-[0.3em]'>
+          <p className='text-muted-foreground mb-3 text-center text-[10px] font-medium tracking-[0.3em] uppercase'>
             In Brief
           </p>
           <ul className='columns-1 gap-6 sm:columns-2 lg:columns-3'>
-            {briefs.map((article) => (
-              <li key={article.id} className='mb-3 break-inside-avoid'>
-                <ArticleLink article={article} className='hover:text-foreground text-muted-foreground'>
+            {briefs.map(article => (
+              <li
+                key={article.id}
+                className='mb-3 break-inside-avoid'
+              >
+                <ArticleLink
+                  article={article}
+                  className='hover:text-foreground text-muted-foreground'
+                >
                   <span className='text-foreground font-serif font-semibold'>{article.headline}</span>
                   {article.published ? (
-                    <LocalTime iso={article.published} className='ml-2 text-[11px] uppercase tracking-wide' />
+                    <LocalTime
+                      iso={article.published}
+                      className='ml-2 text-[11px] tracking-wide uppercase'
+                    />
                   ) : null}
                 </ArticleLink>
               </li>

@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000'
+import {apiFetch} from '@/lib/api-client'
 
 export type NewsArticle = {
   id: number
@@ -13,23 +13,11 @@ export type NewsArticle = {
   teams: string[]
 }
 
-async function request<T>(path: string): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    cache: 'no-store',
-  })
-
-  if (!response.ok) {
-    throw new Error(`Failed to load ${path}: ${response.status}`)
-  }
-
-  return response.json() as Promise<T>
-}
-
 export type NewsPage = {
   articles: NewsArticle[]
   total: number
 }
 
 export async function getNews(limit = 12, offset = 0): Promise<NewsPage> {
-  return request<NewsPage>(`/news?limit=${limit}&offset=${offset}`)
+  return apiFetch<NewsPage>(`/news?limit=${limit}&offset=${offset}`, {revalidate: 600})
 }

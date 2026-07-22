@@ -1,4 +1,4 @@
-import {Navbar} from '@/components/navbar'
+import {Navbar} from '@/components/layout/navbar'
 
 export default function HubLayout({children}: {children: React.ReactNode}) {
   return (
