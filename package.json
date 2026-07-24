@@ -22,7 +22,7 @@
   "dependencies": {
     "@nestjs/common": "^11.1.23",
     "@nestjs/core": "^11.1.23",
-    "concurrently": "^9.2.1"
+    "concurrently": "^10.0.3"
   },
   "devDependencies": {
     "@commitlint/cli": "^21.2.1",
