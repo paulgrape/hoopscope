@@ -1,0 +1,14 @@
+node_modules
+**/node_modules
+**/dist
+**/.next
+**/coverage
+.git
+.github
+.husky
+.cursor
+**/.env
+**/.env.*
+!**/.env.example
+apps/frontend
+*.md

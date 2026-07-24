@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import {
-  NbaSeasonType,
-  NbaStatsService,
-} from '../nba-stats/nba-stats.service';
-import {
-  LeagueZoneAvg,
-  ShotHeatmapResponse,
-  ShotPoint,
-} from './shots.types';
+import { NbaSeasonType, NbaStatsService } from '../nba-stats/nba-stats.service';
+import { LeagueZoneAvg, ShotHeatmapResponse, ShotPoint } from './shots.types';
+
+function stringifyCell(value: unknown): string {
+  if (typeof value === 'string') return value;
+  if (typeof value === 'number' || typeof value === 'boolean') {
+    return String(value);
+  }
+  return '';
+}
 
 @Injectable()
 export class ShotsService {
@@ -51,7 +52,7 @@ export class ShotsService {
     ) as Record<string, number>;
 
     const str = (row: unknown[], key: string): string =>
-      String(row[index[key]] ?? '');
+      stringifyCell(row[index[key]]);
     const num = (row: unknown[], key: string): number =>
       Number(row[index[key]] ?? 0);
 
@@ -95,7 +96,11 @@ export class ShotsService {
   }
 
   private parseLeagueZones(raw: {
-    resultSets?: Array<{ name: string; headers: string[]; rowSet: unknown[][] }>;
+    resultSets?: Array<{
+      name: string;
+      headers: string[];
+      rowSet: unknown[][];
+    }>;
   }): LeagueZoneAvg[] {
     const set =
       raw.resultSets?.find((item) => item.name === 'League_Wide') ??
@@ -108,7 +113,7 @@ export class ShotsService {
     ) as Record<string, number>;
 
     const str = (row: unknown[], key: string): string =>
-      String(row[index[key]] ?? '');
+      stringifyCell(row[index[key]]);
     const num = (row: unknown[], key: string): number =>
       Number(row[index[key]] ?? 0);
 

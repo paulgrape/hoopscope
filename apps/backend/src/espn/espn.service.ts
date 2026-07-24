@@ -329,8 +329,11 @@ export class EspnService {
 
   private parseRetryAfter(err: unknown): number | null {
     if (!axios.isAxiosError(err)) return null;
-    const header = err.response?.headers?.['retry-after'];
-    if (!header) return null;
+    const headers = err.response?.headers as
+      | Record<string, unknown>
+      | undefined;
+    const header = headers?.['retry-after'];
+    if (typeof header !== 'string' && typeof header !== 'number') return null;
 
     const seconds = Number(header);
     if (Number.isFinite(seconds)) return Math.max(0, seconds * 1000);

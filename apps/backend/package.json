@@ -5,6 +5,12 @@
   "author": "Pavel Vinogradov <vin.pavel13@gmail.com>",
   "private": true,
   "license": "MIT",
+  "lint-staged": {
+    "*.ts": [
+      "eslint --fix",
+      "prettier --write"
+    ]
+  },
   "scripts": {
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start:dev": "nest start --watch",

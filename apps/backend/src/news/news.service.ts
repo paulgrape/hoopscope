@@ -7,11 +7,15 @@ export class NewsService {
   constructor(private readonly espn: EspnService) {}
 
   async findAll(limit = 12, offset = 0) {
-    const data = (await this.espn.getNews()) as { articles?: EspnNewsArticle[] };
+    const data = (await this.espn.getNews()) as {
+      articles?: EspnNewsArticle[];
+    };
     const articles = data.articles ?? [];
 
     return {
-      articles: articles.slice(offset, offset + limit).map((article) => mapNewsArticle(article)),
+      articles: articles
+        .slice(offset, offset + limit)
+        .map((article) => mapNewsArticle(article)),
       total: articles.length,
     };
   }

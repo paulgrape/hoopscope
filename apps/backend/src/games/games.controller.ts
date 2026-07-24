@@ -1,4 +1,10 @@
-import { Controller, Get, NotFoundException, Param, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+  Query,
+} from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { GamesService } from './games.service';
 
@@ -49,7 +55,10 @@ export class GamesController {
   }
 
   @Get(':gameId')
-  @ApiOperation({ summary: 'ESPN game summary with line score, box score, totals, and leaders' })
+  @ApiOperation({
+    summary:
+      'ESPN game summary with line score, box score, totals, and leaders',
+  })
   async gameSummary(@Param('gameId') gameId: string) {
     if (gameId === 'schedule' || gameId === 'live' || gameId === 'scoreboard') {
       throw new NotFoundException();

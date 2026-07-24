@@ -1,0 +1,16 @@
+# Local development: runs the NestJS backend in a container.
+# The frontend deploys to Vercel and runs locally via `npm run dev -w apps/frontend`.
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: apps/backend/Dockerfile
+    ports:
+      - '3000:3000'
+    environment:
+      PORT: 3000
+      FRONTEND_URL: http://localhost:3001
+    env_file:
+      - path: apps/backend/.env
+        required: false
+    restart: unless-stopped
