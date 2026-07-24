@@ -10,7 +10,7 @@
     "build": "npm run build -w apps/backend && npm run build -w apps/frontend",
     "lint": "npm run lint -w apps/backend && npm run lint -w apps/frontend",
     "test": "npm run test -w apps/backend && npm run test -w apps/frontend",
-    "prepare": "husky"
+    "prepare": "node .husky/install.mjs"
   },
   "keywords": [],
   "author": "Pavel Vinogradov <vin.pavel13@gmail.com>",
