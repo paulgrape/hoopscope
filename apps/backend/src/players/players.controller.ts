@@ -29,7 +29,11 @@ export class PlayersController {
   @Get(':id/stats')
   @ApiOperation({ summary: 'Get player season averages (regular or playoffs)' })
   @ApiQuery({ name: 'season', required: false, type: Number })
-  @ApiQuery({ name: 'seasonType', required: false, enum: ['regular', 'playoffs'] })
+  @ApiQuery({
+    name: 'seasonType',
+    required: false,
+    enum: ['regular', 'playoffs'],
+  })
   findSeasonStats(
     @Param('id') id: string,
     @Query('season') season?: string,

@@ -4,6 +4,12 @@
   "private": true,
   "license": "MIT",
   "author": "Pavel Vinogradov <vin.pavel13@gmail.com>",
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
+  },
   "scripts": {
     "dev": "next dev -p 3001",
     "build": "npm run generate:llms && next build",

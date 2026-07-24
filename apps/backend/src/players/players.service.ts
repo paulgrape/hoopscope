@@ -175,7 +175,8 @@ export class PlayersService {
 
   async findNews(id: string, limit = 6) {
     const cacheKey = `player-news-mapped:${id}:${limit}`;
-    const cached = this.cache.get<ReturnType<typeof mapNewsArticle>[]>(cacheKey);
+    const cached =
+      this.cache.get<ReturnType<typeof mapNewsArticle>[]>(cacheKey);
     if (cached) return cached;
 
     const data = await this.espn.getAthleteNews(id);
@@ -192,7 +193,11 @@ export class PlayersService {
     latestTeam: PlayerTeamSummary | null,
     injury: PlayerInjury | null,
   ): PlayerProfile {
-    const birthPlace = [a.birthPlace?.city, a.birthPlace?.state, a.birthPlace?.country]
+    const birthPlace = [
+      a.birthPlace?.city,
+      a.birthPlace?.state,
+      a.birthPlace?.country,
+    ]
       .filter(Boolean)
       .join(', ');
 
