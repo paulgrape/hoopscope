@@ -7,7 +7,8 @@
   ],
   "scripts": {
     "dev": "concurrently \"npm run dev -w apps/backend\" \"npm run dev -w apps/frontend\"",
-    "build": "npm run build -w apps/backend && npm run build -w apps/frontend"
+    "build": "npm run build -w apps/backend && npm run build -w apps/frontend",
+    "test": "npm run test -w apps/backend && npm run test -w apps/frontend"
   },
   "keywords": [],
   "author": "Pavel Vinogradov <vin.pavel13@gmail.com>",
