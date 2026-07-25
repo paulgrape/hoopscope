@@ -12,17 +12,38 @@ export type GameTeam = {
 
 export type LivePlayEvent = {
   id: string
+  sequenceNumber: number
   period: number
   clock: string
+  elapsedSeconds: number
   text: string
+  shortText?: string
+  scoringPlay: boolean
+  scoreValue: number
+  teamId?: string
   homeScore: number
   awayScore: number
+}
+
+export type ReplayTimelineEntry = {
+  index: number
+  period: number
+  elapsedSeconds: number
+}
+
+export type ReplayPlayerStat = {
+  name: string
+  points: number
+  rebounds: number
+  assists: number
+  minutes: string
 }
 
 export type LiveGameState = {
   id: string
   name: string
   date: string
+  venue?: string
   homeTeam: GameTeam
   awayTeam: GameTeam
   homeScore: number
@@ -31,9 +52,19 @@ export type LiveGameState = {
   clock: string
   lastPlay: string
   status: 'live' | 'final'
+  paused: boolean
   playIndex: number
   totalPlays: number
   plays: LivePlayEvent[]
+  timeline: ReplayTimelineEntry[]
+  periodScores?: {
+    home: number[]
+    away: number[]
+  }
+  finalPlayers?: {
+    home: ReplayPlayerStat[]
+    away: ReplayPlayerStat[]
+  }
 }
 
 export type ScoreboardTeam = {
