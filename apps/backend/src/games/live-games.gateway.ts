@@ -16,6 +16,7 @@ type ReplaySubscriptionPayload =
   | {
       gameId: string;
       pace?: number;
+      playIndex?: number;
     };
 
 @WebSocketGateway({
@@ -67,6 +68,41 @@ export class LiveGamesGateway implements OnGatewayInit, OnGatewayDisconnect {
     });
   }
 
+  @SubscribeMessage('game:seek')
+  handleSeek(
+    @MessageBody() payload: ReplaySubscriptionPayload,
+    @ConnectedSocket() client: Socket,
+  ) {
+    const { gameId, playIndex } = this.parsePayload(payload);
+    if (playIndex === null) return;
+
+    this.simulation.seekReplay(client.id, gameId, playIndex, (state) => {
+      client.emit('game:update', state);
+    });
+  }
+
+  @SubscribeMessage('game:pause')
+  handlePause(
+    @MessageBody() payload: ReplaySubscriptionPayload,
+    @ConnectedSocket() client: Socket,
+  ) {
+    const { gameId } = this.parsePayload(payload);
+    this.simulation.pauseReplay(client.id, gameId, (state) => {
+      client.emit('game:update', state);
+    });
+  }
+
+  @SubscribeMessage('game:resume')
+  handleResume(
+    @MessageBody() payload: ReplaySubscriptionPayload,
+    @ConnectedSocket() client: Socket,
+  ) {
+    const { gameId } = this.parsePayload(payload);
+    this.simulation.resumeReplay(client.id, gameId, (state) => {
+      client.emit('game:update', state);
+    });
+  }
+
   @SubscribeMessage('game:unsubscribe')
   handleUnsubscribe(
     @MessageBody() payload: ReplaySubscriptionPayload,
@@ -79,12 +115,21 @@ export class LiveGamesGateway implements OnGatewayInit, OnGatewayDisconnect {
 
   private parsePayload(payload: ReplaySubscriptionPayload) {
     if (typeof payload === 'string') {
-      return { gameId: payload, pace: 1 };
+      return { gameId: payload, pace: 1, playIndex: null };
     }
 
     return {
       gameId: payload.gameId,
       pace: payload.pace ?? 1,
+      playIndex: this.parsePlayIndex(payload.playIndex),
     };
+  }
+
+  private parsePlayIndex(playIndex: number | undefined): number | null {
+    if (typeof playIndex !== 'number' || !Number.isFinite(playIndex)) {
+      return null;
+    }
+
+    return Math.max(0, Math.trunc(playIndex));
   }
 }
