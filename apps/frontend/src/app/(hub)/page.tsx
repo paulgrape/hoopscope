@@ -2,7 +2,7 @@ import {NewsNewspaper} from '@/components/news/news-newspaper'
 import {JsonLd} from '@/components/seo/json-ld'
 import {getNews} from '@/lib/news-api'
 import {collectionPageSchema} from '@/lib/seo-schema'
-import {SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE, createPageMetadata} from '@/lib/site'
+import {SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE, absoluteUrl, createPageMetadata} from '@/lib/site'
 import {Rss} from 'lucide-react'
 import type {Metadata} from 'next'
 import Link from 'next/link'
@@ -63,8 +63,10 @@ export default async function Home({searchParams}: HomeProps) {
             {SITE_TAGLINE}. Your morning read on league headlines, pulled fresh from ESPN.
           </p>
         </div>
-        <Link
-          href='/feed.xml'
+        <a
+          href={absoluteUrl('/feed.xml')}
+          target='_blank'
+          rel='noopener noreferrer'
           aria-label='Subscribe to the RSS feed'
           title='Subscribe to the RSS feed'
           className='text-muted-foreground hover:text-foreground flex size-9 shrink-0 items-center justify-center rounded-lg border border-transparent transition-colors'
@@ -74,7 +76,7 @@ export default async function Home({searchParams}: HomeProps) {
             aria-hidden
           />
           <span className='sr-only'>Subscribe to the RSS feed</span>
-        </Link>
+        </a>
       </header>
 
       <NewsNewspaper articles={articles} />
