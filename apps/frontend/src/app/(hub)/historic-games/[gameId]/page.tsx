@@ -7,6 +7,8 @@ import type {Metadata} from 'next'
 import Link from 'next/link'
 import {notFound} from 'next/navigation'
 
+const DISPLAY_LOCALE = 'en-US'
+
 type HistoricGamePageProps = {
   params: Promise<{
     gameId: string
@@ -65,18 +67,33 @@ export default async function HistoricGamePage({params}: HistoricGamePageProps) 
           ])
         ]}
       />
-      <Link
-        href='/historic-games'
-        className='text-muted-foreground hover:text-foreground text-sm underline-offset-4 hover:underline'
-      >
-        Back to historic games
-      </Link>
+      <nav aria-label='Breadcrumb'>
+        <ol className='text-muted-foreground flex flex-wrap items-center gap-1.5 text-sm'>
+          <li>
+            <Link
+              href='/historic-games'
+              className='hover:text-foreground underline-offset-4 hover:underline'
+            >
+              Historic games
+            </Link>
+          </li>
+          <li aria-hidden='true'>/</li>
+          <li
+            className='text-foreground truncate'
+            aria-current='page'
+          >
+            {game.name}
+          </li>
+        </ol>
+      </nav>
 
-      <header className='flex flex-col gap-2'>
-        <p className='text-muted-foreground text-sm tracking-wider uppercase'>Live replay</p>
+      <header className='flex flex-col gap-1.5'>
+        <p className='text-muted-foreground text-xs tracking-wider uppercase sm:text-sm'>Play-by-play replay</p>
         <h1 className='text-2xl font-semibold sm:text-3xl'>{game.name}</h1>
-        <p className='text-muted-foreground max-w-2xl text-sm sm:text-base'>
-          This replay follows the saved ESPN play-by-play feed and updates as websocket ticks arrive.
+        <p className='text-muted-foreground text-sm'>
+          {formatGameDate(game.date)}
+          {game.venue ? ` · ${game.venue}` : ''}
+          {` · ${game.totalPlays.toLocaleString()} saved plays`}
         </p>
       </header>
 
@@ -86,4 +103,13 @@ export default async function HistoricGamePage({params}: HistoricGamePageProps) 
       />
     </main>
   )
+}
+
+function formatGameDate(date: string) {
+  return new Intl.DateTimeFormat(DISPLAY_LOCALE, {
+    weekday: 'short',
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric'
+  }).format(new Date(date))
 }
