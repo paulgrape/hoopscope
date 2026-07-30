@@ -76,6 +76,22 @@ function BoxScoreTable({team, rows, showMinutes}: {team: GameTeam; rows: BoxScor
               Player
             </th>
             {showMinutes ? <StatHeader label='MIN' /> : null}
+            <th
+              scope='col'
+              className='text-foreground px-3 py-2 text-right font-semibold'
+            >
+              PTS
+            </th>
+            <StatHeader label='REB' />
+            <StatHeader label='AST' />
+            <StatHeader
+              label='STL'
+              className='hidden sm:table-cell'
+            />
+            <StatHeader
+              label='BLK'
+              className='hidden sm:table-cell'
+            />
             <StatHeader
               label='FG'
               className='hidden sm:table-cell'
@@ -88,16 +104,6 @@ function BoxScoreTable({team, rows, showMinutes}: {team: GameTeam; rows: BoxScor
               label='FT'
               className='hidden sm:table-cell'
             />
-            <StatHeader label='REB' />
-            <StatHeader label='AST' />
-            <StatHeader
-              label='STL'
-              className='hidden sm:table-cell'
-            />
-            <StatHeader
-              label='BLK'
-              className='hidden sm:table-cell'
-            />
             <StatHeader
               label='TO'
               className='hidden sm:table-cell'
@@ -106,12 +112,6 @@ function BoxScoreTable({team, rows, showMinutes}: {team: GameTeam; rows: BoxScor
               label='PF'
               className='hidden sm:table-cell'
             />
-            <th
-              scope='col'
-              className='text-foreground px-3 py-2 text-right font-semibold'
-            >
-              PTS
-            </th>
           </tr>
         </thead>
         <tbody>
@@ -127,6 +127,17 @@ function BoxScoreTable({team, rows, showMinutes}: {team: GameTeam; rows: BoxScor
                 {row.name}
               </th>
               {showMinutes ? <StatCell value={row.minutes ?? '—'} /> : null}
+              <td className='px-3 py-2 text-right font-semibold tabular-nums'>{row.points}</td>
+              <StatCell value={row.rebounds} />
+              <StatCell value={row.assists} />
+              <StatCell
+                value={row.steals}
+                className='hidden sm:table-cell'
+              />
+              <StatCell
+                value={row.blocks}
+                className='hidden sm:table-cell'
+              />
               <StatCell
                 value={`${row.fieldGoalsMade}-${row.fieldGoalsAttempted}`}
                 className='hidden sm:table-cell'
@@ -139,16 +150,6 @@ function BoxScoreTable({team, rows, showMinutes}: {team: GameTeam; rows: BoxScor
                 value={`${row.freeThrowsMade}-${row.freeThrowsAttempted}`}
                 className='hidden sm:table-cell'
               />
-              <StatCell value={row.rebounds} />
-              <StatCell value={row.assists} />
-              <StatCell
-                value={row.steals}
-                className='hidden sm:table-cell'
-              />
-              <StatCell
-                value={row.blocks}
-                className='hidden sm:table-cell'
-              />
               <StatCell
                 value={row.turnovers}
                 className='hidden sm:table-cell'
@@ -157,7 +158,6 @@ function BoxScoreTable({team, rows, showMinutes}: {team: GameTeam; rows: BoxScor
                 value={row.fouls}
                 className='hidden sm:table-cell'
               />
-              <td className='px-3 py-2 text-right font-semibold tabular-nums'>{row.points}</td>
             </tr>
           ))}
         </tbody>

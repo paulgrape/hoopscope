@@ -28,7 +28,8 @@ const nextConfig: NextConfig = {
     formats: ['image/avif', 'image/webp'],
     remotePatterns: [
       {protocol: 'https', hostname: 'a.espncdn.com'},
-      {protocol: 'https', hostname: 's.espncdn.com'}
+      {protocol: 'https', hostname: 's.espncdn.com'},
+      {protocol: 'https', hostname: 'espnmedia-cdn.akamaized.net'}
     ]
   },
   async headers() {

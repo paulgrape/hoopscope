@@ -2,7 +2,7 @@
 
 import {Button} from '@/components/ui/button'
 import {cn} from '@/lib/utils'
-import {ChevronFirst, ChevronLast, Pause, Play, RotateCcw, SkipBack, SkipForward} from 'lucide-react'
+import {Pause, Play, RotateCcw, SkipBack, SkipForward, Square} from 'lucide-react'
 
 export type PlaybackPace = 1 | 1.5 | 2 | 3
 
@@ -14,8 +14,6 @@ type ReplayTransportProps = {
   pace: PlaybackPace
   canStepBack: boolean
   canStepForward: boolean
-  previousScoringIndex: number | null
-  nextScoringIndex: number | null
   onTogglePlay: () => void
   onRestart: () => void
   onStep: (offset: number) => void
@@ -29,8 +27,6 @@ export function ReplayTransport({
   pace,
   canStepBack,
   canStepForward,
-  previousScoringIndex,
-  nextScoringIndex,
   onTogglePlay,
   onRestart,
   onStep,
@@ -44,30 +40,20 @@ export function ReplayTransport({
           variant='ghost'
           size='icon-sm'
           className='size-9 sm:size-7'
-          aria-label='Restart replay'
-          onClick={onRestart}
-        >
-          <RotateCcw aria-hidden='true' />
-        </Button>
-        <Button
-          variant='ghost'
-          size='icon-sm'
-          className='size-9 sm:size-7'
-          aria-label='Previous scoring play'
-          disabled={previousScoringIndex === null}
-          onClick={() => previousScoringIndex !== null && onSeek(previousScoringIndex)}
-        >
-          <ChevronFirst aria-hidden='true' />
-        </Button>
-        <Button
-          variant='ghost'
-          size='icon-sm'
-          className='size-9 sm:size-7'
           aria-label='Previous play'
           disabled={!canStepBack}
           onClick={() => onStep(-1)}
         >
           <SkipBack aria-hidden='true' />
+        </Button>
+        <Button
+          variant='ghost'
+          size='icon-sm'
+          className='size-9 sm:size-7'
+          aria-label='Restart replay'
+          onClick={onRestart}
+        >
+          <Square aria-hidden='true' />
         </Button>
         <Button
           size='icon'
@@ -92,16 +78,6 @@ export function ReplayTransport({
           onClick={() => onStep(1)}
         >
           <SkipForward aria-hidden='true' />
-        </Button>
-        <Button
-          variant='ghost'
-          size='icon-sm'
-          className='size-9 sm:size-7'
-          aria-label='Next scoring play'
-          disabled={nextScoringIndex === null}
-          onClick={() => nextScoringIndex !== null && onSeek(nextScoringIndex)}
-        >
-          <ChevronLast aria-hidden='true' />
         </Button>
       </div>
 

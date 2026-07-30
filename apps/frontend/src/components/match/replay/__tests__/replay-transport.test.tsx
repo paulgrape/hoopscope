@@ -20,8 +20,6 @@ function renderTransport(overrides: Partial<Parameters<typeof ReplayTransport>[0
       pace={1}
       canStepBack
       canStepForward
-      previousScoringIndex={12}
-      nextScoringIndex={null}
       {...handlers}
       {...overrides}
     />
