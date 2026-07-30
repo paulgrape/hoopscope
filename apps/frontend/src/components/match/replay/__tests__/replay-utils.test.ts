@@ -5,7 +5,6 @@ import {
   clockLabelAtElapsed,
   computeInsights,
   elapsedForPlayIndex,
-  findScoringPlayIndex,
   periodScoresFromPlays,
   periodSegments,
   playIndexAtElapsed,
@@ -103,15 +102,6 @@ describe('replay derived stats', () => {
     expect(insights.homeShots).toEqual({freeThrows: 0, twos: 2, threes: 0, points: 4})
     expect(insights.run).toEqual({team: 'home', points: 2})
     expect(insights.differential).toHaveLength(4)
-  })
-
-  it('finds the neighbouring scoring plays that were already revealed', () => {
-    const seen = [plays[0], plays[1], plays[2], undefined, undefined]
-
-    expect(findScoringPlayIndex(seen, 2, 'previous')).toBe(1)
-    expect(findScoringPlayIndex(seen, 1, 'next')).toBe(2)
-    expect(findScoringPlayIndex(seen, 2, 'next')).toBeNull()
-    expect(findScoringPlayIndex(seen, 1, 'previous')).toBeNull()
   })
 
   it('reads free throws that the archive stores with no score value', () => {

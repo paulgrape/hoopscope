@@ -12,7 +12,7 @@ import {ReplayLineScore} from './replay/replay-line-score'
 import {type ConnectionStatus, ReplayScoreboard} from './replay/replay-scoreboard'
 import {ReplayTimeline} from './replay/replay-timeline'
 import {type PlaybackPace, ReplayTransport} from './replay/replay-transport'
-import {clockToSeconds, findScoringPlayIndex, formatGameClock, periodLabel} from './replay/replay-utils'
+import {clockToSeconds, formatGameClock, periodLabel} from './replay/replay-utils'
 
 const CLOCK_TICK_MS = 250
 
@@ -107,6 +107,11 @@ export function HistoricGameSimulator({initialGame, socketBaseUrl}: HistoricGame
     [emitReplayCommand, game.totalPlays]
   )
 
+  const handlePause = useCallback(() => {
+    setGame(current => ({...current, paused: true}))
+    emitReplayCommand('game:pause')
+  }, [emitReplayCommand])
+
   const handleTogglePlay = useCallback(() => {
     const nextPaused = !game.paused
 
@@ -148,10 +153,11 @@ export function HistoricGameSimulator({initialGame, socketBaseUrl}: HistoricGame
             pace={pace}
             canStepBack={currentIndex > 0}
             canStepForward={currentIndex < game.totalPlays - 1}
-            previousScoringIndex={findScoringPlayIndex(seenPlays, currentIndex, 'previous')}
-            nextScoringIndex={findScoringPlayIndex(seenPlays, currentIndex, 'next')}
             onTogglePlay={handleTogglePlay}
-            onRestart={() => handleSeek(0)}
+            onRestart={() => {
+              handleSeek(0)
+              handlePause()
+            }}
             onStep={offset => handleSeek(currentIndex + offset)}
             onSeek={handleSeek}
             onPaceChange={handlePaceChange}

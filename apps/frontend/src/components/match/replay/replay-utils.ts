@@ -276,20 +276,6 @@ export function computeInsights(plays: LivePlayEvent[]): ReplayInsights {
   return insights
 }
 
-export function findScoringPlayIndex(
-  plays: (LivePlayEvent | undefined)[],
-  fromIndex: number,
-  direction: 'previous' | 'next'
-): number | null {
-  const step = direction === 'next' ? 1 : -1
-
-  for (let index = fromIndex + step; index >= 0 && index < plays.length; index += step) {
-    if (plays[index]?.scoringPlay) return index
-  }
-
-  return null
-}
-
 export function teamAccent(color: string | undefined | null) {
   if (!color) return undefined
   return color.startsWith('#') ? color : `#${color}`

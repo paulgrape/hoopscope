@@ -20,8 +20,6 @@ function renderTransport(overrides: Partial<Parameters<typeof ReplayTransport>[0
       pace={1}
       canStepBack
       canStepForward
-      previousScoringIndex={12}
-      nextScoringIndex={null}
       {...handlers}
       {...overrides}
     />
@@ -64,15 +62,6 @@ describe('ReplayTransport', () => {
 
     expect(onStep).toHaveBeenNthCalledWith(1, 1)
     expect(onStep).toHaveBeenNthCalledWith(2, -1)
-  })
-
-  it('jumps to the previous scoring play and disables unknown jumps', async () => {
-    const {onSeek} = renderTransport()
-
-    await userEvent.click(screen.getByRole('button', {name: 'Previous scoring play'}))
-
-    expect(onSeek).toHaveBeenCalledWith(12)
-    expect(screen.getByRole('button', {name: 'Next scoring play'})).toBeDisabled()
   })
 
   it('disables stepping at the edges of the replay', () => {
