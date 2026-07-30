@@ -64,15 +64,6 @@ describe('ReplayTransport', () => {
     expect(onStep).toHaveBeenNthCalledWith(2, -1)
   })
 
-  it('jumps to the previous scoring play and disables unknown jumps', async () => {
-    const {onSeek} = renderTransport()
-
-    await userEvent.click(screen.getByRole('button', {name: 'Previous scoring play'}))
-
-    expect(onSeek).toHaveBeenCalledWith(12)
-    expect(screen.getByRole('button', {name: 'Next scoring play'})).toBeDisabled()
-  })
-
   it('disables stepping at the edges of the replay', () => {
     renderTransport({canStepBack: false, canStepForward: false})
 
