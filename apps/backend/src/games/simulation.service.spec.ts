@@ -95,6 +95,73 @@ jest.mock('./data', () => ({
         },
       ],
     },
+    {
+      id: 'game-2',
+      name: 'Clock Formats Game',
+      date: '2020-01-02T00:00:00Z',
+      homeTeam: {
+        id: 'h',
+        name: 'Home',
+        abbreviation: 'HOM',
+        logo: '',
+        color: '',
+      },
+      awayTeam: {
+        id: 'a',
+        name: 'Away',
+        abbreviation: 'AWY',
+        logo: '',
+        color: '',
+      },
+      finalScore: { home: 2, away: 0 },
+      plays: [
+        {
+          id: 'g2-p1',
+          sequenceNumber: 1,
+          period: 1,
+          clock: '12:00',
+          text: 'Tip-off',
+          scoringPlay: false,
+          scoreValue: 0,
+          homeScore: 0,
+          awayScore: 0,
+        },
+        {
+          id: 'g2-p2',
+          sequenceNumber: 2,
+          period: 4,
+          clock: '28.3',
+          text: 'Home bucket',
+          scoringPlay: true,
+          scoreValue: 2,
+          teamId: 'h',
+          homeScore: 2,
+          awayScore: 0,
+        },
+        {
+          id: 'g2-p3',
+          sequenceNumber: 3,
+          period: 4,
+          clock: '12:00',
+          text: 'Substitution logged out of order',
+          scoringPlay: false,
+          scoreValue: 0,
+          homeScore: 2,
+          awayScore: 0,
+        },
+        {
+          id: 'g2-p4',
+          sequenceNumber: 4,
+          period: 4,
+          clock: '0.0',
+          text: 'End of Game',
+          scoringPlay: false,
+          scoreValue: 0,
+          homeScore: 2,
+          awayScore: 0,
+        },
+      ],
+    },
   ],
 }));
 
@@ -115,7 +182,7 @@ describe('SimulationService', () => {
     service.startAll();
 
     const games = service.getActiveGames();
-    expect(games).toHaveLength(1);
+    expect(games).toHaveLength(2);
     expect(games[0].id).toBe('game-1');
     expect(service.getGame('game-1')?.status).toBe('live');
     expect(service.getGame('unknown')).toBeNull();
@@ -200,6 +267,14 @@ describe('SimulationService', () => {
     });
     expect(state?.plays[0].shortText).toBe('Jump Ball');
     expect(state?.plays[0].scoringPlay).toBe(false);
+  });
+
+  it('reads sub-minute clocks and keeps elapsed times non-decreasing', () => {
+    const state = service.startReplay('client-1', 'game-2', 1, () => undefined);
+
+    expect(state?.timeline.map((entry) => entry.elapsedSeconds)).toEqual([
+      0, 2851.7, 2851.7, 2880,
+    ]);
   });
 
   it('reveals final period scores and players only at the end', () => {

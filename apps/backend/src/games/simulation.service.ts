@@ -376,9 +376,15 @@ export class SimulationService implements OnModuleDestroy {
     const cached = this.livePlaysByGame.get(game.id);
     if (cached) return cached;
 
-    const livePlays = game.plays.map((play, index) =>
-      this.toLivePlay(play, index),
-    );
+    let latestElapsed = 0;
+    const livePlays = game.plays.map((play, index) => {
+      const livePlay = this.toLivePlay(play, index);
+
+      latestElapsed = Math.max(latestElapsed, livePlay.elapsedSeconds);
+      livePlay.elapsedSeconds = latestElapsed;
+
+      return livePlay;
+    });
     this.livePlaysByGame.set(game.id, livePlays);
 
     return livePlays;
@@ -453,9 +459,14 @@ export class SimulationService implements OnModuleDestroy {
   }
 
   private clockToSeconds(clock: string): number | null {
-    const [minutes, seconds] = clock.split(':').map(Number);
-    if (!Number.isFinite(minutes) || !Number.isFinite(seconds)) return null;
-    return minutes * 60 + seconds;
+    if (clock.includes(':')) {
+      const [minutes, seconds] = clock.split(':').map(Number);
+      if (!Number.isFinite(minutes) || !Number.isFinite(seconds)) return null;
+      return minutes * 60 + seconds;
+    }
+
+    const seconds = Number(clock);
+    return Number.isFinite(seconds) ? seconds : null;
   }
 
   private cloneState(state: LiveGameState): LiveGameState {

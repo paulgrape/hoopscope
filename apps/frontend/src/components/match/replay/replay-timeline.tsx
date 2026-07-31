@@ -40,11 +40,15 @@ export function ReplayTimeline({
 }: ReplayTimelineProps) {
   const trackRef = useRef<HTMLDivElement | null>(null)
   const [dragIndex, setDragIndex] = useState<number | null>(null)
+  const [pendingIndex, setPendingIndex] = useState<number | null>(null)
   const [hoverSeconds, setHoverSeconds] = useState<number | null>(null)
 
   const lastIndex = Math.max(0, timeline.length - 1)
   const currentIndex = Math.min(Math.max(0, playIndex - 1), lastIndex)
-  const activeIndex = dragIndex ?? currentIndex
+
+  if (pendingIndex !== null && pendingIndex === currentIndex) setPendingIndex(null)
+
+  const activeIndex = dragIndex ?? pendingIndex ?? currentIndex
   const totalSeconds = totalGameSeconds(timeline)
   const segments = periodSegments(timeline)
   const lastPeriod = segments.length
@@ -74,6 +78,14 @@ export function ReplayTimeline({
     if (dragIndex !== null) setDragIndex(playIndexAtElapsed(timeline, seconds))
   }
 
+  const commitSeek = (index: number) => {
+    const target = Math.min(Math.max(0, index), lastIndex)
+    if (target === (pendingIndex ?? currentIndex)) return
+
+    setPendingIndex(target)
+    onSeek(target)
+  }
+
   const handlePointerUp = (event: PointerEvent<HTMLDivElement>) => {
     if (event.currentTarget.hasPointerCapture(event.pointerId)) {
       event.currentTarget.releasePointerCapture(event.pointerId)
@@ -81,28 +93,26 @@ export function ReplayTimeline({
 
     const target = dragIndex ?? playIndexAtElapsed(timeline, secondsFromPointer(event.clientX))
     setDragIndex(null)
-    if (target !== currentIndex) onSeek(target)
+    commitSeek(target)
   }
 
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     const seekTo = (index: number) => {
       event.preventDefault()
-      onSeek(Math.min(Math.max(0, index), lastIndex))
+      commitSeek(index)
     }
-
-    const currentSeconds = elapsedForPlayIndex(timeline, currentIndex)
 
     switch (event.key) {
       case 'ArrowLeft':
       case 'ArrowDown':
-        return seekTo(currentIndex - 1)
+        return seekTo(activeIndex - 1)
       case 'ArrowRight':
       case 'ArrowUp':
-        return seekTo(currentIndex + 1)
+        return seekTo(activeIndex + 1)
       case 'PageDown':
-        return seekTo(playIndexAtElapsed(timeline, currentSeconds - PAGE_STEP_SECONDS))
+        return seekTo(playIndexAtElapsed(timeline, activeSeconds - PAGE_STEP_SECONDS))
       case 'PageUp':
-        return seekTo(playIndexAtElapsed(timeline, currentSeconds + PAGE_STEP_SECONDS))
+        return seekTo(playIndexAtElapsed(timeline, activeSeconds + PAGE_STEP_SECONDS))
       case 'Home':
         return seekTo(0)
       case 'End':
