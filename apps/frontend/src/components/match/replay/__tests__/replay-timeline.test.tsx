@@ -106,6 +106,16 @@ describe('ReplayTimeline', () => {
     expect(onSeek).not.toHaveBeenCalled()
   })
 
+  it('holds the requested position until the seek is echoed back', () => {
+    const {slider, onSeek} = renderTimeline(1)
+
+    fireEvent.pointerDown(slider, {clientX: TRACK_WIDTH / 2, pointerId: 1})
+    fireEvent.pointerUp(slider, {clientX: TRACK_WIDTH / 2, pointerId: 1})
+
+    expect(onSeek).toHaveBeenCalledWith(2)
+    expect(slider).toHaveAttribute('aria-valuenow', '2')
+  })
+
   it('steps by play with the arrow keys and jumps with Home and End', () => {
     const {slider, onSeek} = renderTimeline(2)
 
@@ -113,7 +123,7 @@ describe('ReplayTimeline', () => {
     expect(onSeek).toHaveBeenLastCalledWith(2)
 
     fireEvent.keyDown(slider, {key: 'ArrowLeft'})
-    expect(onSeek).toHaveBeenLastCalledWith(0)
+    expect(onSeek).toHaveBeenLastCalledWith(1)
 
     fireEvent.keyDown(slider, {key: 'End'})
     expect(onSeek).toHaveBeenLastCalledWith(3)
