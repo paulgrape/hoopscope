@@ -1,5 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CacheService } from '../cache/cache.service';
+import {
+  isUpstreamNotFound,
+  rethrowAsNotFound,
+} from '../common/upstream-errors';
 import {
   getLatestTeamFromCareerStats,
   parseCareerStats,
@@ -8,12 +12,12 @@ import {
   formatSeasonLabel,
   parseOverviewAverages,
 } from '../espn/athlete-stats.parser';
-import { findPlayerInjury } from '../espn/injury.parser';
 import {
   EspnCoreAthlete,
   EspnSeasonType,
   EspnService,
 } from '../espn/espn.service';
+import { findPlayerInjury } from '../espn/injury.parser';
 import { mapNewsArticle } from '../news/news.mapper';
 
 export type PlayerInjury = {
@@ -105,10 +109,19 @@ export class PlayersService {
     if (cached) return cached;
 
     const [athlete, regularStats, injuries] = await Promise.all([
-      this.espn.getPlayer(id),
-      this.espn.getAthleteStats(id, 'regular'),
+      this.espn
+        .getPlayer(id)
+        .catch(rethrowAsNotFound(`Player ${id} not found`)),
+      this.espn.getAthleteStats(id, 'regular').catch((error: unknown) => {
+        if (isUpstreamNotFound(error)) return {};
+        throw error;
+      }),
       this.espn.getLeagueInjuries().catch(() => ({ items: [] })),
     ]);
+
+    if (!athlete?.id) {
+      throw new NotFoundException(`Player ${id} not found`);
+    }
 
     const profile = this.mapProfile(
       athlete,

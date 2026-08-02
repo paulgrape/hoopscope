@@ -14,6 +14,7 @@ import {SITE_NAME, createPageMetadata} from '@/lib/site'
 import {getTeam} from '@/lib/teams-api'
 import type {Metadata} from 'next'
 import Link from 'next/link'
+import {notFound} from 'next/navigation'
 
 type PlayerDetailsPageProps = {
   params: Promise<{
@@ -28,6 +29,14 @@ export async function generateMetadata({params}: PlayerDetailsPageProps): Promis
   const {playerId} = await params
   const player = await getPlayer(playerId)
 
+  if (!player) {
+    return createPageMetadata({
+      title: 'Player Not Found',
+      description: `No NBA player matches this ${SITE_NAME} address.`,
+      path: `/players/${playerId}`
+    })
+  }
+
   return createPageMetadata({
     title: `${player.fullName} - Stats, Bio & News`,
     description: `${player.fullName} player profile on ${SITE_NAME}: bio, season averages, full career statistics, and the latest related news headlines.`,
@@ -41,8 +50,13 @@ export default async function PlayerDetailsPage({params, searchParams}: PlayerDe
   const {playerId} = await params
   const {teamId} = await searchParams
 
-  const [player, regularStats, playoffStats, careerStats, news, team, heatmap] = await Promise.all([
-    getPlayer(playerId),
+  const player = await getPlayer(playerId)
+
+  if (!player) {
+    notFound()
+  }
+
+  const [regularStats, playoffStats, careerStats, news, team, heatmap] = await Promise.all([
     getPlayerSeasonStats(playerId, {seasonType: 'regular'}),
     getPlayerSeasonStats(playerId, {seasonType: 'playoffs'}),
     getPlayerCareerStats(playerId),

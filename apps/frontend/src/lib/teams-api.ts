@@ -1,4 +1,4 @@
-import {apiFetch} from '@/lib/api-client'
+import {apiFetch, apiFetchOrNull} from '@/lib/api-client'
 
 export type TeamSummary = {
   id: string
@@ -76,8 +76,8 @@ export async function getTeams(): Promise<TeamSummary[]> {
   return apiFetch<TeamSummary[]>('/teams', {revalidate: 3600})
 }
 
-export async function getTeam(teamId: string): Promise<TeamDetails> {
-  return apiFetch<TeamDetails>(`/teams/${teamId}`, {revalidate: 3600})
+export async function getTeam(teamId: string): Promise<TeamDetails | null> {
+  return apiFetchOrNull<TeamDetails>(`/teams/${teamId}`, {revalidate: 3600})
 }
 
 export async function getTeamRoster(teamId: string): Promise<TeamRosterPlayer[]> {

@@ -163,7 +163,7 @@ export async function getHistoricGames(): Promise<LiveGameState[]> {
 }
 
 export async function getHistoricGame(gameId: string): Promise<LiveGameState | null> {
-  return apiFetch<LiveGameState | null>(`/games/live/${gameId}`)
+  return apiFetchOrNull<LiveGameState>(`/games/live/${gameId}`)
 }
 
 export async function getSchedule(date: string, offsetMinutes: number): Promise<ScoreboardGame[]> {
