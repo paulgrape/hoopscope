@@ -1,4 +1,4 @@
-import {apiFetch} from '@/lib/api-client'
+import {apiFetch, apiFetchOrNull} from '@/lib/api-client'
 
 export type SeasonType = 'regular' | 'playoffs'
 
@@ -91,8 +91,8 @@ export type PlayerNewsArticle = {
   teams: string[]
 }
 
-export async function getPlayer(playerId: string): Promise<PlayerProfile> {
-  return apiFetch<PlayerProfile>(`/players/${playerId}`, {revalidate: 3600})
+export async function getPlayer(playerId: string): Promise<PlayerProfile | null> {
+  return apiFetchOrNull<PlayerProfile>(`/players/${playerId}`, {revalidate: 3600})
 }
 
 type PlayerSeasonStatsOptions = {

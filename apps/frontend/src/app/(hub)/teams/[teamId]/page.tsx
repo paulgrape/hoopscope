@@ -6,6 +6,7 @@ import {getTeam, getTeamSeasonStats} from '@/lib/teams-api'
 import type {Metadata} from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
+import {notFound} from 'next/navigation'
 
 type TeamDetailsPageProps = {
   params: Promise<{
@@ -17,6 +18,14 @@ export async function generateMetadata({params}: TeamDetailsPageProps): Promise<
   const {teamId} = await params
   const team = await getTeam(teamId)
 
+  if (!team) {
+    return createPageMetadata({
+      title: 'Team Not Found',
+      description: `No NBA team matches this ${SITE_NAME} address.`,
+      path: `/teams/${teamId}`
+    })
+  }
+
   return createPageMetadata({
     title: `${team.displayName} - Roster, Stats & Schedule`,
     description: `Follow the ${team.displayName} on ${SITE_NAME}: full roster, season record, team details, and regular season and playoff statistics.`,
@@ -27,8 +36,13 @@ export async function generateMetadata({params}: TeamDetailsPageProps): Promise<
 
 export default async function TeamDetailsPage({params}: TeamDetailsPageProps) {
   const {teamId} = await params
-  const [team, regularStats, playoffStats] = await Promise.all([
-    getTeam(teamId),
+  const team = await getTeam(teamId)
+
+  if (!team) {
+    notFound()
+  }
+
+  const [regularStats, playoffStats] = await Promise.all([
     getTeamSeasonStats(teamId, {seasonType: 'regular'}),
     getTeamSeasonStats(teamId, {seasonType: 'playoffs'})
   ])

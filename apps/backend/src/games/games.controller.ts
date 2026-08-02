@@ -51,7 +51,12 @@ export class GamesController {
   @Get('live/:id')
   @ApiOperation({ summary: 'Single simulated game state' })
   liveOne(@Param('id') id: string) {
-    return this.gamesService.getGame(id);
+    const game = this.gamesService.getGame(id);
+    if (!game) {
+      throw new NotFoundException(`Game ${id} not found`);
+    }
+
+    return game;
   }
 
   @Get(':gameId')

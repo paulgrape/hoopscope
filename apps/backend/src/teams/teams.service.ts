@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CacheService } from '../cache/cache.service';
+import { rethrowAsNotFound } from '../common/upstream-errors';
 import {
   formatSeasonLabel,
   parseOverviewStats,
@@ -65,8 +66,14 @@ export class TeamsService {
   }
 
   async findOne(id: string) {
-    const data: any = await this.espn.getTeam(id);
-    const team = data.team;
+    const data: any = await this.espn
+      .getTeam(id)
+      .catch(rethrowAsNotFound(`Team ${id} not found`));
+    const team = data?.team;
+    if (!team) {
+      throw new NotFoundException(`Team ${id} not found`);
+    }
+
     return {
       id: team.id,
       name: team.name,
