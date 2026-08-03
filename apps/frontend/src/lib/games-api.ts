@@ -158,6 +158,8 @@ export type GameSummary = {
 
 const DATE_KEY_PATTERN = /^\d{4}-\d{2}-\d{2}$/
 
+const BROWSER_REFRESH = {timeoutMs: 5000, retries: 1}
+
 export async function getHistoricGames(): Promise<LiveGameState[]> {
   return apiFetch<LiveGameState[]>('/games/live')
 }
@@ -172,7 +174,7 @@ export async function getSchedule(date: string, offsetMinutes: number): Promise<
     offsetMinutes: String(offsetMinutes)
   })
 
-  return proxyFetch<ScoreboardGame[]>(`/api/games/schedule?${params.toString()}`)
+  return proxyFetch<ScoreboardGame[]>(`/api/games/schedule?${params.toString()}`, BROWSER_REFRESH)
 }
 
 export async function getServerSchedule(date: string, offsetMinutes: number): Promise<ScoreboardGame[]> {
@@ -195,7 +197,10 @@ export async function getNearestScheduleDate(
     direction
   })
 
-  const payload = await proxyFetchOrNull<{date: string}>(`/api/games/schedule/nearest?${params.toString()}`)
+  const payload = await proxyFetchOrNull<{date: string}>(
+    `/api/games/schedule/nearest?${params.toString()}`,
+    BROWSER_REFRESH
+  )
   return payload?.date ?? null
 }
 
@@ -204,7 +209,7 @@ export async function getServerGameSummary(gameId: string): Promise<GameSummary 
 }
 
 export async function getGameSummary(gameId: string): Promise<GameSummary | null> {
-  return proxyFetchOrNull<GameSummary>(`/api/games/${gameId}`)
+  return proxyFetchOrNull<GameSummary>(`/api/games/${gameId}`, BROWSER_REFRESH)
 }
 
 export function getTodayDateKey(): string {
