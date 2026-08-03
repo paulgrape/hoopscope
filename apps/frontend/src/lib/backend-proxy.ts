@@ -1,4 +1,4 @@
-import {API_BASE_URL} from '@/lib/api-client'
+import {API_BASE_URL, fetchWithRetry} from '@/lib/api-client'
 import {NextRequest, NextResponse} from 'next/server'
 
 /**
@@ -12,7 +12,16 @@ export async function proxyBackendGet(path: string, request?: NextRequest): Prom
     backendUrl.searchParams.set(key, value)
   })
 
-  const response = await fetch(backendUrl, {cache: 'no-store'})
+  let response: Response
+
+  try {
+    response = await fetchWithRetry(backendUrl, {cache: 'no-store'}, {path})
+  } catch (error) {
+    console.error(`Backend proxy failed for ${path}`, error)
+
+    return NextResponse.json({statusCode: 504, message: `Backend request failed for ${path}`}, {status: 504})
+  }
+
   const body = await response.text()
 
   return new NextResponse(body, {
