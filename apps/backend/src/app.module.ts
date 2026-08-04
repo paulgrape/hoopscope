@@ -4,6 +4,7 @@ import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { CacheModule } from './cache/cache.module';
 import { AllExceptionsFilter } from './common/http-exception.filter';
+import { validate } from './config/env.validation';
 import { EspnModule } from './espn/espn.module';
 import { GamesModule } from './games/games.module';
 import { HealthModule } from './health/health.module';
@@ -16,7 +17,7 @@ import { TeamsModule } from './teams/teams.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({ isGlobal: true, validate }),
     ThrottlerModule.forRoot([{ ttl: 60000, limit: 100 }]),
     CacheModule,
     EspnModule,

@@ -23,4 +23,6 @@ COPY --from=build /app/apps/backend/dist ./dist
 COPY apps/backend/package.json ./package.json
 USER app
 EXPOSE 3000
+HEALTHCHECK --interval=30s --timeout=3s --start-period=15s --retries=3 \
+  CMD wget -qO- "http://127.0.0.1:${PORT:-3000}/health/live" > /dev/null || exit 1
 CMD ["node", "dist/main"]

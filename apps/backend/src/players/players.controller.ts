@@ -1,13 +1,10 @@
-import {
-  BadRequestException,
-  Controller,
-  Get,
-  Param,
-  Query,
-} from '@nestjs/common';
-import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
-import { EspnSeasonType } from '../espn/espn.service';
+import { Controller, Get, Param, Query } from '@nestjs/common';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { SeasonStatsQueryDto } from '../common/dto/season-stats-query.dto';
 import { PlayersService } from './players.service';
+import { PlayerNewsQueryDto } from './dto/player-news-query.dto';
+
+const DEFAULT_NEWS_LIMIT = 6;
 
 @ApiTags('players')
 @Controller('players')
@@ -28,43 +25,20 @@ export class PlayersController {
 
   @Get(':id/stats')
   @ApiOperation({ summary: 'Get player season averages (regular or playoffs)' })
-  @ApiQuery({ name: 'season', required: false, type: Number })
-  @ApiQuery({
-    name: 'seasonType',
-    required: false,
-    enum: ['regular', 'playoffs'],
-  })
   findSeasonStats(
     @Param('id') id: string,
-    @Query('season') season?: string,
-    @Query('seasonType') seasonType?: string,
+    @Query() query: SeasonStatsQueryDto,
   ) {
-    const parsedSeason = season ? Number(season) : undefined;
-    if (season && !Number.isFinite(parsedSeason)) {
-      throw new BadRequestException('season must be a number');
-    }
-
-    const resolvedSeasonType = (seasonType ?? 'regular') as EspnSeasonType;
-    if (resolvedSeasonType !== 'regular' && resolvedSeasonType !== 'playoffs') {
-      throw new BadRequestException('seasonType must be regular or playoffs');
-    }
-
     return this.playersService.findSeasonStats(
       id,
-      parsedSeason,
-      resolvedSeasonType,
+      query.season,
+      query.seasonType ?? 'regular',
     );
   }
 
   @Get(':id/news')
   @ApiOperation({ summary: 'Get player news articles' })
-  @ApiQuery({ name: 'limit', required: false, type: Number })
-  findNews(@Param('id') id: string, @Query('limit') limit?: string) {
-    const parsedLimit = limit ? Number(limit) : 6;
-    if (limit && (!Number.isFinite(parsedLimit) || parsedLimit <= 0)) {
-      throw new BadRequestException('limit must be a positive number');
-    }
-
-    return this.playersService.findNews(id, parsedLimit);
+  findNews(@Param('id') id: string, @Query() query: PlayerNewsQueryDto) {
+    return this.playersService.findNews(id, query.limit ?? DEFAULT_NEWS_LIMIT);
   }
 }

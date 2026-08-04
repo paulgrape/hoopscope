@@ -6,6 +6,11 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { GameIdParamDto } from './dto/game-id-param.dto';
+import {
+  NearestScheduleQueryDto,
+  ScheduleQueryDto,
+} from './dto/schedule-query.dto';
 import { GamesService } from './games.service';
 
 @ApiTags('games')
@@ -21,25 +26,18 @@ export class GamesController {
 
   @Get('schedule/nearest')
   @ApiOperation({ summary: 'Nearest local date with NBA games' })
-  nearestSchedule(
-    @Query('date') date?: string,
-    @Query('offsetMinutes') offsetMinutes?: string,
-    @Query('direction') direction?: string,
-  ) {
+  nearestSchedule(@Query() query: NearestScheduleQueryDto) {
     return this.gamesService.getNearestScheduleDate(
-      date,
-      offsetMinutes,
-      direction,
+      query.date,
+      query.offsetMinutes,
+      query.direction,
     );
   }
 
   @Get('schedule')
   @ApiOperation({ summary: 'Real ESPN schedule for a local date' })
-  schedule(
-    @Query('date') date?: string,
-    @Query('offsetMinutes') offsetMinutes?: string,
-  ) {
-    return this.gamesService.getSchedule(date, offsetMinutes);
+  schedule(@Query() query: ScheduleQueryDto) {
+    return this.gamesService.getSchedule(query.date, query.offsetMinutes);
   }
 
   @Get('live')
@@ -64,10 +62,7 @@ export class GamesController {
     summary:
       'ESPN game summary with line score, box score, totals, and leaders',
   })
-  async gameSummary(@Param('gameId') gameId: string) {
-    if (gameId === 'schedule' || gameId === 'live' || gameId === 'scoreboard') {
-      throw new NotFoundException();
-    }
-    return this.gamesService.getGameSummary(gameId);
+  async gameSummary(@Param() params: GameIdParamDto) {
+    return this.gamesService.getGameSummary(params.gameId);
   }
 }

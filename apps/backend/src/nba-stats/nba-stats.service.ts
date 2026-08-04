@@ -1,8 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import axios, { AxiosInstance } from 'axios';
 import { CacheService } from '../cache/cache.service';
+import { CircuitBreaker } from '../common/circuit-breaker';
+import { withRetry } from '../common/retry';
 
 const SHOT_CHART_TTL_MS = 24 * 60 * 60 * 1000;
+const RETRY_ATTEMPTS = 3;
+const RETRY_BASE_DELAY_MS = 750;
 
 export type NbaSeasonType =
   | 'Regular Season'
@@ -33,6 +37,7 @@ export class NbaStatsService {
   private readonly logger = new Logger(NbaStatsService.name);
   private readonly http: AxiosInstance;
   private readonly inFlight = new Map<string, Promise<unknown>>();
+  private readonly breaker = new CircuitBreaker('NBA Stats');
 
   constructor(private readonly cache: CacheService) {
     this.http = axios.create({
@@ -104,19 +109,43 @@ export class NbaStatsService {
     return promise;
   }
 
+  private async request<T>(
+    endpoint: string,
+    cacheKey: string,
+    send: () => Promise<{ data: T }>,
+  ): Promise<T> {
+    const response = await this.breaker.execute(() =>
+      withRetry(send, {
+        attempts: RETRY_ATTEMPTS,
+        baseDelayMs: RETRY_BASE_DELAY_MS,
+        onRetry: (error, attempt, delayMs) => {
+          this.logger.warn(
+            `NBA Stats ${endpoint} failed for ${cacheKey} (attempt ${attempt}/${RETRY_ATTEMPTS}): ${
+              error instanceof Error ? error.message : String(error)
+            }; retrying in ${delayMs}ms`,
+          );
+        },
+      }),
+    );
+
+    return response.data;
+  }
+
   private async fetchShotChartLeagueWide(
     season: string,
     cacheKey: string,
   ): Promise<NbaStatsResponse> {
     try {
-      const { data } = await this.http.get<NbaStatsResponse>(
-        '/shotchartleaguewide',
-        {
-          params: {
-            LeagueID: '00',
-            Season: season,
-          },
-        },
+      const data = await this.request<NbaStatsResponse>(
+        'shotchartleaguewide',
+        cacheKey,
+        () =>
+          this.http.get<NbaStatsResponse>('/shotchartleaguewide', {
+            params: {
+              LeagueID: '00',
+              Season: season,
+            },
+          }),
       );
 
       this.cache.set(cacheKey, data, SHOT_CHART_TTL_MS);
@@ -150,43 +179,45 @@ export class NbaStatsService {
     cacheKey: string,
   ): Promise<NbaStatsResponse> {
     try {
-      const { data } = await this.http.get<NbaStatsResponse>(
-        '/shotchartdetail',
-        {
-          params: {
-            AheadBehind: '',
-            ClutchTime: '',
-            ContextFilter: '',
-            ContextMeasure: params.contextMeasure,
-            DateFrom: '',
-            DateTo: '',
-            EndPeriod: 10,
-            EndRange: 28800,
-            GameID: '',
-            GameSegment: '',
-            LastNGames: 0,
-            LeagueID: '00',
-            Location: '',
-            Month: 0,
-            OpponentTeamID: 0,
-            Outcome: '',
-            Period: 0,
-            PlayerID: params.playerId,
-            PlayerPosition: '',
-            PointDiff: '',
-            Position: '',
-            RangeType: 0,
-            RookieYear: '',
-            Season: params.season,
-            SeasonSegment: '',
-            SeasonType: params.seasonType,
-            StartPeriod: 1,
-            StartRange: 0,
-            TeamID: params.teamId,
-            VsConference: '',
-            VsDivision: '',
-          },
-        },
+      const data = await this.request<NbaStatsResponse>(
+        'shotchartdetail',
+        cacheKey,
+        () =>
+          this.http.get<NbaStatsResponse>('/shotchartdetail', {
+            params: {
+              AheadBehind: '',
+              ClutchTime: '',
+              ContextFilter: '',
+              ContextMeasure: params.contextMeasure,
+              DateFrom: '',
+              DateTo: '',
+              EndPeriod: 10,
+              EndRange: 28800,
+              GameID: '',
+              GameSegment: '',
+              LastNGames: 0,
+              LeagueID: '00',
+              Location: '',
+              Month: 0,
+              OpponentTeamID: 0,
+              Outcome: '',
+              Period: 0,
+              PlayerID: params.playerId,
+              PlayerPosition: '',
+              PointDiff: '',
+              Position: '',
+              RangeType: 0,
+              RookieYear: '',
+              Season: params.season,
+              SeasonSegment: '',
+              SeasonType: params.seasonType,
+              StartPeriod: 1,
+              StartRange: 0,
+              TeamID: params.teamId,
+              VsConference: '',
+              VsDivision: '',
+            },
+          }),
       );
 
       this.cache.set(cacheKey, data, SHOT_CHART_TTL_MS);

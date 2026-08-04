@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common';
+import { Logger, UsePipes, ValidationPipe } from '@nestjs/common';
 import {
   ConnectedSocket,
   MessageBody,
@@ -7,22 +7,29 @@ import {
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
+  WsException,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { ReplayMessageDto } from './dto/replay-message.dto';
 import { SimulationService } from './simulation.service';
 
-type ReplaySubscriptionPayload =
-  | string
-  | {
-      gameId: string;
-      pace?: number;
-      playIndex?: number;
-    };
+const DEFAULT_PACE = 1;
+
+// Without this, a rejected payload reaches the client as "Internal server error".
+const replayValidationPipe = new ValidationPipe({
+  whitelist: true,
+  transform: true,
+  exceptionFactory: (errors) =>
+    new WsException(
+      errors.flatMap((error) => Object.values(error.constraints ?? {})),
+    ),
+});
 
 @WebSocketGateway({
   cors: { origin: process.env.FRONTEND_URL ?? 'http://localhost:3001' },
   namespace: '/live',
 })
+@UsePipes(replayValidationPipe)
 export class LiveGamesGateway implements OnGatewayInit, OnGatewayDisconnect {
   @WebSocketServer() server: Server;
   private readonly logger = new Logger(LiveGamesGateway.name);
@@ -40,96 +47,82 @@ export class LiveGamesGateway implements OnGatewayInit, OnGatewayDisconnect {
 
   @SubscribeMessage('game:subscribe')
   handleSubscribe(
-    @MessageBody() payload: ReplaySubscriptionPayload,
+    @MessageBody() payload: ReplayMessageDto,
     @ConnectedSocket() client: Socket,
   ) {
-    const { gameId, pace } = this.parsePayload(payload);
     const state = this.simulation.startReplay(
       client.id,
-      gameId,
-      pace,
+      payload.gameId,
+      payload.pace ?? DEFAULT_PACE,
       (state) => {
         client.emit('game:update', state);
       },
     );
 
-    if (!state) client.emit('game:not-found', gameId);
-    this.logger.log(`Client ${client.id} subscribed to game ${gameId}`);
+    if (!state) client.emit('game:not-found', payload.gameId);
+    this.logger.log(`Client ${client.id} subscribed to game ${payload.gameId}`);
   }
 
   @SubscribeMessage('game:setPace')
   handleSetPace(
-    @MessageBody() payload: ReplaySubscriptionPayload,
+    @MessageBody() payload: ReplayMessageDto,
     @ConnectedSocket() client: Socket,
   ) {
-    const { gameId, pace } = this.parsePayload(payload);
-    this.simulation.setReplayPace(client.id, gameId, pace, (state) => {
-      client.emit('game:update', state);
-    });
+    this.simulation.setReplayPace(
+      client.id,
+      payload.gameId,
+      payload.pace ?? DEFAULT_PACE,
+      (state) => {
+        client.emit('game:update', state);
+      },
+    );
   }
 
   @SubscribeMessage('game:seek')
   handleSeek(
-    @MessageBody() payload: ReplaySubscriptionPayload,
+    @MessageBody() payload: ReplayMessageDto,
     @ConnectedSocket() client: Socket,
   ) {
-    const { gameId, playIndex } = this.parsePayload(payload);
-    if (playIndex === null) return;
+    if (payload.playIndex == null) return;
 
-    this.simulation.seekReplay(client.id, gameId, playIndex, (state) => {
-      client.emit('game:update', state);
-    });
+    this.simulation.seekReplay(
+      client.id,
+      payload.gameId,
+      payload.playIndex,
+      (state) => {
+        client.emit('game:update', state);
+      },
+    );
   }
 
   @SubscribeMessage('game:pause')
   handlePause(
-    @MessageBody() payload: ReplaySubscriptionPayload,
+    @MessageBody() payload: ReplayMessageDto,
     @ConnectedSocket() client: Socket,
   ) {
-    const { gameId } = this.parsePayload(payload);
-    this.simulation.pauseReplay(client.id, gameId, (state) => {
+    this.simulation.pauseReplay(client.id, payload.gameId, (state) => {
       client.emit('game:update', state);
     });
   }
 
   @SubscribeMessage('game:resume')
   handleResume(
-    @MessageBody() payload: ReplaySubscriptionPayload,
+    @MessageBody() payload: ReplayMessageDto,
     @ConnectedSocket() client: Socket,
   ) {
-    const { gameId } = this.parsePayload(payload);
-    this.simulation.resumeReplay(client.id, gameId, (state) => {
+    this.simulation.resumeReplay(client.id, payload.gameId, (state) => {
       client.emit('game:update', state);
     });
   }
 
   @SubscribeMessage('game:unsubscribe')
   handleUnsubscribe(
-    @MessageBody() payload: ReplaySubscriptionPayload,
+    @MessageBody() payload: ReplayMessageDto,
     @ConnectedSocket() client: Socket,
   ) {
-    const { gameId } = this.parsePayload(payload);
-    this.simulation.stopReplay(client.id, gameId);
-    this.logger.log(`Client ${client.id} unsubscribed from game ${gameId}`);
-  }
-
-  private parsePayload(payload: ReplaySubscriptionPayload) {
-    if (typeof payload === 'string') {
-      return { gameId: payload, pace: 1, playIndex: null };
-    }
-
-    return {
-      gameId: payload.gameId,
-      pace: payload.pace ?? 1,
-      playIndex: this.parsePlayIndex(payload.playIndex),
-    };
-  }
-
-  private parsePlayIndex(playIndex: number | undefined): number | null {
-    if (typeof playIndex !== 'number' || !Number.isFinite(playIndex)) {
-      return null;
-    }
-
-    return Math.max(0, Math.trunc(playIndex));
+    this.simulation.stopReplay(client.id, payload.gameId);
+    this.logger.log(
+      `Client ${client.id} unsubscribed from game ${payload.gameId}`,
+    );
   }
 }
