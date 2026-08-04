@@ -89,13 +89,42 @@ describe('API (e2e)', () => {
       .get('/shots/heatmap')
       .expect(400);
 
-    const body = response.body as { timestamp?: unknown };
+    const body = response.body as { timestamp?: unknown; message?: string[] };
     expect(response.body).toMatchObject({
       statusCode: 400,
-      message: 'playerId is required',
       path: '/shots/heatmap',
     });
+    expect(body.message).toEqual(
+      expect.arrayContaining(['playerId is required']),
+    );
     expect(typeof body.timestamp).toBe('string');
+  });
+
+  it('GET /games/schedule rejects a malformed date', async () => {
+    const response = await request(app.getHttpServer())
+      .get('/games/schedule?date=31-01-2026')
+      .expect(400);
+
+    const body = response.body as { message?: string[] };
+    expect(body.message).toEqual(
+      expect.arrayContaining(['date must use YYYY-MM-DD format']),
+    );
+  });
+
+  it('GET /news rejects a limit above the allowed range', async () => {
+    await request(app.getHttpServer()).get('/news?limit=500').expect(400);
+  });
+
+  it('GET /games/:gameId rejects a non-numeric id', async () => {
+    await request(app.getHttpServer()).get('/games/not-a-game').expect(400);
+  });
+
+  it('GET /health/live passes without reaching any upstream', async () => {
+    const response = await request(app.getHttpServer())
+      .get('/health/live')
+      .expect(200);
+
+    expect(response.body).toMatchObject({ status: 'ok' });
   });
 
   it('GET /unknown-route returns a normalized 404 error', async () => {

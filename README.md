@@ -92,6 +92,8 @@ Runs the backend in a container on port 3000; run the frontend locally with `npm
 
 ## Environment variables
 
+Backend variables are validated at startup, so a malformed value fails the boot with a clear message instead of surfacing later as a runtime error.
+
 ### Backend (`apps/backend/.env`)
 
 | Variable                                                                                                      | Default                 | Description                            |
@@ -133,6 +135,18 @@ Deployment is handled by platform-native pipelines; GitHub Actions provides the 
 
 - **Frontend — Vercel**: import the repo, set the root directory to `apps/frontend`, and configure `NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_SITE_URL`, and (optionally) `GTM_ID`.
 - **Backend — Render**: create a Web Service with root directory `apps/backend`, build command `npm install && npm run build`, start command `npm run start:prod`, and set `FRONTEND_URL` to the Vercel URL plus any `ESPN_*` overrides.
+
+### Backend runs as a single instance
+
+The response cache, replay sessions, and rate limiter all live in process memory, so the backend is deliberately scoped to **one replica**. Running several would split replay state across processes and multiply the effective rate limit. Moving past one replica requires a shared cache and a Socket.IO Redis adapter first.
+
+### Health probes
+
+| Endpoint        | Checks                      | Use for                                       |
+| --------------- | --------------------------- | --------------------------------------------- |
+| `/health/live`  | Process heap only           | Liveness — an ESPN outage must not restart it |
+| `/health/ready` | Heap plus ESPN reachability | Readiness and traffic gating                  |
+| `/health`       | Alias of `/health/ready`    | Backwards compatibility                       |
 
 ## Testing
 

@@ -145,26 +145,20 @@ export class GamesService {
     );
   }
 
-  async getSchedule(date = getLocalDateKey(new Date()), offsetMinutes = '0') {
-    const { parsedOffset } = parseScheduleQuery(date, offsetMinutes);
-    return this.loadScheduleForDate(date, parsedOffset);
+  async getSchedule(date = getLocalDateKey(new Date()), offsetMinutes = 0) {
+    return this.loadScheduleForDate(date, offsetMinutes);
   }
 
   async getNearestScheduleDate(
     date = getLocalDateKey(new Date()),
-    offsetMinutes = '0',
-    direction = 'before',
+    offsetMinutes = 0,
+    direction: 'before' | 'after' = 'before',
   ) {
-    const { parsedOffset } = parseScheduleQuery(date, offsetMinutes);
-    if (direction !== 'before' && direction !== 'after') {
-      throw new BadRequestException('direction must be before or after');
-    }
-
     const scoreboardCache = new Map<string, unknown>();
     const calendarHit = await this.findNearestViaCalendar(
       date,
       direction,
-      parsedOffset,
+      offsetMinutes,
       scoreboardCache,
     );
     if (calendarHit) {
@@ -178,7 +172,7 @@ export class GamesService {
       const candidate = formatDateKeyUtc(addDays(origin, step * day));
       const games = await this.loadScheduleForDate(
         candidate,
-        parsedOffset,
+        offsetMinutes,
         scoreboardCache,
       );
       if (games.length > 0) {
@@ -335,19 +329,6 @@ export class GamesService {
     scoreboardCache?.set(espnDate, scoreboard);
     return scoreboard;
   }
-}
-
-function parseScheduleQuery(date: string, offsetMinutes: string) {
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
-    throw new BadRequestException('date must use YYYY-MM-DD format');
-  }
-
-  const parsedOffset = Number(offsetMinutes);
-  if (!Number.isFinite(parsedOffset)) {
-    throw new BadRequestException('offsetMinutes must be a number');
-  }
-
-  return { parsedOffset };
 }
 
 function calendarVerifyDates(

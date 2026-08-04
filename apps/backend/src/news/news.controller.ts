@@ -1,6 +1,9 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { NewsQueryDto } from './dto/news-query.dto';
 import { NewsService } from './news.service';
+
+const DEFAULT_LIMIT = 12;
 
 @ApiTags('news')
 @Controller('news')
@@ -9,16 +12,10 @@ export class NewsController {
 
   @Get()
   @ApiOperation({ summary: 'Get latest NBA news from ESPN' })
-  findAll(@Query('limit') limit?: string, @Query('offset') offset?: string) {
-    const parsedLimit = limit
-      ? Math.min(
-          Math.max(Number.isFinite(Number(limit)) ? Number(limit) : 12, 1),
-          30,
-        )
-      : 12;
-    const parsedOffset = offset
-      ? Math.max(Number.isFinite(Number(offset)) ? Number(offset) : 0, 0)
-      : 0;
-    return this.newsService.findAll(parsedLimit, parsedOffset);
+  findAll(@Query() query: NewsQueryDto) {
+    return this.newsService.findAll(
+      query.limit ?? DEFAULT_LIMIT,
+      query.offset ?? 0,
+    );
   }
 }

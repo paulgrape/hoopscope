@@ -7,6 +7,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
+import { CircuitOpenError } from './circuit-breaker';
 
 interface ErrorBody {
   statusCode: number;
@@ -33,7 +34,11 @@ export class AllExceptionsFilter implements ExceptionFilter {
     let error = 'Internal Server Error';
     let message: string | string[] = 'Internal server error';
 
-    if (exception instanceof HttpException) {
+    if (exception instanceof CircuitOpenError) {
+      statusCode = HttpStatus.SERVICE_UNAVAILABLE;
+      error = 'Service Unavailable';
+      message = exception.message;
+    } else if (exception instanceof HttpException) {
       statusCode = exception.getStatus();
       const payload = exception.getResponse();
       if (typeof payload === 'string') {

@@ -18,6 +18,9 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 
+  // Lets OnModuleDestroy run on SIGTERM so replay timers stop on deploy.
+  app.enableShutdownHooks();
+
   if (process.env.NODE_ENV !== 'production') {
     const swaggerConfig = new DocumentBuilder()
       .setTitle(API_TITLE)

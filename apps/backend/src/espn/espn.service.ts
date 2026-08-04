@@ -2,6 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios, { AxiosInstance } from 'axios';
 import { CacheService } from '../cache/cache.service';
+import { CircuitBreaker, CircuitOpenError } from '../common/circuit-breaker';
+import { isRetryableUpstreamError } from '../common/upstream-errors';
 
 export interface EspnCoreAthlete {
   id: string;
@@ -168,6 +170,7 @@ export class EspnService {
   private readonly requestGapMs: number;
 
   private readonly inFlight = new Map<string, Promise<unknown>>();
+  private readonly breaker = new CircuitBreaker('ESPN');
 
   private activeRequests = 0;
   private readonly waiters: Array<() => void> = [];
@@ -251,7 +254,9 @@ export class EspnService {
 
     for (let attempt = 0; attempt <= this.retryAttempts; attempt++) {
       try {
-        const data = await this.withThrottle(requester);
+        const data = await this.breaker.execute(() =>
+          this.withThrottle(requester),
+        );
         this.cache.set(cacheKey, data, ttlMs);
         return data;
       } catch (err) {
@@ -308,11 +313,7 @@ export class EspnService {
   }
 
   private isRetryable(err: unknown): boolean {
-    if (!axios.isAxiosError(err)) return false;
-    const status = err.response?.status;
-    if (status === undefined) return true; // network error / timeout
-    if (status === 429) return true;
-    return status >= 500;
+    return isRetryableUpstreamError(err);
   }
 
   private computeBackoff(attempt: number, err: unknown): number {
@@ -345,6 +346,7 @@ export class EspnService {
   }
 
   private describeError(err: unknown): string {
+    if (err instanceof CircuitOpenError) return err.message;
     if (axios.isAxiosError(err)) {
       const status = err.response?.status;
       return status ? `HTTP ${status}` : (err.code ?? err.message);
