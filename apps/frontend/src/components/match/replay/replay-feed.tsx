@@ -4,7 +4,7 @@ import type {GameTeam, LivePlayEvent} from '@/lib/games-api'
 import {cn} from '@/lib/utils'
 import {ArrowUp} from 'lucide-react'
 import Image from 'next/image'
-import {useMemo, useRef, useState} from 'react'
+import {memo, useMemo, useRef, useState} from 'react'
 
 import {periodLabel, teamAccent} from './replay-utils'
 
@@ -95,6 +95,7 @@ export function ReplayFeed({plays, homeTeam, awayTeam, onSelectPlay}: ReplayFeed
           {visiblePlays.map(({play, index}, position) => {
             const previous = visiblePlays[position - 1]?.play
             const showPeriodHeader = !previous || previous.period !== play.period
+            const team = play.teamId === homeTeam.id ? homeTeam : play.teamId === awayTeam.id ? awayTeam : null
 
             return (
               <li key={play.id}>
@@ -104,11 +105,20 @@ export function ReplayFeed({plays, homeTeam, awayTeam, onSelectPlay}: ReplayFeed
                   </p>
                 ) : null}
                 <FeedRow
-                  play={play}
-                  homeTeam={homeTeam}
-                  awayTeam={awayTeam}
+                  playIndex={index}
+                  period={play.period}
+                  clock={play.clock}
+                  text={play.text}
+                  shortText={play.shortText ?? null}
+                  scoringPlay={play.scoringPlay}
+                  homeScore={play.homeScore}
+                  awayScore={play.awayScore}
+                  homeAbbreviation={homeTeam.abbreviation}
+                  awayAbbreviation={awayTeam.abbreviation}
+                  teamLogo={team?.logo ?? null}
+                  teamColor={team?.color ?? null}
                   isLatest={play.id === latestPlay?.id}
-                  onSelect={() => onSelectPlay(index)}
+                  onSelect={onSelectPlay}
                 />
               </li>
             )
@@ -133,27 +143,46 @@ export function ReplayFeed({plays, homeTeam, awayTeam, onSelectPlay}: ReplayFeed
   )
 }
 
-function FeedRow({
-  play,
-  homeTeam,
-  awayTeam,
+type FeedRowProps = {
+  playIndex: number
+  period: number
+  clock: string
+  text: string
+  shortText: string | null
+  scoringPlay: boolean
+  homeScore: number
+  awayScore: number
+  homeAbbreviation: string
+  awayAbbreviation: string
+  teamLogo: string | null
+  teamColor: string | null
+  isLatest: boolean
+  onSelect: (playIndex: number) => void
+}
+
+const FeedRow = memo(function FeedRow({
+  playIndex,
+  period,
+  clock,
+  text,
+  shortText,
+  scoringPlay,
+  homeScore,
+  awayScore,
+  homeAbbreviation,
+  awayAbbreviation,
+  teamLogo,
+  teamColor,
   isLatest,
   onSelect
-}: {
-  play: LivePlayEvent
-  homeTeam: GameTeam
-  awayTeam: GameTeam
-  isLatest: boolean
-  onSelect: () => void
-}) {
-  const team = play.teamId === homeTeam.id ? homeTeam : play.teamId === awayTeam.id ? awayTeam : null
-  const accent = teamAccent(team?.color)
+}: FeedRowProps) {
+  const accent = teamAccent(teamColor)
 
   return (
     <button
       type='button'
-      onClick={onSelect}
-      aria-label={`Jump to ${periodLabel(play.period)} ${play.clock}: ${play.text}`}
+      onClick={() => onSelect(playIndex)}
+      aria-label={`Jump to ${periodLabel(period)} ${clock}: ${text}`}
       className={cn(
         'border-border bg-background/60 hover:border-ring focus-visible:ring-ring/50 flex w-full gap-2 rounded-lg border p-2.5 text-left transition focus-visible:ring-3 focus-visible:outline-none',
         isLatest && 'border-primary/60'
@@ -167,37 +196,37 @@ function FeedRow({
 
       <span className='min-w-0 flex-1'>
         <span className='text-muted-foreground flex flex-wrap items-center gap-x-2 gap-y-1 text-xs'>
-          <span className='tabular-nums'>{play.clock}</span>
-          {play.shortText ? (
+          <span className='tabular-nums'>{clock}</span>
+          {shortText ? (
             <span
               className={cn(
                 'border-border rounded-full border px-1.5 py-0.5',
-                play.scoringPlay && 'border-emerald-500/40 text-emerald-600 dark:text-emerald-300'
+                scoringPlay && 'border-emerald-500/40 text-emerald-600 dark:text-emerald-300'
               )}
             >
-              {play.shortText}
+              {shortText}
             </span>
           ) : null}
           <span className='w-full tabular-nums sm:ml-auto sm:w-auto'>
-            {awayTeam.abbreviation} {play.awayScore} - {play.homeScore} {homeTeam.abbreviation}
+            {awayAbbreviation} {awayScore} - {homeScore} {homeAbbreviation}
           </span>
         </span>
 
         <span className='mt-1.5 flex items-start gap-2'>
-          {team?.logo ? (
+          {teamLogo ? (
             <Image
-              src={team.logo}
+              src={teamLogo}
               alt=''
               width={20}
               height={20}
               className='mt-0.5 size-4 shrink-0 object-contain'
             />
           ) : null}
-          <span className={cn('text-card-foreground text-sm leading-relaxed', play.scoringPlay && 'font-medium')}>
-            {play.text}
+          <span className={cn('text-card-foreground text-sm leading-relaxed', scoringPlay && 'font-medium')}>
+            {text}
           </span>
         </span>
       </span>
     </button>
   )
-}
+})

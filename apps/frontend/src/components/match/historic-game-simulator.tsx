@@ -12,9 +12,7 @@ import {ReplayLineScore} from './replay/replay-line-score'
 import {type ConnectionStatus, ReplayScoreboard} from './replay/replay-scoreboard'
 import {ReplayTimeline} from './replay/replay-timeline'
 import {type PlaybackPace, ReplayTransport} from './replay/replay-transport'
-import {clockToSeconds, formatGameClock, periodLabel} from './replay/replay-utils'
-
-const CLOCK_TICK_MS = 250
+import {periodLabel} from './replay/replay-utils'
 
 type HistoricGameSimulatorProps = {
   initialGame: LiveGameState
@@ -24,7 +22,6 @@ type HistoricGameSimulatorProps = {
 export function HistoricGameSimulator({initialGame, socketBaseUrl}: HistoricGameSimulatorProps) {
   const [game, setGame] = useState(initialGame)
   const [pace, setPace] = useState<PlaybackPace>(1)
-  const [displayClock, setDisplayClock] = useState(initialGame.clock)
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>('connecting')
   const [seenPlays, setSeenPlays] = useState<(LivePlayEvent | undefined)[]>(() =>
     mergeSeenPlays([], initialGame.plays, initialGame.totalPlays)
@@ -32,7 +29,6 @@ export function HistoricGameSimulator({initialGame, socketBaseUrl}: HistoricGame
   const [maxSeenIndex, setMaxSeenIndex] = useState(initialGame.playIndex - 1)
   const socketRef = useRef<Socket | null>(null)
   const paceRef = useRef<PlaybackPace>(1)
-  const displayClockSecondsRef = useRef(clockToSeconds(initialGame.clock))
 
   useEffect(() => {
     const socket = io(`${socketBaseUrl}/live`)
@@ -54,10 +50,6 @@ export function HistoricGameSimulator({initialGame, socketBaseUrl}: HistoricGame
     socket.on('game:update', (nextGame: LiveGameState) => {
       if (nextGame.id !== initialGame.id) return
 
-      const clockSeconds = clockToSeconds(nextGame.clock)
-
-      displayClockSecondsRef.current = clockSeconds
-      setDisplayClock(clockSeconds === null ? nextGame.clock : formatGameClock(clockSeconds))
       setGame(nextGame)
       setSeenPlays(previous => mergeSeenPlays(previous, nextGame.plays, nextGame.totalPlays))
       setMaxSeenIndex(previous => Math.max(previous, nextGame.playIndex - 1))
@@ -70,29 +62,13 @@ export function HistoricGameSimulator({initialGame, socketBaseUrl}: HistoricGame
     }
   }, [initialGame.id, socketBaseUrl])
 
-  useEffect(() => {
-    if (game.status === 'final' || game.paused) return
-
-    let lastTickAt = Date.now()
-    const interval = window.setInterval(() => {
-      const currentClockSeconds = displayClockSecondsRef.current
-      const now = Date.now()
-      const elapsedGameSeconds = ((now - lastTickAt) / 1000) * paceRef.current
-
-      lastTickAt = now
-      if (currentClockSeconds === null) return
-
-      const nextClockSeconds = Math.max(0, currentClockSeconds - elapsedGameSeconds)
-      displayClockSecondsRef.current = nextClockSeconds
-      setDisplayClock(formatGameClock(nextClockSeconds))
-    }, CLOCK_TICK_MS)
-
-    return () => window.clearInterval(interval)
-  }, [game.status, game.paused])
-
   const emitReplayCommand = useCallback(
     (event: string, payload: Record<string, number> = {}) => {
-      socketRef.current?.emit(event, {gameId: initialGame.id, ...payload})
+      const socket = socketRef.current
+      if (!socket?.connected) return false
+
+      socket.emit(event, {gameId: initialGame.id, ...payload})
+      return true
     },
     [initialGame.id]
   )
@@ -108,15 +84,18 @@ export function HistoricGameSimulator({initialGame, socketBaseUrl}: HistoricGame
   )
 
   const handlePause = useCallback(() => {
-    setGame(current => ({...current, paused: true}))
-    emitReplayCommand('game:pause')
+    // Only show the optimistic state when the command actually left the client.
+    if (emitReplayCommand('game:pause')) {
+      setGame(current => ({...current, paused: true}))
+    }
   }, [emitReplayCommand])
 
   const handleTogglePlay = useCallback(() => {
     const nextPaused = !game.paused
 
-    setGame(current => ({...current, paused: nextPaused}))
-    emitReplayCommand(nextPaused ? 'game:pause' : 'game:resume')
+    if (emitReplayCommand(nextPaused ? 'game:pause' : 'game:resume')) {
+      setGame(current => ({...current, paused: nextPaused}))
+    }
   }, [emitReplayCommand, game.paused])
 
   const handlePaceChange = useCallback(
@@ -142,7 +121,7 @@ export function HistoricGameSimulator({initialGame, socketBaseUrl}: HistoricGame
           <div className='bg-background sticky top-14 z-10 -mt-3 py-3'>
             <ReplayScoreboard
               game={game}
-              displayClock={displayClock}
+              pace={pace}
               connectionStatus={connectionStatus}
             />
           </div>

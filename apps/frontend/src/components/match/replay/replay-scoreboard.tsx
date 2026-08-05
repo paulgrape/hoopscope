@@ -3,18 +3,29 @@ import {cn} from '@/lib/utils'
 import Image from 'next/image'
 import Link from 'next/link'
 
-import {periodLabel, teamAccent} from './replay-utils'
+import {ReplayClock} from './replay-clock'
+import {teamAccent} from './replay-utils'
 
 export type ConnectionStatus = 'connecting' | 'connected' | 'disconnected'
 
 type ReplayScoreboardProps = {
   game: LiveGameState
-  displayClock: string
+  pace: number
   connectionStatus: ConnectionStatus
 }
 
-export function ReplayScoreboard({game, displayClock, connectionStatus}: ReplayScoreboardProps) {
+export function ReplayScoreboard({game, pace, connectionStatus}: ReplayScoreboardProps) {
   const isFinal = game.status === 'final'
+  const clock = (
+    <ReplayClock
+      clock={game.clock}
+      playIndex={game.playIndex}
+      quarter={game.quarter}
+      paused={game.paused}
+      isFinal={isFinal}
+      pace={pace}
+    />
+  )
 
   return (
     <div className='bg-card border-border rounded-xl border p-3 sm:p-5'>
@@ -37,11 +48,7 @@ export function ReplayScoreboard({game, displayClock, connectionStatus}: ReplayS
           score={game.homeScore}
           truncateName={false}
         />
-        <Clock
-          isFinal={isFinal}
-          quarter={game.quarter}
-          displayClock={displayClock}
-        />
+        {clock}
       </div>
 
       <div className='mt-4 hidden grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-4 sm:grid'>
@@ -49,11 +56,7 @@ export function ReplayScoreboard({game, displayClock, connectionStatus}: ReplayS
           team={game.awayTeam}
           score={game.awayScore}
         />
-        <Clock
-          isFinal={isFinal}
-          quarter={game.quarter}
-          displayClock={displayClock}
-        />
+        {clock}
         <TeamRow
           team={game.homeTeam}
           score={game.homeScore}
@@ -102,19 +105,6 @@ function ConnectionIndicator({status}: {status: ConnectionStatus}) {
       <span className='sr-only'>Connection status: </span>
       <span className='capitalize'>{status}</span>
     </span>
-  )
-}
-
-function Clock({isFinal, quarter, displayClock}: {isFinal: boolean; quarter: number; displayClock: string}) {
-  return (
-    <div className='text-center'>
-      <p className='text-muted-foreground text-xs font-medium tracking-wider uppercase'>
-        {isFinal ? 'Final' : periodLabel(quarter)}
-      </p>
-      <p className='mt-0.5 text-2xl leading-none font-semibold tabular-nums sm:text-3xl'>
-        {isFinal ? '—' : displayClock}
-      </p>
-    </div>
   )
 }
 
