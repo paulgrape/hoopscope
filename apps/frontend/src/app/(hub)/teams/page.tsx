@@ -4,8 +4,6 @@ import {collectionPageSchema} from '@/lib/seo-schema'
 import {createPageMetadata} from '@/lib/site'
 import {getTeams} from '@/lib/teams-api'
 
-export const dynamic = 'force-dynamic'
-
 export const metadata = createPageMetadata({
   title: 'NBA Teams - Rosters, Records & Season Stats',
   description:
