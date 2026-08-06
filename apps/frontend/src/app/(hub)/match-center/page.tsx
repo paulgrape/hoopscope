@@ -1,6 +1,6 @@
 import {MatchCenterTimeline} from '@/components/match/match-center-timeline'
+import {MatchCenterTimelineSkeleton} from '@/components/match/match-center-timeline-skeleton'
 import {JsonLd} from '@/components/seo/json-ld'
-import {Skeleton} from '@/components/ui/skeleton'
 import {getOffsetMinutesForDate, getServerSchedule, getTodayDateKey, isValidDateKey} from '@/lib/games-api'
 import {webPageSchema} from '@/lib/seo-schema'
 import {createPageMetadata} from '@/lib/site'
@@ -19,9 +19,7 @@ type MatchCenterPageProps = {
 
 export default async function MatchCenterPage({searchParams}: MatchCenterPageProps) {
   const params = await searchParams
-  const today = getTodayDateKey()
-  const initialDate = isValidDateKey(params.date) ? params.date : today
-  const initialGames = await getServerSchedule(initialDate, getOffsetMinutesForDate(initialDate)).catch(() => [])
+  const initialDate = isValidDateKey(params.date) ? params.date : getTodayDateKey()
 
   return (
     <main
@@ -46,30 +44,20 @@ export default async function MatchCenterPage({searchParams}: MatchCenterPagePro
         </p>
       </header>
 
-      <Suspense fallback={<MatchCenterTimelineFallback />}>
-        <MatchCenterTimeline
-          initialDate={initialDate}
-          initialGames={initialGames}
-        />
+      <Suspense fallback={<MatchCenterTimelineSkeleton />}>
+        <ScheduleTimeline initialDate={initialDate} />
       </Suspense>
     </main>
   )
 }
 
-function MatchCenterTimelineFallback() {
+async function ScheduleTimeline({initialDate}: {initialDate: string}) {
+  const initialGames = await getServerSchedule(initialDate, getOffsetMinutesForDate(initialDate)).catch(() => [])
+
   return (
-    <section className='flex min-w-0 flex-col gap-5 sm:gap-6'>
-      <div className='flex flex-wrap items-center gap-2'>
-        <Skeleton className='size-8 rounded-lg' />
-        <Skeleton className='h-8 w-44 rounded-lg' />
-        <Skeleton className='size-8 rounded-lg' />
-      </div>
-      {Array.from({length: 3}).map((_, index) => (
-        <Skeleton
-          key={index}
-          className='h-40 w-full rounded-xl'
-        />
-      ))}
-    </section>
+    <MatchCenterTimeline
+      initialDate={initialDate}
+      initialGames={initialGames}
+    />
   )
 }

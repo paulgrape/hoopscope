@@ -5,8 +5,6 @@ import {createPageMetadata} from '@/lib/site'
 import Image from 'next/image'
 import Link from 'next/link'
 
-export const dynamic = 'force-dynamic'
-
 export const metadata = createPageMetadata({
   title: 'Historic Games - Classic NBA Replays',
   description:

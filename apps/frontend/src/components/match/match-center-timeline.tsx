@@ -1,9 +1,9 @@
 'use client'
 
+import {GameTimelineCardSkeleton} from '@/components/match/match-center-timeline-skeleton'
 import {Button} from '@/components/ui/button'
 import {Calendar} from '@/components/ui/calendar'
 import {Popover, PopoverContent, PopoverTrigger} from '@/components/ui/popover'
-import {Skeleton} from '@/components/ui/skeleton'
 import {
   type ScoreboardGame,
   type ScoreboardTeam,
@@ -298,46 +298,6 @@ function GameTimelineCard({game, dateKey}: {game: ScoreboardGame; dateKey: strin
         </div>
       </div>
     </article>
-  )
-}
-
-function GameTimelineCardSkeleton() {
-  return (
-    <article className='relative md:pl-12'>
-      <div className='bg-background border-border absolute top-7 left-2 hidden h-5 w-5 rounded-full border-4 md:block' />
-      <div className='bg-card border-border rounded-xl border p-3 sm:p-5'>
-        <div className='flex flex-col gap-3 md:flex-row md:items-center md:justify-between'>
-          <div className='flex min-w-0 flex-col gap-1.5'>
-            <Skeleton className='h-4 w-28' />
-            <Skeleton className='h-5 w-32 sm:h-6' />
-            <Skeleton className='h-4 w-40' />
-          </div>
-          <Skeleton className='h-7 w-32 rounded-full' />
-        </div>
-
-        <div className='mt-4 grid gap-2 sm:mt-5 md:grid-cols-[1fr_auto_1fr] md:items-center md:gap-4'>
-          <TeamPanelSkeleton />
-          <Skeleton className='mx-auto my-1 h-4 w-6' />
-          <TeamPanelSkeleton align='right' />
-        </div>
-      </div>
-    </article>
-  )
-}
-
-function TeamPanelSkeleton({align = 'left'}: {align?: 'left' | 'right'}) {
-  return (
-    <div
-      className={`bg-background/40 flex min-w-0 items-center gap-3 rounded-lg p-3 md:bg-transparent md:p-0 ${
-        align === 'right' ? 'md:flex-row-reverse' : ''
-      }`}
-    >
-      <Skeleton className='h-10 w-10 shrink-0 rounded-full sm:h-12 sm:w-12' />
-      <div className={`flex min-w-0 flex-1 flex-col gap-1.5 ${align === 'right' ? 'md:items-end' : ''}`}>
-        <Skeleton className='h-4 w-10' />
-        <Skeleton className='h-4 w-28' />
-      </div>
-    </div>
   )
 }
 

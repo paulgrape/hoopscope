@@ -4,8 +4,6 @@ import {collectionPageSchema} from '@/lib/seo-schema'
 import {createPageMetadata} from '@/lib/site'
 import {getStandings} from '@/lib/standings-api'
 
-export const dynamic = 'force-dynamic'
-
 export const metadata = createPageMetadata({
   title: 'NBA Standings - Conference & Playoff Race',
   description:
