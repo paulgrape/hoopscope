@@ -3,6 +3,7 @@ import {StandingsTables} from '@/components/standings/standings-tables'
 import {collectionPageSchema} from '@/lib/seo-schema'
 import {createPageMetadata} from '@/lib/site'
 import {getStandings} from '@/lib/standings-api'
+import {connection} from 'next/server'
 
 export const metadata = createPageMetadata({
   title: 'NBA Standings - Conference & Playoff Race',
@@ -12,6 +13,7 @@ export const metadata = createPageMetadata({
 })
 
 export default async function StandingsPage() {
+  await connection()
   const standings = await getStandings()
 
   return (

@@ -3,6 +3,7 @@ import {TeamCard} from '@/components/teams/team-card'
 import {collectionPageSchema} from '@/lib/seo-schema'
 import {createPageMetadata} from '@/lib/site'
 import {getTeams} from '@/lib/teams-api'
+import {connection} from 'next/server'
 
 export const metadata = createPageMetadata({
   title: 'NBA Teams - Rosters, Records & Season Stats',
@@ -12,6 +13,7 @@ export const metadata = createPageMetadata({
 })
 
 export default async function TeamsPage() {
+  await connection()
   const teams = await getTeams()
 
   return (

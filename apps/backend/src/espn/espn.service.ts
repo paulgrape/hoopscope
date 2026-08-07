@@ -4,6 +4,13 @@ import axios, { AxiosInstance } from 'axios';
 import { CacheService } from '../cache/cache.service';
 import { CircuitBreaker, CircuitOpenError } from '../common/circuit-breaker';
 import { isRetryableUpstreamError } from '../common/upstream-errors';
+import {
+  EspnByAthleteResponse,
+  EspnGameSummaryResponse,
+  EspnScoreboardResponse,
+  EspnTeamResponse,
+  EspnTeamsResponse,
+} from './espn.types';
 
 export interface EspnCoreAthlete {
   id: string;
@@ -367,10 +374,10 @@ export class EspnService {
   }
 
   getTeams() {
-    return this.get('/teams', this.TTL_TEAMS);
+    return this.get<EspnTeamsResponse>('/teams', this.TTL_TEAMS);
   }
   getTeam(id: string) {
-    return this.get(`/teams/${id}`, this.TTL_TEAMS);
+    return this.get<EspnTeamResponse>(`/teams/${id}`, this.TTL_TEAMS);
   }
   getRoster(teamId: string, season?: number) {
     const path =
@@ -427,22 +434,27 @@ export class EspnService {
     teamId: string,
     season: number,
     seasonType: EspnSeasonType,
-  ): Promise<unknown> {
+  ): Promise<EspnByAthleteResponse> {
     const seasontype = this.toEspnSeasonType(seasonType);
     const url = `${this.webApiBase}/statistics/byathlete`;
     const cacheKey = `byathlete:${teamId}:${season}:${seasontype}`;
 
-    return this.fetchJson<unknown>(cacheKey, this.TTL_PLAYERS, async () => {
-      this.logger.log(
-        `ESPN fetch: ${url}?team=${teamId}&season=${season}&seasontype=${seasontype}`,
-      );
-      const { data } = await this.http.get<unknown>(url, {
-        params: { team: teamId, season, seasontype, limit: 200 },
-        timeout: 20_000,
-      });
-      return data;
-    });
+    return this.fetchJson<EspnByAthleteResponse>(
+      cacheKey,
+      this.TTL_PLAYERS,
+      async () => {
+        this.logger.log(
+          `ESPN fetch: ${url}?team=${teamId}&season=${season}&seasontype=${seasontype}`,
+        );
+        const { data } = await this.http.get<EspnByAthleteResponse>(url, {
+          params: { team: teamId, season, seasontype, limit: 200 },
+          timeout: 20_000,
+        });
+        return data;
+      },
+    );
   }
+
   async getPlayer(id: string): Promise<EspnCoreAthlete> {
     const url = `${this.coreApiBase}/athletes/${id}`;
 
@@ -456,7 +468,7 @@ export class EspnService {
   }
   getScoreboard(date?: string) {
     const path = date ? `/scoreboard?dates=${date}` : '/scoreboard';
-    return this.get(path, this.TTL_SCORES);
+    return this.get<EspnScoreboardResponse>(path, this.TTL_SCORES);
   }
 
   getScheduleCalendar(): Promise<string[]> {
@@ -471,7 +483,10 @@ export class EspnService {
   }
 
   getGameSummary(eventId: string) {
-    return this.get(`/summary?event=${eventId}`, this.TTL_SCORES);
+    return this.get<EspnGameSummaryResponse>(
+      `/summary?event=${eventId}`,
+      this.TTL_SCORES,
+    );
   }
   getNews() {
     return this.get('/news?limit=50', this.TTL_NEWS);

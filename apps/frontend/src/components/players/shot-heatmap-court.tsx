@@ -370,22 +370,22 @@ function CourtLinesOverlay() {
 
 function HeatmapLegend({hover}: {hover: HoverInfo | null}) {
   return (
-    <div className='text-muted-foreground flex flex-col gap-2 text-xs sm:text-sm'>
+    <div className='text-muted-foreground flex min-w-0 flex-col gap-2 text-xs sm:text-sm'>
       <div className='flex flex-wrap items-center gap-x-4 gap-y-2'>
-        <div className='flex items-center gap-2'>
+        <div className='flex min-w-0 flex-wrap items-center gap-2'>
           <span>Below league</span>
           <span
-            className='border-border/40 inline-block h-2 w-20 rounded-full border'
+            className='border-border/40 inline-block h-2 w-20 shrink-0 rounded-full border'
             style={{
               background: `linear-gradient(90deg, ${relativeColor(-REL_CLIP, 1)}, ${relativeColor(0, 1)}, ${relativeColor(REL_CLIP, 1)})`
             }}
           />
           <span>Above league</span>
         </div>
-        <div className='flex items-center gap-2'>
+        <div className='flex min-w-0 flex-wrap items-center gap-2'>
           <span>Dim</span>
           <span
-            className='border-border/40 inline-block h-2 w-16 rounded-full border'
+            className='border-border/40 inline-block h-2 w-16 shrink-0 rounded-full border'
             style={{
               background: `linear-gradient(90deg, ${relativeColor(0.05, 0)}, ${relativeColor(0.05, 1)})`
             }}
@@ -394,7 +394,7 @@ function HeatmapLegend({hover}: {hover: HoverInfo | null}) {
         </div>
       </div>
       {hover ? (
-        <p className='text-foreground'>
+        <p className='text-foreground break-words'>
           {hover.kind === 'cloud' ? (
             <>
               dens. {hover.attempts.toFixed(1)} · ~{(hover.rawFg * 100).toFixed(0)}% raw →{' '}
@@ -414,7 +414,7 @@ function HeatmapLegend({hover}: {hover: HoverInfo | null}) {
           )}
         </p>
       ) : (
-        <p>
+        <p className='break-words'>
           Color = shrink-adjusted FG% vs zone league avg (clip ±{(REL_CLIP * 100).toFixed(0)} pts) · brightness = volume
           (≤2 att. = max dim; caps 20/15)
         </p>
@@ -442,7 +442,7 @@ function HexHeatmap({
   return (
     <svg
       viewBox={`0 0 ${COURT_WIDTH_FT} ${COURT_LENGTH_FT}`}
-      className='border-border aspect-50/47 w-full rounded-lg border bg-zinc-100 dark:bg-zinc-900'
+      className='border-border aspect-[50/47] h-auto w-full max-w-full rounded-lg border bg-zinc-100 dark:bg-zinc-900'
       role='img'
       aria-label='Hexbin shot heatmap vs league average'
     >
@@ -647,7 +647,7 @@ function CloudHeatmap({
   }, [field])
 
   return (
-    <div className='border-border relative aspect-50/47 w-full overflow-hidden rounded-lg border bg-zinc-100 dark:bg-zinc-900'>
+    <div className='border-border relative aspect-[50/47] w-full max-w-full overflow-hidden rounded-lg border bg-zinc-100 dark:bg-zinc-900'>
       <div className='absolute inset-0 bg-zinc-100 dark:bg-zinc-900' />
       <canvas
         ref={canvasRef}
@@ -758,9 +758,9 @@ export function ShotHeatmapCourt({shots, leagueZones}: ShotHeatmapCourtProps) {
   const league = useMemo(() => buildLeagueLookup(leagueZones), [leagueZones])
 
   return (
-    <div className='flex w-full max-w-3xl flex-col gap-3'>
+    <div className='flex w-full max-w-3xl min-w-0 flex-col gap-3'>
       <div
-        className='flex w-fit gap-1 rounded-lg border p-1'
+        className='flex w-fit max-w-full gap-1 rounded-lg border p-1'
         role='group'
         aria-label='Heatmap visualization mode'
       >
@@ -797,8 +797,8 @@ export function ShotHeatmapCourt({shots, leagueZones}: ShotHeatmapCourtProps) {
         league={league}
       />
 
-      <div className='flex flex-col gap-4 sm:flex-row sm:items-start'>
-        <div className='w-full max-w-md shrink-0'>
+      <div className='flex min-w-0 flex-col gap-4 sm:flex-row sm:items-start'>
+        <div className='w-full max-w-md min-w-0 overflow-x-auto sm:shrink-0'>
           {mode === 'cloud' ? (
             <CloudHeatmap
               shots={shots}
@@ -814,7 +814,7 @@ export function ShotHeatmapCourt({shots, leagueZones}: ShotHeatmapCourtProps) {
           )}
         </div>
 
-        <div className='sm:sticky sm:top-4 sm:max-w-xs sm:min-w-48'>
+        <div className='min-w-0 sm:sticky sm:top-4 sm:max-w-xs sm:min-w-48'>
           <HeatmapLegend hover={hover} />
         </div>
       </div>

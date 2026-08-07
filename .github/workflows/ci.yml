@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
   backend:
-    name: Backend (lint, test, build)
+    name: Backend (lint, typecheck, test, build)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -26,6 +26,10 @@ jobs:
 
       - name: Lint
         run: npx eslint "{src,apps,libs,test}/**/*.ts"
+        working-directory: apps/backend
+
+      - name: Typecheck
+        run: npx tsc --noEmit
         working-directory: apps/backend
 
       - name: Unit tests

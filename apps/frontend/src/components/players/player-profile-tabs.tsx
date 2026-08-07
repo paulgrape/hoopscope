@@ -28,7 +28,7 @@ export function PlayerProfileTabs({
   return (
     <Tabs
       defaultValue='stats'
-      className='gap-5 sm:gap-6'
+      className='w-full min-w-0 gap-5 sm:gap-6'
     >
       <TabsList className='w-full sm:w-fit'>
         <TabsTrigger
@@ -68,7 +68,7 @@ export function PlayerProfileTabs({
         <TabsContent
           value='heatmap'
           keepMounted={false}
-          className='flex flex-col gap-3'
+          className='flex min-w-0 flex-col gap-3 overflow-x-auto'
         >
           <p className='text-muted-foreground text-sm'>
             {heatmap.season} {heatmap.seasonType} — shrink-adjusted FG% vs zone league average (blue below / red above);

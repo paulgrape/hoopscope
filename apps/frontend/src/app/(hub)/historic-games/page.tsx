@@ -4,6 +4,7 @@ import {collectionPageSchema} from '@/lib/seo-schema'
 import {createPageMetadata} from '@/lib/site'
 import Image from 'next/image'
 import Link from 'next/link'
+import {connection} from 'next/server'
 
 export const metadata = createPageMetadata({
   title: 'Historic Games - Classic NBA Replays',
@@ -13,6 +14,7 @@ export const metadata = createPageMetadata({
 })
 
 export default async function HistoricGamesPage() {
+  await connection()
   const games = await getHistoricGames()
 
   return (
