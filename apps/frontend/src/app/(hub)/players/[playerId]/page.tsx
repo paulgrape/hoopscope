@@ -82,7 +82,7 @@ export default async function PlayerDetailsPage({params, searchParams}: PlayerDe
     <main
       id='main-content'
       tabIndex={-1}
-      className='mx-auto flex w-full max-w-7xl flex-1 flex-col gap-5 px-4 py-5 sm:gap-6 sm:px-6 sm:py-8'
+      className='mx-auto flex w-full max-w-7xl min-w-0 flex-1 flex-col gap-5 px-4 py-5 sm:gap-6 sm:px-6 sm:py-8'
     >
       <JsonLd
         data={[

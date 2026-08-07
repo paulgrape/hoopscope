@@ -6,6 +6,7 @@ import {
   parseOverviewStats,
 } from '../espn/athlete-stats.parser';
 import { EspnSeasonType, EspnService } from '../espn/espn.service';
+import { EspnByAthleteEntry, espnHeadshotHref } from '../espn/espn.types';
 
 export type TeamSeasonType = EspnSeasonType;
 
@@ -52,8 +53,9 @@ export class TeamsService {
   ) {}
 
   async findAll() {
-    const data: any = await this.espn.getTeams();
-    return data.sports[0].leagues[0].teams.map(({ team }: any) => ({
+    const data = await this.espn.getTeams();
+    const teams = data.sports?.[0]?.leagues?.[0]?.teams ?? [];
+    return teams.map(({ team }) => ({
       id: team.id,
       name: team.name,
       abbreviation: team.abbreviation,
@@ -66,7 +68,7 @@ export class TeamsService {
   }
 
   async findOne(id: string) {
-    const data: any = await this.espn
+    const data = await this.espn
       .getTeam(id)
       .catch(rethrowAsNotFound(`Team ${id} not found`));
     const team = data?.team;
@@ -178,13 +180,13 @@ export class TeamsService {
     season: number,
     seasonType: TeamSeasonType,
   ): Promise<RosterPlayer[]> {
-    const data: any = await this.espn.getTeamAthleteStatsFallback(
+    const data = await this.espn.getTeamAthleteStatsFallback(
       teamId,
       season,
       seasonType,
     );
 
-    const athletes: any[] =
+    const athletes: EspnByAthleteEntry[] =
       data?.athletes ??
       data?.items ??
       data?.leaders ??
@@ -192,7 +194,7 @@ export class TeamsService {
       [];
 
     return athletes
-      .map((entry: any) => {
+      .map((entry) => {
         const athlete = entry.athlete ?? entry;
         const id = String(athlete?.id ?? entry?.id ?? '');
         if (!id) return null;
@@ -209,7 +211,7 @@ export class TeamsService {
             athlete?.position?.abbreviation ??
             athlete?.position?.displayName ??
             null,
-          headshot: athlete?.headshot?.href ?? athlete?.headshot ?? null,
+          headshot: espnHeadshotHref(athlete?.headshot),
         } satisfies RosterPlayer;
       })
       .filter((player): player is RosterPlayer => player != null);

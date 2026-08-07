@@ -4,6 +4,17 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { EspnService } from '../espn/espn.service';
+import {
+  EspnBoxScorePlayerGroup,
+  EspnBoxScoreStat,
+  EspnBoxScoreTeam,
+  EspnCompetitor,
+  EspnLinescore,
+  EspnScoreboardEvent,
+  EspnScoreboardResponse,
+  EspnTeamLeaderGroup,
+  espnHeadshotHref,
+} from '../espn/espn.types';
 import { SimulationService } from './simulation.service';
 
 type ScoreboardStatus = 'scheduled' | 'live' | 'final';
@@ -128,19 +139,15 @@ export class GamesService {
   }
 
   async getScoreboard() {
-    const data: any = await this.espn.getScoreboard();
+    const data = await this.espn.getScoreboard();
     return (
-      data.events?.map((e: any) => ({
-        id: e.id,
-        name: e.name,
-        date: e.date,
-        status: e.status?.type?.description,
-        homeTeam: e.competitions?.[0]?.competitors?.find(
-          (c: any) => c.homeAway === 'home',
-        ),
-        awayTeam: e.competitions?.[0]?.competitors?.find(
-          (c: any) => c.homeAway === 'away',
-        ),
+      data.events?.map((event) => ({
+        id: event.id,
+        name: event.name,
+        date: event.date,
+        status: event.status?.type?.description,
+        homeTeam: findCompetitor(event.competitions?.[0]?.competitors, 'home'),
+        awayTeam: findCompetitor(event.competitions?.[0]?.competitors, 'away'),
       })) ?? []
     );
   }
@@ -154,7 +161,7 @@ export class GamesService {
     offsetMinutes = 0,
     direction: 'before' | 'after' = 'before',
   ) {
-    const scoreboardCache = new Map<string, unknown>();
+    const scoreboardCache = new Map<string, EspnScoreboardResponse>();
     const calendarHit = await this.findNearestViaCalendar(
       date,
       direction,
@@ -187,7 +194,7 @@ export class GamesService {
     originDate: string,
     direction: 'before' | 'after',
     parsedOffset: number,
-    scoreboardCache: Map<string, unknown>,
+    scoreboardCache: Map<string, EspnScoreboardResponse>,
   ): Promise<string | null> {
     let calendar: string[];
     try {
@@ -225,18 +232,17 @@ export class GamesService {
       throw new BadRequestException('gameId is required');
     }
 
-    const data: any = await this.espn.getGameSummary(gameId);
+    const data = await this.espn.getGameSummary(gameId);
     const competition = data?.header?.competitions?.[0];
     if (!competition) {
       throw new NotFoundException(`Game ${gameId} not found`);
     }
 
     const competitors = competition.competitors ?? [];
-    const home = competitors.find((c: any) => c.homeAway === 'home');
-    const away = competitors.find((c: any) => c.homeAway === 'away');
-    const statusType =
-      competition.status?.type ?? data?.header?.competitions?.[0]?.status?.type;
-    const boxTeams: any[] = data?.boxscore?.teams ?? [];
+    const home = findCompetitor(competitors, 'home');
+    const away = findCompetitor(competitors, 'away');
+    const statusType = competition.status?.type;
+    const boxTeams = data?.boxscore?.teams ?? [];
     const homeBox = findBoxTeam(boxTeams, home?.team?.id);
     const awayBox = findBoxTeam(boxTeams, away?.team?.id);
     const playersByTeam = normalizeBoxPlayers(data?.boxscore?.players ?? []);
@@ -277,7 +283,7 @@ export class GamesService {
   private async loadScheduleForDate(
     date: string,
     parsedOffset: number,
-    scoreboardCache?: Map<string, unknown>,
+    scoreboardCache?: Map<string, EspnScoreboardResponse>,
   ) {
     const selectedDate = parseDateKey(date);
     const localDayStart = new Date(
@@ -296,8 +302,8 @@ export class GamesService {
 
     const games = new Map<string, ScoreboardGame>();
     for (const scoreboard of scoreboards) {
-      for (const event of (scoreboard as any).events ?? []) {
-        const gameDate = new Date(event.date);
+      for (const event of scoreboard.events ?? []) {
+        const gameDate = new Date(event.date ?? '');
         if (
           !Number.isFinite(gameDate.getTime()) ||
           gameDate < localDayStart ||
@@ -319,10 +325,11 @@ export class GamesService {
 
   private async getScoreboardCached(
     espnDate: string,
-    scoreboardCache?: Map<string, unknown>,
-  ) {
-    if (scoreboardCache?.has(espnDate)) {
-      return scoreboardCache.get(espnDate);
+    scoreboardCache?: Map<string, EspnScoreboardResponse>,
+  ): Promise<EspnScoreboardResponse> {
+    const cached = scoreboardCache?.get(espnDate);
+    if (cached) {
+      return cached;
     }
 
     const scoreboard = await this.espn.getScoreboard(espnDate);
@@ -348,21 +355,24 @@ function calendarVerifyDates(
   );
 }
 
-function normalizeScoreboardEvent(event: any): ScoreboardGame {
+function findCompetitor(
+  competitors: EspnCompetitor[] | undefined,
+  homeAway: 'home' | 'away',
+): EspnCompetitor | undefined {
+  return competitors?.find((competitor) => competitor.homeAway === homeAway);
+}
+
+function normalizeScoreboardEvent(event: EspnScoreboardEvent): ScoreboardGame {
   const competition = event.competitions?.[0];
-  const home = competition?.competitors?.find(
-    (competitor: any) => competitor.homeAway === 'home',
-  );
-  const away = competition?.competitors?.find(
-    (competitor: any) => competitor.homeAway === 'away',
-  );
+  const home = findCompetitor(competition?.competitors, 'home');
+  const away = findCompetitor(competition?.competitors, 'away');
   const statusType = event.status?.type;
 
   return {
     id: event.id,
-    name: event.name,
+    name: event.name ?? buildGameName(away, home),
     shortName: event.shortName ?? null,
-    date: event.date,
+    date: event.date ?? '',
     status: normalizeStatus(statusType?.state),
     statusDetail:
       statusType?.shortDetail ??
@@ -379,35 +389,41 @@ function normalizeScoreboardEvent(event: any): ScoreboardGame {
   };
 }
 
-function normalizeTeam(competitor: any): ScoreboardTeam | null {
+function normalizeTeam(
+  competitor: EspnCompetitor | undefined,
+): ScoreboardTeam | null {
   const team = competitor?.team;
   if (!team) return null;
 
+  const name = team.name ?? team.displayName ?? '';
   return {
     id: String(team.id),
-    name: team.name,
-    displayName: team.displayName ?? team.shortDisplayName ?? team.name,
-    abbreviation: team.abbreviation,
+    name,
+    displayName: team.displayName ?? team.shortDisplayName ?? name,
+    abbreviation: team.abbreviation ?? '',
     logo: team.logo ?? team.logos?.[0]?.href ?? null,
     color: team.color ?? null,
   };
 }
 
-function normalizeSummaryTeam(competitor: any): ScoreboardTeam | null {
+function normalizeSummaryTeam(
+  competitor: EspnCompetitor | undefined,
+): ScoreboardTeam | null {
   return normalizeTeam(competitor);
 }
 
-function findBoxTeam(boxTeams: any[], teamId?: string) {
+function findBoxTeam(boxTeams: EspnBoxScoreTeam[], teamId?: string) {
   if (!teamId) return null;
   return (
-    boxTeams.find((entry: any) => String(entry?.team?.id) === String(teamId)) ??
-    null
+    boxTeams.find((entry) => String(entry?.team?.id) === String(teamId)) ?? null
   );
 }
 
-function normalizeTeamTotals(boxTeam: any): TeamStatLine[] {
-  const stats: any[] = boxTeam?.statistics ?? [];
-  const byName = new Map(stats.map((stat: any) => [stat.name, stat]));
+function normalizeTeamTotals(boxTeam: EspnBoxScoreTeam | null): TeamStatLine[] {
+  const stats = boxTeam?.statistics ?? [];
+  const byName = new Map<string, EspnBoxScoreStat>(
+    stats.flatMap((stat) => (stat.name ? [[stat.name, stat] as const] : [])),
+  );
 
   return TEAM_TOTAL_KEYS.flatMap((key) => {
     const stat = byName.get(key);
@@ -422,23 +438,27 @@ function normalizeTeamTotals(boxTeam: any): TeamStatLine[] {
   });
 }
 
-function normalizePeriodScores(linescores: any[] | undefined): number[] {
+function normalizePeriodScores(
+  linescores: EspnLinescore[] | undefined,
+): number[] {
   return (linescores ?? [])
     .map((line) => Number(line?.value ?? line?.displayValue ?? NaN))
     .filter((value) => Number.isFinite(value));
 }
 
-function normalizeBoxPlayers(players: any[]): Map<string, BoxScorePlayer[]> {
+function normalizeBoxPlayers(
+  players: EspnBoxScorePlayerGroup[],
+): Map<string, BoxScorePlayer[]> {
   const statsByTeam = new Map<string, BoxScorePlayer[]>();
 
   for (const teamBox of players) {
     const teamId = teamBox?.team?.id ? String(teamBox.team.id) : null;
-    const scoring = teamBox?.statistics?.find((stat: any) =>
+    const scoring = teamBox?.statistics?.find((stat) =>
       stat.labels?.includes('PTS'),
     );
     if (!teamId || !scoring?.labels || !scoring?.athletes) continue;
 
-    const labels: string[] = scoring.labels;
+    const labels = scoring.labels;
     const index = {
       min: labels.indexOf('MIN'),
       fg: labels.indexOf('FG'),
@@ -454,14 +474,14 @@ function normalizeBoxPlayers(players: any[]): Map<string, BoxScorePlayer[]> {
     };
 
     const rows = scoring.athletes
-      .filter((entry: any) => !entry.didNotPlay)
-      .map((entry: any): BoxScorePlayer | null => {
+      .filter((entry) => !entry.didNotPlay)
+      .map((entry): BoxScorePlayer | null => {
         const athlete = entry.athlete;
         const name =
           athlete?.displayName ?? athlete?.fullName ?? athlete?.shortName ?? '';
         if (!name) return null;
 
-        const stats: string[] | undefined = entry.stats;
+        const stats = entry.stats;
         return {
           athleteId: athlete?.id ? String(athlete.id) : null,
           name,
@@ -483,10 +503,7 @@ function normalizeBoxPlayers(players: any[]): Map<string, BoxScorePlayer[]> {
           freeThrows: nullableStringAt(stats, index.ft),
         };
       })
-      .filter(
-        (player: BoxScorePlayer | null): player is BoxScorePlayer =>
-          player !== null,
-      )
+      .filter((player): player is BoxScorePlayer => player !== null)
       .sort(compareBoxPlayers);
 
     statsByTeam.set(teamId, rows);
@@ -532,7 +549,9 @@ function nullableStringAt(
   return value.length > 0 ? value : null;
 }
 
-function normalizeLeaders(teamLeaderGroups: any[]): GameLeader[] {
+function normalizeLeaders(
+  teamLeaderGroups: EspnTeamLeaderGroup[],
+): GameLeader[] {
   const bestByCategory = new Map<
     string,
     GameLeader & { numericValue: number }
@@ -562,7 +581,7 @@ function normalizeLeaders(teamLeaderGroups: any[]): GameLeader[] {
           top.athlete.shortName ??
           'Player',
         shortName: top.athlete.shortName ?? null,
-        headshot: top.athlete.headshot?.href ?? null,
+        headshot: espnHeadshotHref(top.athlete.headshot),
         teamId,
         teamAbbreviation,
         value: String(top.displayValue ?? top.value ?? ''),
@@ -586,7 +605,10 @@ function normalizeLeaders(teamLeaderGroups: any[]): GameLeader[] {
     .map(({ numericValue: _numericValue, ...leader }) => leader);
 }
 
-function buildGameName(away: any, home: any) {
+function buildGameName(
+  away: EspnCompetitor | undefined,
+  home: EspnCompetitor | undefined,
+) {
   const awayName =
     away?.team?.displayName ??
     away?.team?.name ??
@@ -600,7 +622,10 @@ function buildGameName(away: any, home: any) {
   return `${awayName} at ${homeName}`;
 }
 
-function buildShortName(away: any, home: any) {
+function buildShortName(
+  away: EspnCompetitor | undefined,
+  home: EspnCompetitor | undefined,
+) {
   const awayAbbr = away?.team?.abbreviation;
   const homeAbbr = home?.team?.abbreviation;
   if (!awayAbbr || !homeAbbr) return null;
