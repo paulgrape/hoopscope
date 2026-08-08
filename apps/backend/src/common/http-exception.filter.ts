@@ -15,6 +15,7 @@ interface ErrorBody {
   message: string | string[];
   path: string;
   timestamp: string;
+  requestId?: string;
 }
 
 /**
@@ -28,7 +29,8 @@ export class AllExceptionsFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost): void {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
-    const request = ctx.getRequest<Request>();
+    const request = ctx.getRequest<Request & { id?: unknown }>();
+    const requestId = typeof request.id === 'string' ? request.id : undefined;
 
     let statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
     let error = 'Internal Server Error';
@@ -62,6 +64,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
       message,
       path: request.url,
       timestamp: new Date().toISOString(),
+      requestId,
     };
 
     response.status(statusCode).json(body);
