@@ -16,6 +16,17 @@ export enum NodeEnv {
   Test = 'test',
 }
 
+/** pino levels; `silent` disables logging entirely. */
+export enum LogLevel {
+  Trace = 'trace',
+  Debug = 'debug',
+  Info = 'info',
+  Warn = 'warn',
+  Error = 'error',
+  Fatal = 'fatal',
+  Silent = 'silent',
+}
+
 /** Local URLs have no TLD, so the default validator rule would reject them. */
 const URL_OPTIONS = { require_tld: false, require_protocol: true };
 
@@ -34,6 +45,10 @@ export class EnvironmentVariables {
   @IsOptional()
   @IsUrl(URL_OPTIONS)
   FRONTEND_URL?: string;
+
+  @IsOptional()
+  @IsEnum(LogLevel)
+  LOG_LEVEL?: LogLevel;
 
   @IsOptional()
   @Type(() => Number)

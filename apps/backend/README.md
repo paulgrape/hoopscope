@@ -22,6 +22,7 @@ src/
 ├── espn/         # Global ESPN client: cache, dedupe, throttle, retry, stale fallback
 ├── nba-stats/    # Global stats.nba.com client (shot charts)
 ├── cache/        # In-process TTL cache
+├── logging/      # pino logger + per-request correlation ids
 ├── teams/        # Teams, rosters, season player averages
 ├── players/      # Profiles, season/career stats, player news
 ├── games/        # Scoreboard, schedule, summaries + historic replay gateway
@@ -40,6 +41,12 @@ The core design decision is a **single resilient entry point** (`EspnService.fet
 5. Stale-cache fallback when all retries fail
 
 "Live" games are **historic play-by-play replays** streamed tick-by-tick by `SimulationService` through a Socket.IO gateway — not real-time NBA data.
+
+## Logging
+
+pino via `nestjs-pino`: JSON in production, `pino-pretty` elsewhere, level from `LOG_LEVEL`.
+
+Every request gets an id (inbound `x-request-id` is reused, otherwise a UUID). The id is echoed in the `x-request-id` response header, returned as `requestId` in error bodies, and bound as `requestId` to every log line made while handling that request — including `EspnService` fetch and retry logs. Health probes are excluded from request logging.
 
 ## Data scripts
 

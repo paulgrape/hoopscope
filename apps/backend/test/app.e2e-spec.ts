@@ -137,4 +137,24 @@ describe('API (e2e)', () => {
       path: '/unknown-route',
     });
   });
+
+  it('reuses an inbound request id and reports it on errors', async () => {
+    const response = await request(app.getHttpServer())
+      .get('/unknown-route')
+      .set('x-request-id', 'e2e-correlation-id')
+      .expect(404);
+
+    expect(response.headers['x-request-id']).toBe('e2e-correlation-id');
+    expect(response.body).toMatchObject({ requestId: 'e2e-correlation-id' });
+  });
+
+  it('generates a request id when the client does not send one', async () => {
+    const response = await request(app.getHttpServer())
+      .get('/unknown-route')
+      .expect(404);
+
+    const body = response.body as { requestId?: string };
+    expect(body.requestId).toEqual(expect.any(String));
+    expect(response.headers['x-request-id']).toBe(body.requestId);
+  });
 });

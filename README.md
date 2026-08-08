@@ -101,6 +101,7 @@ Backend variables are validated at startup, so a malformed value fails the boot 
 | `PORT`                                                                                                        | `3000`                  | HTTP port                              |
 | `FRONTEND_URL`                                                                                                | `http://localhost:3001` | Allowed CORS origin (HTTP + WebSocket) |
 | `HISTORIC_GAME_TICK_MS`                                                                                       | `1000`                  | Replay tick interval                   |
+| `LOG_LEVEL`                                                                                                   | `info` (prod), `debug`  | pino level: `trace`…`fatal`, `silent`  |
 | `ESPN_BASE_URL`, `ESPN_WEB_API_BASE_URL`, `ESPN_CORE_BASE_URL`, `ESPN_NOW_API_URL`, `ESPN_STANDINGS_BASE_URL` | ESPN defaults           | Override upstream API bases            |
 | `ESPN_RETRY_ATTEMPTS`                                                                                         | `3`                     | Retry attempts per upstream call       |
 | `ESPN_RETRY_BASE_DELAY_MS` / `ESPN_RETRY_MAX_DELAY_MS`                                                        | `500` / `8000`          | Backoff window                         |
