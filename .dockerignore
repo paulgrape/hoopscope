@@ -3,6 +3,8 @@ node_modules
 **/dist
 **/.next
 **/coverage
+**/*.tsbuildinfo
+apps/backend/test
 .git
 .github
 .husky
