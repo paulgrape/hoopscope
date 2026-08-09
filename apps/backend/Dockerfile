@@ -5,7 +5,9 @@ FROM node:22-alpine AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
 COPY apps/backend/package.json apps/backend/
-RUN npm ci --workspace apps/backend --include-workspace-root
+# Scripts are skipped because the root prepare hook installs husky, which needs
+# a git checkout the build context does not carry.
+RUN npm ci --workspace apps/backend --include-workspace-root --ignore-scripts
 
 FROM node:22-alpine AS build
 WORKDIR /app
@@ -19,7 +21,7 @@ ENV NODE_ENV=production
 WORKDIR /app
 COPY package.json package-lock.json ./
 COPY apps/backend/package.json apps/backend/
-RUN npm ci --workspace apps/backend --include-workspace-root --omit=dev
+RUN npm ci --workspace apps/backend --include-workspace-root --omit=dev --ignore-scripts
 
 FROM node:22-alpine AS runtime
 ENV NODE_ENV=production
