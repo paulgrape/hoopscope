@@ -41,6 +41,27 @@ jobs:
       - name: Build
         run: npm run build -w apps/backend
 
+  docker:
+    name: Backend Docker image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build image
+        run: docker build -f apps/backend/Dockerfile -t hoopscope-backend:ci .
+
+      - name: Verify runtime contents
+        run: |
+          docker run --rm hoopscope-backend:ci node -e "
+            const fs = require('node:fs');
+            fs.accessSync('dist/games/data/historic-games.json');
+            for (const pkg of ['jest', 'typescript', '@nestjs/cli']) {
+              if (fs.existsSync('node_modules/' + pkg)) {
+                throw new Error('devDependency shipped in runtime image: ' + pkg);
+              }
+            }
+          "
+
   frontend:
     name: Frontend (lint, typecheck, test, build)
     runs-on: ubuntu-latest
