@@ -18,7 +18,12 @@ import {
   EspnService,
 } from '../espn/espn.service';
 import { findPlayerInjury } from '../espn/injury.parser';
+import { flattenRosterAthletes } from '../espn/roster.parser';
 import { mapNewsArticle } from '../news/news.mapper';
+
+const PLAYER_INDEX_CACHE_KEY = 'player-index';
+const PLAYER_INDEX_TTL_MS = 12 * 60 * 60 * 1000;
+const DEFAULT_SEARCH_LIMIT = 60;
 
 export type PlayerInjury = {
   status: string;
@@ -96,12 +101,63 @@ export type PlayerCareerStatsResponse = {
   seasons: PlayerCareerSeasonStats[];
 };
 
+export type PlayerListItem = {
+  id: string;
+  fullName: string;
+  jersey: string | null;
+  position: string | null;
+  headshot: string | null;
+  team: PlayerTeamSummary | null;
+};
+
+export type PlayerSearchOptions = {
+  q?: string;
+  teamId?: string;
+  limit?: number;
+};
+
+export type PlayerSearchResponse = {
+  total: number;
+  players: PlayerListItem[];
+};
+
+/** Accent-insensitive, punctuation-insensitive form used for name matching. */
+function normalizeSearchTerm(value: string): string {
+  return value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+}
+
 @Injectable()
 export class PlayersService {
   constructor(
     private readonly espn: EspnService,
     private readonly cache: CacheService,
   ) {}
+
+  async search({
+    q,
+    teamId,
+    limit = DEFAULT_SEARCH_LIMIT,
+  }: PlayerSearchOptions = {}): Promise<PlayerSearchResponse> {
+    const index = await this.loadIndex();
+    const tokens = normalizeSearchTerm(q ?? '')
+      .split(' ')
+      .filter(Boolean);
+
+    const matches = index.filter((player) => {
+      if (teamId && player.team?.id !== teamId) return false;
+      if (tokens.length === 0) return true;
+
+      const haystack = normalizeSearchTerm(player.fullName);
+      return tokens.every((token) => haystack.includes(token));
+    });
+
+    return { total: matches.length, players: matches.slice(0, limit) };
+  }
 
   async findOne(id: string): Promise<PlayerProfile> {
     const cacheKey = `player-profile:${id}`;
@@ -199,6 +255,66 @@ export class PlayersService {
 
     this.cache.set(cacheKey, articles, 10 * 60 * 1000);
     return articles;
+  }
+
+  /**
+   * ESPN has no league-wide player list, so the searchable index is every
+   * current roster merged into one cached, name-sorted array.
+   */
+  private async loadIndex(): Promise<PlayerListItem[]> {
+    const cached = this.cache.get<PlayerListItem[]>(PLAYER_INDEX_CACHE_KEY);
+    if (cached) return cached;
+
+    const teams = await this.loadTeamSummaries();
+    const rosters = await Promise.all(
+      teams.map((team) =>
+        this.espn
+          .getRoster(team.id)
+          .then((data) => ({ team, athletes: flattenRosterAthletes(data) }))
+          .catch(() => ({ team, athletes: [] })),
+      ),
+    );
+
+    const byId = new Map<string, PlayerListItem>();
+    for (const { team, athletes } of rosters) {
+      for (const athlete of athletes) {
+        const id = athlete.id ? String(athlete.id) : '';
+        const fullName = athlete.fullName?.trim() ?? '';
+        if (!id || !fullName) continue;
+
+        byId.set(id, {
+          id,
+          fullName,
+          jersey: athlete.jersey ?? null,
+          position: athlete.position?.abbreviation ?? null,
+          headshot: athlete.headshot?.href ?? null,
+          team,
+        });
+      }
+    }
+
+    const index = [...byId.values()].sort((a, b) =>
+      a.fullName.localeCompare(b.fullName),
+    );
+
+    if (index.length > 0) {
+      this.cache.set(PLAYER_INDEX_CACHE_KEY, index, PLAYER_INDEX_TTL_MS);
+    }
+
+    return index;
+  }
+
+  private async loadTeamSummaries(): Promise<PlayerTeamSummary[]> {
+    const data = await this.espn.getTeams();
+    const teams = data.sports?.[0]?.leagues?.[0]?.teams ?? [];
+
+    return teams
+      .map(({ team }) => ({
+        id: team.id ?? '',
+        abbreviation: team.abbreviation ?? '',
+        displayName: team.displayName ?? team.name ?? 'Unknown',
+      }))
+      .filter((team) => team.id !== '');
   }
 
   private mapProfile(

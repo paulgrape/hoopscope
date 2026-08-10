@@ -39,6 +39,7 @@ describe('Navbar', () => {
     expect(screen.getAllByRole('link', {name: 'Match Center'})[0]).toHaveAttribute('href', '/match-center')
     expect(screen.getAllByRole('link', {name: 'Historic Games'})[0]).toHaveAttribute('href', '/historic-games')
     expect(screen.getAllByRole('link', {name: 'Teams'})[0]).toHaveAttribute('href', '/teams')
+    expect(screen.getAllByRole('link', {name: 'Players'})[0]).toHaveAttribute('href', '/players')
     expect(screen.getAllByRole('link', {name: 'Standings'})[0]).toHaveAttribute('href', '/standings')
   })
 
