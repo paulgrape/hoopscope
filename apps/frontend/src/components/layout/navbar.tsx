@@ -15,9 +15,7 @@ const navLinks = [
   {href: '/match-center', label: 'Match Center'},
   {href: '/historic-games', label: 'Historic Games'},
   {href: '/teams', label: 'Teams'},
-  {href: '/standings', label: 'Standings'},
-  {href: '/about', label: 'About'},
-  {href: '/privacy', label: 'Privacy Policy'}
+  {href: '/standings', label: 'Standings'}
 ]
 
 const isActivePath = (pathname: string, href: string) =>

@@ -42,6 +42,13 @@ describe('Navbar', () => {
     expect(screen.getAllByRole('link', {name: 'Standings'})[0]).toHaveAttribute('href', '/standings')
   })
 
+  it('keeps secondary pages out of the primary nav', () => {
+    render(<Navbar />)
+
+    expect(screen.queryByRole('link', {name: 'About'})).not.toBeInTheDocument()
+    expect(screen.queryByRole('link', {name: 'Privacy Policy'})).not.toBeInTheDocument()
+  })
+
   it('marks the active route in the desktop nav', () => {
     render(<Navbar />)
 
