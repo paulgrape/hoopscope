@@ -31,6 +31,12 @@ export const STATIC_PUBLIC_ROUTES: PublicRoute[] = [
     entityType: 'teams'
   },
   {
+    path: '/players',
+    title: 'Players',
+    description: 'Search active NBA rosters by player name or team.',
+    entityType: 'players'
+  },
+  {
     path: '/standings',
     title: 'Standings',
     description: 'Conference standings with playoff and play-in positions highlighted.',

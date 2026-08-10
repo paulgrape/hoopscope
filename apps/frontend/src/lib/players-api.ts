@@ -91,6 +91,41 @@ export type PlayerNewsArticle = {
   teams: string[]
 }
 
+export type PlayerListItem = {
+  id: string
+  fullName: string
+  jersey: string | null
+  position: string | null
+  headshot: string | null
+  team: PlayerTeamSummary | null
+}
+
+export type PlayerSearchResponse = {
+  total: number
+  players: PlayerListItem[]
+}
+
+/** Keeps the players index payload small; the UI tells visitors to refine. */
+export const PLAYER_SEARCH_LIMIT = 60
+
+type PlayerSearchOptions = {
+  q?: string
+  teamId?: string
+  limit?: number
+}
+
+export async function searchPlayers(options: PlayerSearchOptions = {}): Promise<PlayerSearchResponse> {
+  const params = new URLSearchParams()
+  if (options.q) params.set('q', options.q)
+  if (options.teamId) params.set('teamId', options.teamId)
+  if (options.limit != null) params.set('limit', String(options.limit))
+
+  const query = params.toString()
+  const path = query ? `/players?${query}` : '/players'
+
+  return apiFetch<PlayerSearchResponse>(path, {revalidate: 1800})
+}
+
 export async function getPlayer(playerId: string): Promise<PlayerProfile | null> {
   return apiFetchOrNull<PlayerProfile>(`/players/${playerId}`, {revalidate: 3600})
 }

@@ -15,6 +15,7 @@ const navLinks = [
   {href: '/match-center', label: 'Match Center'},
   {href: '/historic-games', label: 'Historic Games'},
   {href: '/teams', label: 'Teams'},
+  {href: '/players', label: 'Players'},
   {href: '/standings', label: 'Standings'}
 ]
 

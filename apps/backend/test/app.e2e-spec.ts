@@ -150,6 +150,36 @@ const espnStub = {
     });
   }),
   getTeam: jest.fn().mockResolvedValue({}),
+  getTeams: jest.fn().mockResolvedValue({
+    sports: [
+      {
+        leagues: [
+          {
+            teams: [
+              {
+                team: {
+                  id: '13',
+                  name: 'Lakers',
+                  abbreviation: 'LAL',
+                  displayName: 'Los Angeles Lakers',
+                },
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  }),
+  getRoster: jest.fn().mockResolvedValue({
+    athletes: [
+      {
+        id: '1966',
+        fullName: 'LeBron James',
+        jersey: '23',
+        position: { abbreviation: 'SF' },
+      },
+    ],
+  }),
 };
 
 describe('API (e2e)', () => {
@@ -267,6 +297,34 @@ describe('API (e2e)', () => {
       statusCode: 404,
       message: 'Team 999 not found',
     });
+  });
+
+  it('GET /players searches the roster index by name', async () => {
+    const response = await request(app.getHttpServer())
+      .get('/players?q=lebron')
+      .expect(200);
+
+    expect(response.body).toMatchObject({
+      total: 1,
+      players: [
+        {
+          id: '1966',
+          fullName: 'LeBron James',
+          team: { id: '13', abbreviation: 'LAL' },
+        },
+      ],
+    });
+  });
+
+  it('GET /players rejects a non-numeric team filter', async () => {
+    const response = await request(app.getHttpServer())
+      .get('/players?teamId=lakers')
+      .expect(400);
+
+    const body = response.body as { message?: string[] };
+    expect(body.message).toEqual(
+      expect.arrayContaining(['teamId must be numeric']),
+    );
   });
 
   it('GET /shots/heatmap without playerId returns a normalized 400 error', async () => {

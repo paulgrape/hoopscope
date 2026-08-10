@@ -3,13 +3,25 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SeasonStatsQueryDto } from '../common/dto/season-stats-query.dto';
 import { PlayersService } from './players.service';
 import { PlayerNewsQueryDto } from './dto/player-news-query.dto';
+import { PlayerSearchQueryDto } from './dto/player-search-query.dto';
 
 const DEFAULT_NEWS_LIMIT = 6;
+const DEFAULT_SEARCH_LIMIT = 60;
 
 @ApiTags('players')
 @Controller('players')
 export class PlayersController {
   constructor(private readonly playersService: PlayersService) {}
+
+  @Get()
+  @ApiOperation({ summary: 'Search players across every current roster' })
+  search(@Query() query: PlayerSearchQueryDto) {
+    return this.playersService.search({
+      q: query.q,
+      teamId: query.teamId,
+      limit: query.limit ?? DEFAULT_SEARCH_LIMIT,
+    });
+  }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get player profile with team and injury status' })

@@ -4,6 +4,7 @@ import { PlayersService } from './players.service';
 describe('PlayersController', () => {
   let controller: PlayersController;
   let players: {
+    search: jest.Mock;
     findOne: jest.Mock;
     findCareerStats: jest.Mock;
     findSeasonStats: jest.Mock;
@@ -12,12 +13,37 @@ describe('PlayersController', () => {
 
   beforeEach(() => {
     players = {
+      search: jest.fn(),
       findOne: jest.fn(),
       findCareerStats: jest.fn(),
       findSeasonStats: jest.fn(),
       findNews: jest.fn(),
     };
     controller = new PlayersController(players as unknown as PlayersService);
+  });
+
+  it('defaults the search limit to 60 when omitted', () => {
+    const payload = { total: 0, players: [] };
+    players.search.mockReturnValue(payload);
+
+    expect(controller.search({ q: 'curry' })).toBe(payload);
+    expect(players.search).toHaveBeenCalledWith({
+      q: 'curry',
+      teamId: undefined,
+      limit: 60,
+    });
+  });
+
+  it('forwards an explicit search limit and team filter', () => {
+    players.search.mockReturnValue({ total: 0, players: [] });
+
+    controller.search({ teamId: '13', limit: 10 });
+
+    expect(players.search).toHaveBeenCalledWith({
+      q: undefined,
+      teamId: '13',
+      limit: 10,
+    });
   });
 
   it('loads a player profile', () => {
