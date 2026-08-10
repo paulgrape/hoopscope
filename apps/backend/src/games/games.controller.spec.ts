@@ -55,9 +55,9 @@ describe('GamesController', () => {
     const payload = [{ id: '1' }];
     games.getSchedule.mockReturnValue(payload);
 
-    expect(
-      controller.schedule({ date: '2026-01-14', offsetMinutes: 0 }),
-    ).toBe(payload);
+    expect(controller.schedule({ date: '2026-01-14', offsetMinutes: 0 })).toBe(
+      payload,
+    );
     expect(games.getSchedule).toHaveBeenCalledWith('2026-01-14', 0);
   });
 

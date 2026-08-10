@@ -73,10 +73,7 @@ describe('LiveGamesGateway', () => {
   it('defaults pace to 1 and emits game:not-found when missing', () => {
     simulation.startReplay.mockReturnValue(null);
 
-    gateway.handleSubscribe(
-      { gameId: 'missing' },
-      client as unknown as Socket,
-    );
+    gateway.handleSubscribe({ gameId: 'missing' }, client as unknown as Socket);
 
     expect(simulation.startReplay).toHaveBeenCalledWith(
       'client-1',
@@ -139,14 +136,8 @@ describe('LiveGamesGateway', () => {
       },
     );
 
-    gateway.handlePause(
-      { gameId: 'historic-1' },
-      client as unknown as Socket,
-    );
-    gateway.handleResume(
-      { gameId: 'historic-1' },
-      client as unknown as Socket,
-    );
+    gateway.handlePause({ gameId: 'historic-1' }, client as unknown as Socket);
+    gateway.handleResume({ gameId: 'historic-1' }, client as unknown as Socket);
 
     expect(simulation.pauseReplay).toHaveBeenCalledWith(
       'client-1',
