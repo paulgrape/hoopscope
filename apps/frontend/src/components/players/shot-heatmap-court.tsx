@@ -721,34 +721,36 @@ function ZoneSummaryTable({shots, league}: {shots: ShotPoint[]; league: LeagueLo
   }
 
   return (
-    <table className='sr-only'>
-      <caption>Shot efficiency by court zone versus league average</caption>
-      <thead>
-        <tr>
-          <th scope='col'>Zone</th>
-          <th scope='col'>Attempts</th>
-          <th scope='col'>Makes</th>
-          <th scope='col'>Adjusted field goal percentage</th>
-          <th scope='col'>League average</th>
-          <th scope='col'>Difference vs league</th>
-        </tr>
-      </thead>
-      <tbody>
-        {rows.map(row => (
-          <tr key={row.zone}>
-            <th scope='row'>{row.zone}</th>
-            <td>{row.attempts}</td>
-            <td>{row.makes}</td>
-            <td>{(row.adjustedFg * 100).toFixed(0)}%</td>
-            <td>{(row.leagueFg * 100).toFixed(0)}%</td>
-            <td>
-              {row.relative >= 0 ? '+' : ''}
-              {(row.relative * 100).toFixed(1)} pts
-            </td>
+    <div className='sr-only'>
+      <table>
+        <caption>Shot efficiency by court zone versus league average</caption>
+        <thead>
+          <tr>
+            <th scope='col'>Zone</th>
+            <th scope='col'>Attempts</th>
+            <th scope='col'>Makes</th>
+            <th scope='col'>Adjusted field goal percentage</th>
+            <th scope='col'>League average</th>
+            <th scope='col'>Difference vs league</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {rows.map(row => (
+            <tr key={row.zone}>
+              <th scope='row'>{row.zone}</th>
+              <td>{row.attempts}</td>
+              <td>{row.makes}</td>
+              <td>{(row.adjustedFg * 100).toFixed(0)}%</td>
+              <td>{(row.leagueFg * 100).toFixed(0)}%</td>
+              <td>
+                {row.relative >= 0 ? '+' : ''}
+                {(row.relative * 100).toFixed(1)} pts
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   )
 }
 

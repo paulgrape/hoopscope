@@ -1,9 +1,59 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { Test, TestingModule } from '@nestjs/testing';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import request from 'supertest';
 import { App } from 'supertest/types';
 import { AppModule } from './../src/app.module';
+import { AllExceptionsFilter } from './../src/common/http-exception.filter';
 import { EspnService } from './../src/espn/espn.service';
+import { HealthModule } from './../src/health/health.module';
+
+function scoreboardEvent(date: string, id = '401585601') {
+  return {
+    id,
+    name: 'Away at Home',
+    shortName: 'AWY @ HOM',
+    date,
+    status: {
+      type: {
+        state: 'post',
+        description: 'Final',
+        shortDetail: 'Final',
+      },
+      period: 4,
+      displayClock: '0.0',
+    },
+    competitions: [
+      {
+        date,
+        venue: { fullName: 'Arena' },
+        competitors: [
+          {
+            homeAway: 'home',
+            score: '110',
+            team: {
+              id: '1',
+              displayName: 'Home',
+              abbreviation: 'HOM',
+              logos: [{ href: 'https://logo/1.png' }],
+            },
+          },
+          {
+            homeAway: 'away',
+            score: '108',
+            team: {
+              id: '2',
+              displayName: 'Away',
+              abbreviation: 'AWY',
+              logos: [{ href: 'https://logo/2.png' }],
+            },
+          },
+        ],
+      },
+    ],
+  };
+}
 
 const espnStub = {
   getStandings: jest.fn().mockResolvedValue({
@@ -36,6 +86,70 @@ const espnStub = {
       },
     ],
   }),
+  getScheduleCalendar: jest.fn().mockRejectedValue(new Error('no calendar')),
+  getScoreboard: jest.fn().mockImplementation((espnDate?: string) => {
+    if (espnDate === '20260114') {
+      return Promise.resolve({
+        events: [scoreboardEvent('2026-01-14T20:00:00.000Z')],
+      });
+    }
+    return Promise.resolve({ events: [] });
+  }),
+  getGameSummary: jest.fn().mockImplementation((gameId: string) => {
+    if (gameId === '404404') {
+      return Promise.resolve({});
+    }
+
+    return Promise.resolve({
+      header: {
+        id: gameId,
+        name: 'Away at Home',
+        date: '2026-01-14T20:00:00.000Z',
+        competitions: [
+          {
+            date: '2026-01-14T20:00:00.000Z',
+            status: {
+              type: {
+                state: 'post',
+                shortDetail: 'Final',
+                description: 'Final',
+              },
+              period: 4,
+              displayClock: '0.0',
+            },
+            competitors: [
+              {
+                homeAway: 'home',
+                score: '110',
+                team: {
+                  id: '1',
+                  displayName: 'Home',
+                  abbreviation: 'HOM',
+                  logos: [{ href: 'https://logo/1.png' }],
+                },
+                linescores: [],
+              },
+              {
+                homeAway: 'away',
+                score: '108',
+                team: {
+                  id: '2',
+                  displayName: 'Away',
+                  abbreviation: 'AWY',
+                  logos: [{ href: 'https://logo/2.png' }],
+                },
+                linescores: [],
+              },
+            ],
+          },
+        ],
+      },
+      boxscore: { teams: [], players: [] },
+      leaders: [],
+      gameInfo: { venue: { fullName: 'Arena' } },
+    });
+  }),
+  getTeam: jest.fn().mockResolvedValue({}),
 };
 
 describe('API (e2e)', () => {
@@ -81,6 +195,77 @@ describe('API (e2e)', () => {
           ],
         },
       ],
+    });
+  });
+
+  it('GET /games/schedule returns games for a local date', async () => {
+    const response = await request(app.getHttpServer())
+      .get('/games/schedule?date=2026-01-14')
+      .expect(200);
+
+    expect(response.body).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: '401585601',
+          date: '2026-01-14T20:00:00.000Z',
+        }),
+      ]),
+    );
+  });
+
+  it('GET /games/schedule/nearest finds the closest date with games', async () => {
+    const response = await request(app.getHttpServer())
+      .get('/games/schedule/nearest?date=2026-01-15&direction=before')
+      .expect(200);
+
+    expect(response.body).toEqual({ date: '2026-01-14' });
+  });
+
+  it('GET /games/:gameId returns a mapped game summary', async () => {
+    const response = await request(app.getHttpServer())
+      .get('/games/401585601')
+      .expect(200);
+
+    expect(response.body).toMatchObject({
+      id: '401585601',
+      name: 'Away at Home',
+      status: 'final',
+      homeScore: 110,
+      awayScore: 108,
+    });
+  });
+
+  it('GET /games/:gameId returns 404 when ESPN has no competition', async () => {
+    const response = await request(app.getHttpServer())
+      .get('/games/404404')
+      .expect(404);
+
+    expect(response.body).toMatchObject({
+      statusCode: 404,
+      path: '/games/404404',
+      message: 'Game 404404 not found',
+    });
+  });
+
+  it('GET /games/live/:id returns 404 for an unknown simulation', async () => {
+    const response = await request(app.getHttpServer())
+      .get('/games/live/not-a-real-sim')
+      .expect(404);
+
+    expect(response.body).toMatchObject({
+      statusCode: 404,
+      message: 'Game not-a-real-sim not found',
+    });
+  });
+
+  it('GET /teams/:id returns 404 when ESPN has no team payload', async () => {
+    const response = await request(app.getHttpServer())
+      .get('/teams/999')
+      .expect(404);
+
+    expect(response.body).toMatchObject({
+      statusCode: 404,
+      message: 'Team 999 not found',
     });
   });
 
@@ -156,5 +341,43 @@ describe('API (e2e)', () => {
     const body = response.body as { requestId?: string };
     expect(body.requestId).toEqual(expect.any(String));
     expect(response.headers['x-request-id']).toBe(body.requestId);
+  });
+});
+
+describe('API throttling (e2e)', () => {
+  let app: INestApplication<App>;
+
+  beforeAll(async () => {
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [
+        ThrottlerModule.forRoot([{ ttl: 60_000, limit: 2 }]),
+        HealthModule,
+      ],
+      providers: [
+        { provide: APP_GUARD, useClass: ThrottlerGuard },
+        { provide: APP_FILTER, useClass: AllExceptionsFilter },
+      ],
+    }).compile();
+
+    app = moduleFixture.createNestApplication();
+    await app.init();
+  });
+
+  afterAll(async () => {
+    await app.close();
+  });
+
+  it('returns 429 after the request limit is exceeded', async () => {
+    await request(app.getHttpServer()).get('/health/live').expect(200);
+    await request(app.getHttpServer()).get('/health/live').expect(200);
+
+    const response = await request(app.getHttpServer())
+      .get('/health/live')
+      .expect(429);
+
+    expect(response.body).toMatchObject({
+      statusCode: 429,
+      path: '/health/live',
+    });
   });
 });
