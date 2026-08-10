@@ -1,8 +1,8 @@
-import { randomUUID } from 'node:crypto';
-import type { IncomingMessage, ServerResponse } from 'node:http';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { LoggerModule, Params } from 'nestjs-pino';
+import { randomUUID } from 'node:crypto';
+import type { IncomingMessage, ServerResponse } from 'node:http';
 
 export const REQUEST_ID_HEADER = 'x-request-id';
 
@@ -24,13 +24,15 @@ function requestId(req: IncomingMessage, res: ServerResponse): string {
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService): Params => {
-        const isProduction = config.get<string>('NODE_ENV') === 'production';
+        const nodeEnv = config.get<string>('NODE_ENV');
+        const isProduction = nodeEnv === 'production';
+        const isTest = nodeEnv === 'test';
 
         return {
           pinoHttp: {
             level:
               config.get<string>('LOG_LEVEL') ??
-              (isProduction ? 'info' : 'debug'),
+              (isTest ? 'silent' : isProduction ? 'info' : 'debug'),
             genReqId: requestId,
             // Binds the id to every log line made during the request instead of
             // dumping the whole req/res pair.
@@ -48,16 +50,17 @@ function requestId(req: IncomingMessage, res: ServerResponse): string {
               }),
               res: (res: ServerResponse) => ({ statusCode: res.statusCode }),
             },
-            transport: isProduction
-              ? undefined
-              : {
-                  target: 'pino-pretty',
-                  options: {
-                    singleLine: true,
-                    translateTime: 'SYS:HH:MM:ss.l',
-                    ignore: 'pid,hostname',
+            transport:
+              isProduction || isTest
+                ? undefined
+                : {
+                    target: 'pino-pretty',
+                    options: {
+                      singleLine: true,
+                      translateTime: 'SYS:HH:MM:ss.l',
+                      ignore: 'pid,hostname',
+                    },
                   },
-                },
           },
         };
       },
