@@ -13,6 +13,7 @@ type FooterLink = {
 
 const footerLinks: FooterLink[] = [
   {href: '/match-center', label: 'Match Center'},
+  {href: '/news', label: 'News'},
   {href: '/historic-games', label: 'Historic Games'},
   {href: '/teams', label: 'Teams'},
   {href: '/standings', label: 'Standings'},

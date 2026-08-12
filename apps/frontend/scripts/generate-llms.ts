@@ -92,7 +92,7 @@ function buildLlmsFullTxt(): string {
     '',
     `- Standings, schedules, team records, and player stats are loaded from ${DATA_SOURCE_NAME} and may lag live broadcasts.`,
     '- Historic game replays use saved play-by-play feeds and do not reflect live game state.',
-    '- News headlines on the home page link to external ESPN articles.',
+    '- News headlines on the home page and the /news broadsheet link to external ESPN articles.',
     '',
     '## Citation guidance',
     '',

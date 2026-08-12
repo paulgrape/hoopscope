@@ -5,6 +5,7 @@ export const dynamic = 'force-dynamic'
 
 const FEED_LIMIT = 30
 const FEED_PATH = '/feed.xml'
+const FEED_HOME_PATH = '/news'
 
 function escapeXml(value: string): string {
   return value
@@ -22,7 +23,7 @@ function formatRssDate(date: string | null): string {
 }
 
 function buildItem(article: NewsArticle): string {
-  const link = article.url ?? absoluteUrl('/')
+  const link = article.url ?? absoluteUrl(FEED_HOME_PATH)
   const guid = article.url
     ? `<guid isPermaLink="true">${escapeXml(link)}</guid>`
     : `<guid isPermaLink="false">${escapeXml(String(article.id))}</guid>`
@@ -60,7 +61,7 @@ function buildRssFeed(articles: NewsArticle[]): string {
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
   <channel>
     <title>${escapeXml(SITE_NAME)}</title>
-    <link>${escapeXml(absoluteUrl('/'))}</link>
+    <link>${escapeXml(absoluteUrl(FEED_HOME_PATH))}</link>
     <description>${escapeXml(SITE_DESCRIPTION)}</description>
     <language>en-us</language>
     <lastBuildDate>${now}</lastBuildDate>

@@ -9,7 +9,13 @@ export const STATIC_PUBLIC_ROUTES: PublicRoute[] = [
   {
     path: '/',
     title: 'Home',
-    description: 'League headlines, scores context, and quick links across Hoopscope.',
+    description: 'League dashboard: games for today, a standings snapshot, and the latest headlines.',
+    entityType: 'dashboard'
+  },
+  {
+    path: '/news',
+    title: 'News',
+    description: 'Daily broadsheet of NBA headlines with an RSS feed.',
     entityType: 'news'
   },
   {
