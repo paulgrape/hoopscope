@@ -1,16 +1,24 @@
-import {NewsNewspaper} from '@/components/news/news-newspaper'
+import {ScoreboardMiniSkeleton} from '@/components/match/scoreboard-mini-skeleton'
+import {TodaysScores} from '@/components/match/todays-scores'
+import {NewsStrip} from '@/components/news/news-strip'
 import {JsonLd} from '@/components/seo/json-ld'
+import {StandingsSnapshot} from '@/components/standings/standings-snapshot'
 import {getNews} from '@/lib/news-api'
-import {collectionPageSchema} from '@/lib/seo-schema'
-import {SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE, absoluteUrl, createPageMetadata} from '@/lib/site'
-import {Rss} from 'lucide-react'
+import {webPageSchema} from '@/lib/seo-schema'
+import {SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE, createPageMetadata} from '@/lib/site'
+import {getStandings} from '@/lib/standings-api'
 import type {Metadata} from 'next'
 import Link from 'next/link'
+import {Suspense} from 'react'
+
+const HEADLINE_COUNT = 4
+
+const HOME_DESCRIPTION = `${SITE_TAGLINE}. ${SITE_DESCRIPTION}`
 
 export const metadata: Metadata = {
   ...createPageMetadata({
     title: SITE_NAME,
-    description: `${SITE_TAGLINE}. ${SITE_DESCRIPTION}`,
+    description: HOME_DESCRIPTION,
     path: '/'
   }),
   title: {
@@ -18,25 +26,13 @@ export const metadata: Metadata = {
   }
 }
 
-const PAGE_SIZE = 12
-
-type HomeProps = {
-  searchParams: Promise<{
-    page?: string
-  }>
-}
-
-function parsePage(value: string | undefined) {
-  const parsed = Number(value)
-  return Number.isInteger(parsed) && parsed > 0 ? parsed : 1
-}
-
-export default async function Home({searchParams}: HomeProps) {
-  const {page: pageParam} = await searchParams
-  const page = parsePage(pageParam)
-
-  const {articles, total} = await getNews(PAGE_SIZE, (page - 1) * PAGE_SIZE)
-  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
+export default async function Home() {
+  const [standings, articles] = await Promise.all([
+    getStandings().catch(() => null),
+    getNews(HEADLINE_COUNT, 0)
+      .then(page => page.articles)
+      .catch(() => [])
+  ])
 
   return (
     <main
@@ -45,82 +41,90 @@ export default async function Home({searchParams}: HomeProps) {
       className='mx-auto flex w-full max-w-7xl flex-1 flex-col gap-5 px-4 py-5 sm:gap-6 sm:px-6 sm:py-8'
     >
       <JsonLd
-        data={collectionPageSchema({
+        data={webPageSchema({
           path: '/',
           title: SITE_NAME,
-          description: `${SITE_TAGLINE}. ${SITE_DESCRIPTION}`,
-          items: articles.slice(0, 8).map(article => ({
-            name: article.headline,
-            url: article.url ?? '/'
-          }))
+          description: HOME_DESCRIPTION
         })}
       />
-      <header className='flex items-start justify-between gap-4'>
-        <div className='flex flex-col gap-2'>
-          <p className='text-muted-foreground text-sm tracking-wider uppercase'>Welcome</p>
-          <h1 className='text-2xl font-semibold sm:text-3xl'>{SITE_NAME}</h1>
-          <p className='text-muted-foreground max-w-2xl text-sm sm:text-base'>
-            {SITE_TAGLINE}. Your morning read on league headlines, pulled fresh from ESPN.
-          </p>
-        </div>
-        <a
-          href={absoluteUrl('/feed.xml')}
-          target='_blank'
-          rel='noopener noreferrer'
-          aria-label='Subscribe to the RSS feed'
-          title='Subscribe to the RSS feed'
-          className='text-muted-foreground hover:text-foreground flex size-9 shrink-0 items-center justify-center rounded-lg border border-transparent transition-colors'
-        >
-          <Rss
-            className='size-4'
-            aria-hidden
-          />
-          <span className='sr-only'>Subscribe to the RSS feed</span>
-        </a>
+      <header className='flex flex-wrap items-baseline gap-x-3 gap-y-1'>
+        <h1 className='text-xl font-semibold sm:text-2xl'>{SITE_NAME}</h1>
+        <p className='text-muted-foreground text-sm'>{SITE_TAGLINE}</p>
       </header>
 
-      <NewsNewspaper articles={articles} />
-
-      <nav
-        aria-label='News pagination'
-        className='flex items-center justify-between gap-4 text-xs tracking-[0.2em] uppercase sm:text-sm'
+      <DashboardSection
+        id='home-scores'
+        title='Scoreboard'
+        href='/match-center'
+        linkLabel='Full schedule'
       >
-        {page > 1 ? (
-          <Link
-            href={page === 2 ? '/' : `/?page=${page - 1}`}
-            className='text-foreground hover:text-muted-foreground transition-colors'
-          >
-            &larr; Newer
-          </Link>
-        ) : (
-          <span
-            aria-hidden
-            className='text-muted-foreground/40 select-none'
-          >
-            &larr; Newer
-          </span>
-        )}
+        <Suspense fallback={<ScoreboardMiniSkeleton />}>
+          <TodaysScores />
+        </Suspense>
+      </DashboardSection>
 
-        <span className='text-muted-foreground'>
-          Page {page} of {totalPages}
-        </span>
+      <div className='grid min-w-0 gap-5 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] lg:gap-6'>
+        <DashboardSection
+          id='home-news'
+          title='Latest headlines'
+          href='/news'
+          linkLabel='All news'
+        >
+          <NewsStrip articles={articles} />
+        </DashboardSection>
 
-        {page < totalPages ? (
-          <Link
-            href={`/?page=${page + 1}`}
-            className='text-foreground hover:text-muted-foreground transition-colors'
-          >
-            Earlier &rarr;
-          </Link>
-        ) : (
-          <span
-            aria-hidden
-            className='text-muted-foreground/40 select-none'
-          >
-            Earlier &rarr;
-          </span>
-        )}
-      </nav>
+        <DashboardSection
+          id='home-standings'
+          title='Standings'
+          subtitle={standings?.season}
+          href='/standings'
+          linkLabel='Full standings'
+        >
+          <StandingsSnapshot conferences={standings?.conferences ?? []} />
+        </DashboardSection>
+      </div>
     </main>
+  )
+}
+
+function DashboardSection({
+  id,
+  title,
+  subtitle,
+  href,
+  linkLabel,
+  children
+}: {
+  id: string
+  title: string
+  subtitle?: string
+  href: string
+  linkLabel: string
+  children: React.ReactNode
+}) {
+  return (
+    <section
+      aria-labelledby={id}
+      className='flex min-w-0 flex-col gap-3'
+    >
+      <div className='flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1'>
+        <div className='flex flex-wrap items-baseline gap-x-3 gap-y-1'>
+          <h2
+            id={id}
+            className='text-lg font-semibold sm:text-xl'
+          >
+            {title}
+          </h2>
+          {subtitle ? <p className='text-muted-foreground text-xs tracking-wider uppercase'>{subtitle}</p> : null}
+        </div>
+        <Link
+          href={href}
+          className='text-muted-foreground hover:text-foreground text-sm transition-colors'
+        >
+          {linkLabel} &rarr;
+        </Link>
+      </div>
+      <div className='flex min-w-0 flex-1 flex-col'>{children}</div>
+    </section>
   )
 }

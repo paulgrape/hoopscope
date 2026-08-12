@@ -13,6 +13,7 @@ import {useEffect, useRef, useState} from 'react'
 const navLinks = [
   {href: '/', label: 'Home'},
   {href: '/match-center', label: 'Match Center'},
+  {href: '/news', label: 'News'},
   {href: '/historic-games', label: 'Historic Games'},
   {href: '/teams', label: 'Teams'},
   {href: '/players', label: 'Players'},

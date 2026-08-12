@@ -26,6 +26,7 @@ describe('SiteFooter', () => {
     const footerNav = screen.getByRole('navigation', {name: 'Footer'})
 
     expect(within(footerNav).getByRole('link', {name: 'Match Center'})).toHaveAttribute('href', '/match-center')
+    expect(within(footerNav).getByRole('link', {name: 'News'})).toHaveAttribute('href', '/news')
     expect(within(footerNav).getByRole('link', {name: 'Historic Games'})).toHaveAttribute('href', '/historic-games')
     expect(within(footerNav).getByRole('link', {name: 'Teams'})).toHaveAttribute('href', '/teams')
     expect(within(footerNav).getByRole('link', {name: 'Standings'})).toHaveAttribute('href', '/standings')
