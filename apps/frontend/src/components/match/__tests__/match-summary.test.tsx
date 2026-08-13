@@ -14,10 +14,10 @@ vi.mock('next/image', () => ({
   )
 }))
 
-function makeTeam(id: string, abbreviation: string, displayName: string): ScoreboardTeam {
+function makeTeam(id: string, abbreviation: string, displayName: string, name: string): ScoreboardTeam {
   return {
     id,
-    name: displayName,
+    name,
     displayName,
     abbreviation,
     logo: null,
@@ -36,8 +36,8 @@ function makeSummary(overrides: Partial<GameSummary> = {}): GameSummary {
     period: 4,
     clock: '0:00',
     venue: 'TD Garden',
-    homeTeam: makeTeam('2', 'BOS', 'Boston Celtics'),
-    awayTeam: makeTeam('13', 'LAL', 'Los Angeles Lakers'),
+    homeTeam: makeTeam('2', 'BOS', 'Boston Celtics', 'Celtics'),
+    awayTeam: makeTeam('13', 'LAL', 'Los Angeles Lakers', 'Lakers'),
     homeScore: 110,
     awayScore: 104,
     periodScores: {
@@ -86,6 +86,25 @@ function makeSummary(overrides: Partial<GameSummary> = {}): GameSummary {
         fieldGoals: '9-18',
         threePointers: '2-6',
         freeThrows: '4-5'
+      },
+      {
+        athleteId: '201',
+        name: 'Austin Reaves',
+        shortName: 'A. Reaves',
+        jersey: '15',
+        position: 'G',
+        starter: false,
+        minutes: '28',
+        points: 12,
+        rebounds: 10,
+        assists: 4,
+        steals: 0,
+        blocks: 0,
+        turnovers: 1,
+        fouls: 3,
+        fieldGoals: '5-11',
+        threePointers: '1-4',
+        freeThrows: '1-2'
       }
     ],
     leaders: [
@@ -147,15 +166,35 @@ describe('MatchSummary', () => {
     render(<MatchSummary initialSummary={makeSummary()} />)
 
     expect(screen.getByRole('heading', {name: 'Box score'})).toBeInTheDocument()
-    expect(screen.getByRole('tab', {name: 'LAL'})).toBeInTheDocument()
-    expect(screen.getByRole('tab', {name: 'BOS'})).toBeInTheDocument()
+    expect(screen.getByRole('tab', {name: 'Lakers'})).toBeInTheDocument()
+    expect(screen.getByRole('tab', {name: 'Celtics'})).toBeInTheDocument()
 
     expect(screen.getByRole('link', {name: /L\. James/})).toHaveAttribute('href', '/players/200')
 
-    await userEvent.click(screen.getByRole('tab', {name: 'BOS'}))
+    await userEvent.click(screen.getByRole('tab', {name: 'Celtics'}))
 
     const boxScore = screen.getByRole('tabpanel')
     expect(within(boxScore).getByRole('link', {name: /J\. Tatum/})).toHaveAttribute('href', '/players/100')
+  })
+
+  it('groups the box score by starters and bench and expands a row for the remaining stats', async () => {
+    render(<MatchSummary initialSummary={makeSummary()} />)
+
+    const boxScore = screen.getByRole('tabpanel')
+    expect(within(boxScore).getByText('Starters')).toBeInTheDocument()
+    expect(within(boxScore).getByText('Bench')).toBeInTheDocument()
+
+    const names = within(boxScore)
+      .getAllByRole('rowheader')
+      .map(cell => cell.textContent)
+    expect(names[0]).toContain('L. James')
+    expect(names[1]).toContain('A. Reaves')
+
+    const toggle = within(boxScore).getByRole('button', {name: /more stats for L\. James/i})
+    await userEvent.click(toggle)
+
+    expect(toggle).toHaveAttribute('aria-expanded', 'true')
+    expect(within(boxScore).getAllByText('9-18')).toHaveLength(2)
   })
 
   it('renders team totals and leaders', () => {
