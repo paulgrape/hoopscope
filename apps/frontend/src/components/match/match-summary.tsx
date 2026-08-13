@@ -1,5 +1,6 @@
 'use client'
 
+import {type BoxScoreLine, BoxScoreTable as BoxScoreTableBase} from '@/components/match/box-score-table'
 import {Tabs, TabsContent, TabsList, TabsTrigger} from '@/components/ui/tabs'
 import {
   type BoxScorePlayer,
@@ -217,15 +218,15 @@ function LineScore({summary}: {summary: GameSummary}) {
   const headers = Array.from({length: periodCount}, (_, index) => (index < 4 ? `Q${index + 1}` : `OT${index - 3}`))
 
   return (
-    <div className='border-border mt-6 overflow-x-auto rounded-lg border'>
-      <table className='w-full min-w-[20rem] text-sm'>
+    <div className='border-border mt-6 overflow-hidden rounded-lg border'>
+      <table className='w-full text-sm'>
         <thead className='bg-muted/40 text-muted-foreground'>
           <tr>
-            <th className='px-3 py-2 text-left font-medium'>Team</th>
+            <th className='w-full px-3 py-2 text-left font-medium'>Team</th>
             {headers.map(label => (
               <th
                 key={label}
-                className='px-2 py-2 text-center font-medium'
+                className='px-1.5 py-2 text-center font-medium sm:px-2'
               >
                 {label}
               </th>
@@ -269,7 +270,7 @@ function LineScoreRow({
       {Array.from({length: periodCount}, (_, index) => (
         <td
           key={index}
-          className='px-2 py-2 text-center tabular-nums'
+          className='px-1.5 py-2 text-center tabular-nums sm:px-2'
         >
           {periods[index] ?? '—'}
         </td>
@@ -280,8 +281,8 @@ function LineScoreRow({
 }
 
 function BoxScoreTabs({summary}: {summary: GameSummary}) {
-  const awayLabel = summary.awayTeam?.abbreviation ?? 'Away'
-  const homeLabel = summary.homeTeam?.abbreviation ?? 'Home'
+  const awayLabel = summary.awayTeam?.name ?? summary.awayTeam?.abbreviation ?? 'Away'
+  const homeLabel = summary.homeTeam?.name ?? summary.homeTeam?.abbreviation ?? 'Home'
   const defaultTab = summary.awayPlayers.length > 0 ? 'away' : summary.homePlayers.length > 0 ? 'home' : 'away'
 
   return (
@@ -322,116 +323,34 @@ function BoxScoreTabs({summary}: {summary: GameSummary}) {
 }
 
 function BoxScoreTable({team, players}: {team: ScoreboardTeam | null; players: BoxScorePlayer[]}) {
-  if (players.length === 0) {
-    return <p className='text-muted-foreground text-sm'>No box score yet for {team?.displayName ?? 'this team'}.</p>
+  return (
+    <BoxScoreTableBase
+      lines={players.map(toBoxScoreLine)}
+      emptyMessage={`No box score yet for ${team?.displayName ?? 'this team'}.`}
+      showLineupGroups
+    />
+  )
+}
+
+function toBoxScoreLine(player: BoxScorePlayer): BoxScoreLine {
+  return {
+    id: player.athleteId ?? player.name,
+    name: player.shortName ?? player.name,
+    href: player.athleteId ? `/players/${player.athleteId}` : null,
+    meta: player.position,
+    starter: player.starter,
+    minutes: player.minutes,
+    points: player.points,
+    rebounds: player.rebounds,
+    assists: player.assists,
+    steals: player.steals,
+    blocks: player.blocks,
+    turnovers: player.turnovers,
+    fouls: player.fouls,
+    fieldGoals: player.fieldGoals,
+    threePointers: player.threePointers,
+    freeThrows: player.freeThrows
   }
-
-  const starters = players.filter(player => player.starter)
-  const bench = players.filter(player => !player.starter)
-
-  return (
-    <div className='border-border overflow-x-auto rounded-xl border'>
-      <table className='w-full min-w-160 text-sm'>
-        <thead className='bg-muted/40 text-muted-foreground sticky top-0'>
-          <tr>
-            <th className='px-3 py-2 text-left font-medium'>Player</th>
-            <th className='px-2 py-2 text-right font-medium'>MIN</th>
-            <th className='px-2 py-2 text-right font-medium'>FG</th>
-            <th className='px-2 py-2 text-right font-medium'>3PT</th>
-            <th className='px-2 py-2 text-right font-medium'>FT</th>
-            <th className='px-2 py-2 text-right font-medium'>REB</th>
-            <th className='px-2 py-2 text-right font-medium'>AST</th>
-            <th className='px-2 py-2 text-right font-medium'>STL</th>
-            <th className='px-2 py-2 text-right font-medium'>BLK</th>
-            <th className='px-2 py-2 text-right font-medium'>TO</th>
-            <th className='px-2 py-2 text-right font-medium'>PF</th>
-            <th className='text-foreground px-3 py-2 text-right font-semibold'>PTS</th>
-          </tr>
-        </thead>
-        <tbody>
-          {starters.length > 0 ? (
-            <>
-              <BoxScoreGroupLabel
-                colSpan={12}
-                label='Starters'
-              />
-              {starters.map(player => (
-                <BoxScoreRow
-                  key={player.athleteId ?? player.name}
-                  player={player}
-                />
-              ))}
-            </>
-          ) : null}
-          {bench.length > 0 ? (
-            <>
-              <BoxScoreGroupLabel
-                colSpan={12}
-                label='Bench'
-              />
-              {bench.map(player => (
-                <BoxScoreRow
-                  key={player.athleteId ?? player.name}
-                  player={player}
-                />
-              ))}
-            </>
-          ) : null}
-        </tbody>
-      </table>
-    </div>
-  )
-}
-
-function BoxScoreGroupLabel({colSpan, label}: {colSpan: number; label: string}) {
-  return (
-    <tr className='bg-muted/20'>
-      <td
-        colSpan={colSpan}
-        className='text-muted-foreground px-3 py-1.5 text-xs font-medium tracking-wider uppercase'
-      >
-        {label}
-      </td>
-    </tr>
-  )
-}
-
-function BoxScoreRow({player}: {player: BoxScorePlayer}) {
-  const name = player.shortName ?? player.name
-  const nameCell = (
-    <span className='flex min-w-0 items-baseline gap-1.5'>
-      <span className='truncate font-medium'>{name}</span>
-      {player.position ? <span className='text-muted-foreground shrink-0 text-xs'>{player.position}</span> : null}
-    </span>
-  )
-
-  return (
-    <tr className='border-border border-t'>
-      <td className='max-w-40 px-3 py-2'>
-        {player.athleteId ? (
-          <Link
-            href={`/players/${player.athleteId}`}
-            className='hover:underline'
-          >
-            {nameCell}
-          </Link>
-        ) : (
-          nameCell
-        )}
-      </td>
-      <td className='px-2 py-2 text-right tabular-nums'>{player.minutes || '—'}</td>
-      <td className='px-2 py-2 text-right tabular-nums'>{player.fieldGoals ?? '—'}</td>
-      <td className='px-2 py-2 text-right tabular-nums'>{player.threePointers ?? '—'}</td>
-      <td className='px-2 py-2 text-right tabular-nums'>{player.freeThrows ?? '—'}</td>
-      <td className='px-2 py-2 text-right tabular-nums'>{player.rebounds}</td>
-      <td className='px-2 py-2 text-right tabular-nums'>{player.assists}</td>
-      <td className='px-2 py-2 text-right tabular-nums'>{player.steals}</td>
-      <td className='px-2 py-2 text-right tabular-nums'>{player.blocks}</td>
-      <td className='px-2 py-2 text-right tabular-nums'>{player.turnovers}</td>
-      <td className='px-2 py-2 text-right tabular-nums'>{player.fouls}</td>
-      <td className='px-3 py-2 text-right font-semibold tabular-nums'>{player.points}</td>
-    </tr>
-  )
 }
 
 function TeamTotalsComparison({
