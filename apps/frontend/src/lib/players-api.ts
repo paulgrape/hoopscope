@@ -1,6 +1,8 @@
 import {apiFetch, apiFetchOrNull} from '@/lib/api-client'
+import type {NewsArticle} from '@/lib/news-api'
+import type {SeasonType} from '@/lib/teams-api'
 
-export type SeasonType = 'regular' | 'playoffs'
+export type {SeasonType}
 
 export type PlayerInjury = {
   status: string
@@ -78,19 +80,6 @@ export type PlayerCareerStatsResponse = {
   seasons: PlayerCareerSeasonStats[]
 }
 
-export type PlayerNewsArticle = {
-  id: number
-  type: string
-  headline: string
-  description: string
-  published: string | null
-  imageUrl: string | null
-  imageCaption: string | null
-  url: string | null
-  byline: string | null
-  teams: string[]
-}
-
 export type PlayerListItem = {
   id: string
   fullName: string
@@ -155,8 +144,8 @@ export async function getPlayerCareerStats(playerId: string): Promise<PlayerCare
   })
 }
 
-export async function getPlayerNews(playerId: string, limit = 6): Promise<PlayerNewsArticle[]> {
-  return apiFetch<PlayerNewsArticle[]>(`/players/${playerId}/news?limit=${limit}`, {
+export async function getPlayerNews(playerId: string, limit = 6): Promise<NewsArticle[]> {
+  return apiFetch<NewsArticle[]>(`/players/${playerId}/news?limit=${limit}`, {
     revalidate: 600
   })
 }

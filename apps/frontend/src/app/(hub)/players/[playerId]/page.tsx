@@ -1,3 +1,4 @@
+import {PageBreadcrumb} from '@/components/layout/page-breadcrumb'
 import {PlayerBioGrid, PlayerPageHeader} from '@/components/players/player-page-header'
 import {PlayerProfileTabs} from '@/components/players/player-profile-tabs'
 import {JsonLd} from '@/components/seo/json-ld'
@@ -13,7 +14,6 @@ import {breadcrumbSchema, personSchema} from '@/lib/seo-schema'
 import {SITE_NAME, createPageMetadata} from '@/lib/site'
 import {getTeam} from '@/lib/teams-api'
 import type {Metadata} from 'next'
-import Link from 'next/link'
 import {notFound} from 'next/navigation'
 
 type PlayerDetailsPageProps = {
@@ -65,8 +65,6 @@ export default async function PlayerDetailsPage({params, searchParams}: PlayerDe
     getCachedShotHeatmapForEspnPlayer(playerId)
   ])
 
-  const backHref = teamId ? `/teams/${teamId}` : '/teams'
-  const backLabel = team ? `Back to ${team.displayName}` : 'Back to teams'
   const breadcrumbItems = team
     ? [
         {name: 'Teams', path: '/teams'},
@@ -74,7 +72,7 @@ export default async function PlayerDetailsPage({params, searchParams}: PlayerDe
         {name: player.fullName, path: `/players/${playerId}`}
       ]
     : [
-        {name: 'Teams', path: '/teams'},
+        {name: 'Players', path: '/players'},
         {name: player.fullName, path: `/players/${playerId}`}
       ]
 
@@ -97,12 +95,11 @@ export default async function PlayerDetailsPage({params, searchParams}: PlayerDe
           breadcrumbSchema(breadcrumbItems)
         ]}
       />
-      <Link
-        href={backHref}
-        className='text-muted-foreground hover:text-foreground text-sm underline-offset-4 hover:underline'
-      >
-        {backLabel}
-      </Link>
+      <PageBreadcrumb
+        items={breadcrumbItems.map((item, index) =>
+          index === breadcrumbItems.length - 1 ? {name: item.name} : {name: item.name, href: item.path}
+        )}
+      />
 
       <PlayerPageHeader player={player} />
       <PlayerBioGrid player={player} />

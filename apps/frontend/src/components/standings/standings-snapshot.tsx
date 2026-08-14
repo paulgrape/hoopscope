@@ -29,7 +29,7 @@ function SnapshotRow({team}: {team: StandingTeam}) {
       </span>
       <Link
         href={`/teams/${team.id}`}
-        className='hover:text-primary flex min-w-0 flex-1 items-center gap-2 transition-colors'
+        className='hover:text-foreground flex min-w-0 flex-1 items-center gap-2 transition-colors'
       >
         {team.logo ? (
           <Image

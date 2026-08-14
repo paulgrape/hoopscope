@@ -42,47 +42,54 @@ export default async function HistoricGamesPage() {
         </p>
       </header>
 
-      <section className='grid min-w-0 gap-3 sm:gap-4 lg:grid-cols-2'>
-        {games.map(game => (
-          <Link
-            key={game.id}
-            href={`/historic-games/${game.id}`}
-            className='bg-card border-border hover:border-ring flex min-w-0 flex-col gap-4 rounded-xl border p-3 transition active:scale-[0.98] sm:gap-5 sm:p-5 sm:hover:-translate-y-1'
-          >
-            <div className='text-muted-foreground flex flex-wrap items-center justify-between gap-2 text-sm'>
-              <span>{new Date(game.date).toLocaleDateString()}</span>
-              <span className='rounded-full border px-2 py-0.5 capitalize'>{game.status}</span>
-            </div>
-
-            <div className='grid gap-2 sm:grid-cols-[1fr_auto_1fr] sm:items-center sm:gap-4'>
-              <TeamBlock
-                name={game.awayTeam.name}
-                abbreviation={game.awayTeam.abbreviation}
-                logo={game.awayTeam.logo}
-              />
-              <div className='text-center'>
-                <p className='text-2xl font-semibold sm:text-3xl'>
-                  {game.awayScore} - {game.homeScore}
-                </p>
-                <p className='text-muted-foreground mt-1 text-xs tracking-wider uppercase'>Final</p>
+      {games.length === 0 ? (
+        <div className='bg-card border-border flex flex-col items-center gap-2 rounded-xl border p-6 text-center'>
+          <p className='font-medium'>No archived games</p>
+          <p className='text-muted-foreground text-sm'>Saved play-by-play replays will show up here.</p>
+        </div>
+      ) : (
+        <section className='grid min-w-0 gap-3 sm:gap-4 lg:grid-cols-2'>
+          {games.map(game => (
+            <Link
+              key={game.id}
+              href={`/historic-games/${game.id}`}
+              className='bg-card border-border hover:border-ring flex min-w-0 flex-col gap-4 rounded-xl border p-3 transition active:scale-[0.98] sm:gap-5 sm:p-5 sm:hover:-translate-y-1'
+            >
+              <div className='text-muted-foreground flex flex-wrap items-center justify-between gap-2 text-sm'>
+                <span>{new Date(game.date).toLocaleDateString()}</span>
+                <span className='rounded-full border px-2 py-0.5 capitalize'>{game.status}</span>
               </div>
-              <TeamBlock
-                name={game.homeTeam.name}
-                abbreviation={game.homeTeam.abbreviation}
-                logo={game.homeTeam.logo}
-                align='right'
-              />
-            </div>
 
-            <div className='min-w-0'>
-              <h2 className='text-card-foreground truncate text-base font-semibold sm:text-lg'>{game.name}</h2>
-              <p className='text-muted-foreground mt-1 text-sm'>
-                {game.totalPlays.toLocaleString()} saved play-by-play events
-              </p>
-            </div>
-          </Link>
-        ))}
-      </section>
+              <div className='grid gap-2 sm:grid-cols-[1fr_auto_1fr] sm:items-center sm:gap-4'>
+                <TeamBlock
+                  name={game.awayTeam.name}
+                  abbreviation={game.awayTeam.abbreviation}
+                  logo={game.awayTeam.logo}
+                />
+                <div className='text-center'>
+                  <p className='text-2xl font-semibold sm:text-3xl'>
+                    {game.awayScore} - {game.homeScore}
+                  </p>
+                  <p className='text-muted-foreground mt-1 text-xs tracking-wider uppercase'>Final</p>
+                </div>
+                <TeamBlock
+                  name={game.homeTeam.name}
+                  abbreviation={game.homeTeam.abbreviation}
+                  logo={game.homeTeam.logo}
+                  align='right'
+                />
+              </div>
+
+              <div className='min-w-0'>
+                <h2 className='text-card-foreground truncate text-base font-semibold sm:text-lg'>{game.name}</h2>
+                <p className='text-muted-foreground mt-1 text-sm'>
+                  {game.totalPlays.toLocaleString()} saved play-by-play events
+                </p>
+              </div>
+            </Link>
+          ))}
+        </section>
+      )}
     </main>
   )
 }

@@ -27,7 +27,7 @@ function StandingRow({team}: {team: StandingTeam}) {
       >
         <Link
           href={`/teams/${team.id}`}
-          className='hover:text-primary flex min-w-0 items-center gap-2 transition-colors sm:gap-3'
+          className='hover:text-foreground flex min-w-0 items-center gap-2 transition-colors sm:gap-3'
         >
           {team.logo ? (
             <Image
