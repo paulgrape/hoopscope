@@ -1,10 +1,10 @@
+import {PageBreadcrumb} from '@/components/layout/page-breadcrumb'
 import {HistoricGameSimulator} from '@/components/match/historic-game-simulator'
 import {JsonLd} from '@/components/seo/json-ld'
 import {SOCKET_BASE_URL, getHistoricGame} from '@/lib/games-api'
 import {breadcrumbSchema, sportsEventSchema} from '@/lib/seo-schema'
 import {createPageMetadata} from '@/lib/site'
 import type {Metadata} from 'next'
-import Link from 'next/link'
 import {notFound} from 'next/navigation'
 
 const DISPLAY_LOCALE = 'en-US'
@@ -67,25 +67,12 @@ export default async function HistoricGamePage({params}: HistoricGamePageProps) 
           ])
         ]}
       />
-      <nav aria-label='Breadcrumb'>
-        <ol className='text-muted-foreground flex flex-wrap items-center gap-1.5 text-sm'>
-          <li>
-            <Link
-              href='/historic-games'
-              className='hover:text-foreground underline-offset-4 hover:underline'
-            >
-              Historic games
-            </Link>
-          </li>
-          <li aria-hidden='true'>/</li>
-          <li
-            className='text-foreground truncate'
-            aria-current='page'
-          >
-            {game.name}
-          </li>
-        </ol>
-      </nav>
+      <PageBreadcrumb
+        items={[
+          {name: 'Historic Games', href: '/historic-games'},
+          {name: game.name}
+        ]}
+      />
 
       <header className='flex flex-col gap-1.5'>
         <p className='text-muted-foreground text-xs tracking-wider uppercase sm:text-sm'>Play-by-play replay</p>

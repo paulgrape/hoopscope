@@ -5,14 +5,15 @@ import {PlayerNewsSection} from '@/components/players/player-news-section'
 import {PlayerSeasonStats} from '@/components/players/player-season-stats'
 import {ShotHeatmapCourt} from '@/components/players/shot-heatmap-court'
 import {Tabs, TabsContent, TabsList, TabsTrigger} from '@/components/ui/tabs'
-import type {PlayerCareerSeasonStats, PlayerNewsArticle, PlayerSeasonStatsResponse} from '@/lib/players-api'
+import type {NewsArticle} from '@/lib/news-api'
+import type {PlayerCareerSeasonStats, PlayerSeasonStatsResponse} from '@/lib/players-api'
 import type {ShotHeatmapResponse} from '@/lib/shots-api'
 
 type PlayerProfileTabsProps = {
   regularStats: PlayerSeasonStatsResponse
   playoffStats: PlayerSeasonStatsResponse
   careerSeasons: PlayerCareerSeasonStats[]
-  news: PlayerNewsArticle[]
+  news: NewsArticle[]
   espnNewsHref: string
   heatmap?: ShotHeatmapResponse | null
 }

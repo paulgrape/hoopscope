@@ -79,7 +79,9 @@ export function TeamSeasonStats({regularStats, playoffStats, teamId}: TeamSeason
   return (
     <section className='bg-card border-border min-w-0 rounded-xl border p-3 sm:p-5'>
       <div className='flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4'>
-        <h2 className='text-card-foreground text-lg font-semibold sm:text-xl'>2025-26 Season Stats</h2>
+        <h2 className='text-card-foreground text-lg font-semibold sm:text-xl'>
+          {regularStats.seasonLabel} Season Stats
+        </h2>
 
         <div className='flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center'>
           <div className='bg-background border-border flex w-full rounded-lg border p-0.5 sm:w-auto'>

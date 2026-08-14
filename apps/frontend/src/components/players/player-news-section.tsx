@@ -1,9 +1,9 @@
-import type {PlayerNewsArticle} from '@/lib/players-api'
+import type {NewsArticle} from '@/lib/news-api'
 import {ArrowUpRight} from 'lucide-react'
 import Image from 'next/image'
 
 type PlayerNewsSectionProps = {
-  articles: PlayerNewsArticle[]
+  articles: NewsArticle[]
   moreHref: string
 }
 
@@ -53,7 +53,7 @@ export function PlayerNewsSection({articles, moreHref}: PlayerNewsSectionProps) 
   )
 }
 
-function NewsCard({article}: {article: PlayerNewsArticle}) {
+function NewsCard({article}: {article: NewsArticle}) {
   const href = typeof article.url === 'string' && article.url.length > 0 ? article.url : null
 
   const content = (

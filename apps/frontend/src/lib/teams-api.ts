@@ -15,16 +15,6 @@ export type TeamDetails = TeamSummary & {
   record: string | null
 }
 
-export type TeamRosterPlayer = {
-  id: string
-  fullName: string
-  jersey: string | null
-  position: string | null
-  headshot: string | null
-  age: number | null
-  experience: number
-}
-
 export type SeasonType = 'regular' | 'playoffs'
 
 export type TeamSeasonStatPlayer = {
@@ -54,34 +44,12 @@ export type TeamSeasonStatsResponse = {
   players: TeamSeasonStatPlayer[]
 }
 
-export type SeasonOption = {
-  value: number
-  label: string
-}
-
-const SEASON_HISTORY_COUNT = 10
-
-export function formatSeasonLabel(season: number): string {
-  return `${season - 1}–${String(season).slice(-2)}`
-}
-
-export function buildSeasonOptions(currentSeason: number): SeasonOption[] {
-  return Array.from({length: SEASON_HISTORY_COUNT}, (_, index) => {
-    const value = currentSeason - index
-    return {value, label: formatSeasonLabel(value)}
-  })
-}
-
 export async function getTeams(): Promise<TeamSummary[]> {
   return apiFetch<TeamSummary[]>('/teams', {revalidate: 3600})
 }
 
 export async function getTeam(teamId: string): Promise<TeamDetails | null> {
   return apiFetchOrNull<TeamDetails>(`/teams/${teamId}`, {revalidate: 3600})
-}
-
-export async function getTeamRoster(teamId: string): Promise<TeamRosterPlayer[]> {
-  return apiFetch<TeamRosterPlayer[]>(`/teams/${teamId}/roster`, {revalidate: 3600})
 }
 
 type TeamSeasonStatsOptions = {

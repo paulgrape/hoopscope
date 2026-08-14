@@ -1,5 +1,3 @@
-import {apiFetch} from '@/lib/api-client'
-
 export type ShotPoint = {
   x: number
   y: number
@@ -27,23 +25,4 @@ export type ShotHeatmapResponse = {
   seasonType: string
   shots: ShotPoint[]
   leagueZones: LeagueZoneAvg[]
-}
-
-type ShotHeatmapOptions = {
-  playerId: string
-  season?: string
-  seasonType?: string
-}
-
-export async function getShotHeatmap(options: ShotHeatmapOptions): Promise<ShotHeatmapResponse> {
-  const params = new URLSearchParams({
-    playerId: options.playerId
-  })
-
-  if (options.season) params.set('season', options.season)
-  if (options.seasonType) params.set('seasonType', options.seasonType)
-
-  return apiFetch<ShotHeatmapResponse>(`/shots/heatmap?${params.toString()}`, {
-    revalidate: 3600
-  })
 }

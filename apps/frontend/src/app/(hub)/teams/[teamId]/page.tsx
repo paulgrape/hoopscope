@@ -1,3 +1,4 @@
+import {PageBreadcrumb} from '@/components/layout/page-breadcrumb'
 import {JsonLd} from '@/components/seo/json-ld'
 import {TeamSeasonStats} from '@/components/teams/team-season-stats'
 import {breadcrumbSchema, sportsTeamSchema} from '@/lib/seo-schema'
@@ -5,7 +6,6 @@ import {SITE_NAME, createPageMetadata} from '@/lib/site'
 import {getTeam, getTeamSeasonStats} from '@/lib/teams-api'
 import type {Metadata} from 'next'
 import Image from 'next/image'
-import Link from 'next/link'
 import {notFound} from 'next/navigation'
 
 type TeamDetailsPageProps = {
@@ -68,21 +68,25 @@ export default async function TeamDetailsPage({params}: TeamDetailsPageProps) {
           ])
         ]}
       />
-      <Link
-        href='/teams'
-        className='text-muted-foreground hover:text-foreground text-sm underline-offset-4 hover:underline'
-      >
-        Back to all teams
-      </Link>
+      <PageBreadcrumb
+        items={[
+          {name: 'Teams', href: '/teams'},
+          {name: team.displayName}
+        ]}
+      />
 
       <header className='bg-card border-border flex flex-col items-start gap-4 rounded-xl border p-3 sm:flex-row sm:items-center sm:gap-8 sm:p-5'>
-        <Image
-          src={team.logo ?? ''}
-          alt={team.displayName}
-          className='h-20 w-20 shrink-0 object-contain sm:h-25 sm:w-25'
-          width={100}
-          height={100}
-        />
+        {team.logo ? (
+          <Image
+            src={team.logo}
+            alt={`${team.displayName} logo`}
+            className='h-20 w-20 shrink-0 object-contain sm:h-25 sm:w-25'
+            width={100}
+            height={100}
+          />
+        ) : (
+          <div className='bg-muted h-20 w-20 shrink-0 rounded-full sm:h-25 sm:w-25' />
+        )}
         <div className='min-w-0'>
           <p className='text-muted-foreground text-xs tracking-wider uppercase'>{team.abbreviation}</p>
           <h1 className='text-card-foreground mt-1 text-2xl font-semibold sm:text-3xl'>{team.displayName}</h1>

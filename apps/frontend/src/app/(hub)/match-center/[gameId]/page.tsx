@@ -1,10 +1,10 @@
+import {PageBreadcrumb} from '@/components/layout/page-breadcrumb'
 import {MatchSummary} from '@/components/match/match-summary'
 import {JsonLd} from '@/components/seo/json-ld'
 import {getServerGameSummary, isValidDateKey} from '@/lib/games-api'
 import {breadcrumbSchema, sportsEventSchema} from '@/lib/seo-schema'
 import {createPageMetadata} from '@/lib/site'
 import type {Metadata} from 'next'
-import Link from 'next/link'
 import {notFound} from 'next/navigation'
 
 type MatchPageProps = {
@@ -70,12 +70,12 @@ export default async function MatchPage({params, searchParams}: MatchPageProps) 
         ]}
       />
 
-      <Link
-        href={backHref}
-        className='text-muted-foreground hover:text-foreground text-sm underline-offset-4 hover:underline'
-      >
-        Back to Match Center
-      </Link>
+      <PageBreadcrumb
+        items={[
+          {name: 'Match Center', href: backHref},
+          {name: game.shortName ?? game.name}
+        ]}
+      />
 
       <header>
         <h1 className='text-2xl font-semibold sm:text-3xl'>{game.shortName ?? game.name}</h1>
