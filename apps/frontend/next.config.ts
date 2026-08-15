@@ -23,7 +23,6 @@ const securityHeaders = [
 ]
 
 const nextConfig: NextConfig = {
-  experimental: {appNewScrollHandler: true},
   htmlLimitedBots: /.*/,
   images: {
     formats: ['image/avif', 'image/webp'],
