@@ -10,6 +10,13 @@ updates:
           - minor
           - patch
     open-pull-requests-limit: 5
+    ignore:
+      # TS 7.0 has no compiler API; Nest CLI, typescript-eslint, and ts-jest break until 7.1.
+      - dependency-name: typescript
+        versions: [">=7.0.0"]
+      # ESLint 10: eslint-config-next plugins still peer eslint ^9.
+      - dependency-name: eslint
+        versions: [">=10.0.0"]
 
   - package-ecosystem: github-actions
     directory: /
