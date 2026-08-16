@@ -15,12 +15,10 @@ Built as a full-stack TypeScript monorepo: a **Next.js 16** frontend backed by a
 
 ## Live demo
 
-<!-- TODO: fill in after the first deploy (see Deployment below). -->
-
-| Surface  | URL                |
-| -------- | ------------------ |
-| Web app  | _not yet deployed_ |
-| API docs | _not yet deployed_ |
+| Surface | URL                                           |
+| ------- | --------------------------------------------- |
+| Web app | https://hoopscope.vercel.app/                 |
+| API     | https://nba-hub-8tmx.onrender.com/health/live |
 
 > The backend is intended for a free hosting tier, so the first request after a
 > period of inactivity may take a few seconds to cold-start.
