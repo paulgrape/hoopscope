@@ -5,8 +5,8 @@ Thanks for your interest in contributing! This document covers the workflow and 
 ## Getting started
 
 ```bash
-git clone https://github.com/paulgrape/nba-hub.git
-cd nba-hub
+git clone https://github.com/paulgrape/hoopscope.git
+cd hoopscope
 npm install
 cp apps/backend/.env.example apps/backend/.env
 cp apps/frontend/.env.example apps/frontend/.env.local

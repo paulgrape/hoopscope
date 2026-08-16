@@ -15,7 +15,7 @@ Please **do not open a public issue** for security vulnerabilities.
 
 Instead, report privately via one of:
 
-- GitHub's [private vulnerability reporting](https://github.com/paulgrape/nba-hub/security/advisories/new) for this repository
+- GitHub's [private vulnerability reporting](https://github.com/paulgrape/hoopscope/security/advisories/new) for this repository
 - Email: vin.pavel13@gmail.com (include "SECURITY" in the subject)
 
 Please include:

@@ -5,7 +5,7 @@
 
 # Hoopscope
 
-[![CI](https://github.com/paulgrape/nba-hub/actions/workflows/ci.yml/badge.svg)](https://github.com/paulgrape/nba-hub/actions/workflows/ci.yml)
+[![CI](https://github.com/paulgrape/hoopscope/actions/workflows/ci.yml/badge.svg)](https://github.com/paulgrape/hoopscope/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D22-brightgreen)](https://nodejs.org)
 
@@ -33,8 +33,8 @@ Built as a full-stack TypeScript monorepo: a **Next.js 16** frontend backed by a
   <img src="docs/screenshots/replay.gif" alt="Historic game replay" />
 </p>
 
-| Shot heatmap | Standings |
-| --- | --- |
+| Shot heatmap                                       | Standings                                    |
+| -------------------------------------------------- | -------------------------------------------- |
 | ![Shot heatmap](docs/screenshots/shot-heatmap.png) | ![Standings](docs/screenshots/standings.png) |
 
 ## Features
@@ -112,7 +112,7 @@ keyboard-operable `role="slider"` and score changes are announced via
 ## Monorepo layout
 
 ```
-nba-hub/
+hoopscope/
 ├── apps/
 │   ├── frontend/   # Next.js app (port 3001), vercel.json
 │   └── backend/    # NestJS API (port 3000, Swagger at /api/docs), Dockerfile
@@ -133,8 +133,8 @@ nba-hub/
 ### Setup
 
 ```bash
-git clone https://github.com/paulgrape/nba-hub.git
-cd nba-hub
+git clone https://github.com/paulgrape/hoopscope.git
+cd hoopscope
 npm install
 
 # environment
