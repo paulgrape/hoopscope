@@ -10,8 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Coverage thresholds for both workspaces, enforced in CI
-- Security jobs on pull requests: dependency audit (`audit-ci`), CodeQL, and
-  dependency review
+- Security jobs on pull requests: dependency audit (`audit-ci`) and CodeQL
 - Deployment configuration for Vercel (frontend) and Render (backend)
 - `CHANGELOG.md`, `CODEOWNERS`, and `.nvmrc`
 - `/.well-known/security.txt` disclosure endpoint referenced by `SECURITY.md`

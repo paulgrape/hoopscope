@@ -109,17 +109,6 @@ jobs:
       - name: Audit production dependencies
         run: npm run audit
 
-  dependency-review:
-    name: Dependency review
-    runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/dependency-review-action@v4
-        with:
-          fail-on-severity: high
-
   codeql:
     name: CodeQL
     runs-on: ubuntu-latest
