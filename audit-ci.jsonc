@@ -1,0 +1,25 @@
+// Dependency audit gate for CI. Fails the build on high or critical advisories
+// in the production dependency graph.
+//
+// Anything added to `allowlist` must be justified below and re-reviewed when the
+// owning dependency is next upgraded. Prefer upgrading over allowlisting.
+{
+  "$schema": "https://raw.githubusercontent.com/IBM/audit-ci/main/docs/schema.json",
+  "high": true,
+  "critical": true,
+  "skip-dev": true,
+  "allowlist": [
+    // js-yaml DoS via crafted YAML, reached only through @nestjs/swagger.
+    //
+    // Not exploitable here: the OpenAPI document is built from decorators, this
+    // service never parses caller-supplied YAML, and Swagger is only mounted
+    // when NODE_ENV !== 'production' (apps/backend/src/main.ts).
+    //
+    // Cannot currently be patched away: @nestjs/swagger pins a vulnerable
+    // js-yaml 5.x, and npm silently ignores root `overrides` for workspace
+    // dependencies, so the transitive pin does not apply.
+    //
+    // Re-check when @nestjs/swagger > 11.4.6 ships.
+    "GHSA-pm4m-ph32-ghv5"
+  ]
+}

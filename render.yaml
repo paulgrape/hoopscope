@@ -1,0 +1,29 @@
+# Render blueprint for the NestJS backend.
+#
+# Single instance by design: the response cache, replay sessions, and rate
+# limiter all live in process memory, so a second replica would split replay
+# state and multiply the effective rate limit. Scaling out requires a shared
+# cache and a Socket.IO Redis adapter first. See README.
+services:
+  - type: web
+    name: hoopscope-backend
+    runtime: node
+    plan: free
+    region: frankfurt
+    rootDir: .
+    numInstances: 1
+    buildCommand: npm ci && npm run build -w apps/backend
+    startCommand: npm run start:prod -w apps/backend
+    healthCheckPath: /health/live
+    envVars:
+      - key: NODE_VERSION
+        value: 22
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: LOG_LEVEL
+        value: info
+      # Set to the deployed Vercel origin; gates both HTTP CORS and Socket.IO.
+      - key: FRONTEND_URL
+        sync: false

@@ -10,23 +10,27 @@
     "build": "npm run build -w apps/backend && npm run build -w apps/frontend",
     "lint": "npm run lint -w apps/backend && npm run lint -w apps/frontend",
     "test": "npm run test -w apps/backend && npm run test -w apps/frontend",
+    "audit": "audit-ci --config ./audit-ci.jsonc",
     "prepare": "node .husky/install.mjs"
   },
   "keywords": [],
   "author": "Pavel Vinogradov <vin.pavel13@gmail.com>",
   "license": "MIT",
+  "engines": {
+    "node": ">=22",
+    "npm": ">=10"
+  },
   "lint-staged": {
-    "*.md": "prettier --write"
+    "*.{md,yml,yaml}": "prettier --write"
   },
   "type": "module",
   "dependencies": {
-    "@nestjs/common": "^11.1.23",
-    "@nestjs/core": "^11.1.23",
     "concurrently": "^10.0.3"
   },
   "devDependencies": {
     "@commitlint/cli": "^21.2.1",
     "@commitlint/config-conventional": "^21.2.0",
+    "audit-ci": "7.1.0",
     "husky": "^9.1.7",
     "lint-staged": "^17.1.0"
   }

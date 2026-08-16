@@ -1,12 +1,39 @@
+<!-- Banner: docs/screenshots/banner.png (1200×300, 4:1). -->
+<p align="center">
+  <img src="docs/screenshots/banner.png" alt="Hoopscope — live scores, standings, shot heatmaps, and historic game replays" width="100%" />
+</p>
+
 # Hoopscope
 
 [![CI](https://github.com/paulgrape/nba-hub/actions/workflows/ci.yml/badge.svg)](https://github.com/paulgrape/nba-hub/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Node](https://img.shields.io/badge/node-%3E%3D20-brightgreen)](https://nodejs.org)
+[![Node](https://img.shields.io/badge/node-%3E%3D22-brightgreen)](https://nodejs.org)
 
 Pro basketball hub: live scores, standings, teams, player profiles, shot heatmaps, news, and play-by-play replays of historic NBA games.
 
 Built as a full-stack TypeScript monorepo: a **Next.js 16** frontend backed by a **NestJS** backend-for-frontend (BFF) that aggregates public ESPN and stats.nba.com data with a resilient HTTP layer (caching, request de-duplication, retry with backoff, stale-data fallback).
+
+## Live demo
+
+<!-- TODO: fill in after the first deploy (see Deployment below). -->
+
+| Surface  | URL                |
+| -------- | ------------------ |
+| Web app  | _not yet deployed_ |
+| API docs | _not yet deployed_ |
+
+> The backend is intended for a free hosting tier, so the first request after a
+> period of inactivity may take a few seconds to cold-start.
+
+## Screenshots
+
+| Match center | Historic replay |
+| --- | --- |
+| ![Match center](docs/screenshots/match-center.png) | ![Replay](docs/screenshots/replay.gif) |
+
+| Shot heatmap | Standings |
+| --- | --- |
+| ![Shot heatmap](docs/screenshots/shot-heatmap.png) | ![Standings](docs/screenshots/standings.png) |
 
 ## Features
 
@@ -38,6 +65,40 @@ flowchart LR
   - `NbaStatsService` — shot chart data from stats.nba.com with the same cache/fallback strategy.
 - **Replays** — historic play-by-play is seeded to JSON and streamed tick-by-tick via a Socket.IO gateway.
 
+## Engineering highlights
+
+The interesting problems in this codebase, and how they were solved:
+
+**Surviving flaky third-party APIs.** ESPN and stats.nba.com are undocumented,
+unversioned, and rate-limited without notice. Every upstream call goes through
+one layered path in `EspnService`: fresh-cache read → in-flight request
+de-duplication → concurrency throttle → retry with exponential backoff and
+jitter (honouring `Retry-After`) → stale-cache fallback → circuit breaker. The
+practical result is that an ESPN outage degrades the site to slightly stale data
+instead of taking it down. The retry, breaker, and stale-fallback paths are unit
+tested by driving real 500/429/503 and network failures.
+
+**Liveness that does not cascade.** `/health/live` deliberately checks only the
+process heap while `/health/ready` also checks ESPN reachability. Folding the
+upstream check into liveness would let a third-party outage trigger an infinite
+restart loop — a failure mode that is easy to ship and painful to debug.
+
+**A single-instance decision, made explicitly.** The response cache, replay
+sessions, and rate limiter are all in-process, so the backend is scoped to one
+replica and that constraint is documented in `render.yaml`, `docker-compose.yml`,
+and below. Choosing a constraint and writing it down beats discovering it in
+production.
+
+**Server-first rendering with narrow client islands.** Pages are React Server
+Components; client components are limited to what genuinely needs interactivity
+(theme, cookie consent, schedule polling, the replay simulator). Each domain has
+a typed API module over one shared fetch client with per-resource ISR windows.
+
+**Replay as a state-machine UI.** Historic games stream tick-by-tick over
+Socket.IO with transport controls (play/pause, seek, pace). The timeline is a
+keyboard-operable `role="slider"` and score changes are announced via
+`aria-live`, so the most dynamic screen is also the most accessible one.
+
 ## Tech stack
 
 | Layer    | Technologies                                                                                                                       |
@@ -51,10 +112,12 @@ flowchart LR
 ```
 nba-hub/
 ├── apps/
-│   ├── frontend/   # Next.js app (port 3001)
-│   └── backend/    # NestJS API (port 3000, Swagger at /api/docs)
-├── .github/        # CI workflow, PR/issue templates, dependabot
+│   ├── frontend/   # Next.js app (port 3001), vercel.json
+│   └── backend/    # NestJS API (port 3000, Swagger at /api/docs), Dockerfile
+├── docs/           # screenshots used by this README
+├── .github/        # CI workflow, PR/issue templates, dependabot, CODEOWNERS
 ├── docker-compose.yml
+├── render.yaml     # backend deployment blueprint
 └── package.json    # npm workspaces root
 ```
 
@@ -62,7 +125,7 @@ nba-hub/
 
 ### Prerequisites
 
-- Node.js >= 20
+- Node.js >= 22 (see [`.nvmrc`](.nvmrc); CI runs the same version)
 - npm >= 10
 
 ### Setup
@@ -132,10 +195,12 @@ Backend data scripts (run with `-w apps/backend`): `seed:historic-games`, `downl
 
 ## Deployment
 
-Deployment is handled by platform-native pipelines; GitHub Actions provides the quality gate (lint, typecheck, test, build) on every pull request.
+Deployment is handled by platform-native pipelines; GitHub Actions provides the quality gate (lint, typecheck, test with coverage, build, audit, CodeQL) on every pull request.
 
-- **Frontend — Vercel**: import the repo, set the root directory to `apps/frontend`, and configure `NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_SITE_URL`, and (optionally) `GTM_ID`.
-- **Backend — Render**: create a Web Service with root directory `apps/backend`, build command `npm install && npm run build`, start command `npm run start:prod`, and set `FRONTEND_URL` to the Vercel URL plus any `ESPN_*` overrides.
+- **Frontend — Vercel**: import the repo and set the root directory to `apps/frontend`; [`vercel.json`](apps/frontend/vercel.json) supplies the framework, install, and build commands. Configure `NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_SITE_URL`, and (optionally) `GTM_ID`.
+- **Backend — Render**: [`render.yaml`](render.yaml) is a blueprint — point Render at the repo and it provisions the Web Service, health check, and env vars. Set `FRONTEND_URL` to the Vercel origin (it gates both HTTP CORS and Socket.IO) plus any `ESPN_*` overrides.
+
+The two are mutually dependent on first deploy: the backend needs `FRONTEND_URL` and the frontend needs `NEXT_PUBLIC_API_URL`. Deploy the backend first, then the frontend, then update `FRONTEND_URL` and redeploy the backend.
 
 ### Backend runs as a single instance
 
@@ -154,15 +219,22 @@ The response cache, replay sessions, and rate limiter all live in process memory
 ```bash
 npm run test                      # both workspaces
 npm run test -w apps/backend      # Jest unit tests
+npm run test:cov -w apps/backend  # with coverage thresholds
 npm run test:e2e -w apps/backend  # Jest e2e
 npm run test -w apps/frontend     # Vitest + React Testing Library
+npm run test:cov -w apps/frontend # with coverage thresholds
 ```
+
+250 tests across the two workspaces (100 Jest, 150 Vitest). Both suites enforce
+coverage thresholds in CI, so a regression in covered code fails the build.
 
 ## Roadmap
 
+- Runtime response validation (Zod) at the API boundaries, replacing structural casts
+- Per-connection limits on replay WebSocket sessions
+- Extract the shared schedule-state hook behind the match center and scoreboard
 - Replace the in-process TTL cache with Redis for multi-instance deployments
 - Real-time NBA game data (current "live" mode replays historic play-by-play)
-- Player list/search page
 - E2E browser tests (Playwright)
 
 ## Data sources & disclaimer
