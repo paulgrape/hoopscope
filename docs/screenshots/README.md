@@ -11,5 +11,5 @@ light mode with the browser chrome cropped out.
 | `shot-heatmap.png` | `/players/[id]`        | Shot heatmap tab, hex mode, with the zone table visible |
 | `standings.png`    | `/standings`           | Both conferences with playoff/play-in seeding markers   |
 
-Keep `replay.gif` under ~5 MB so it renders inline on GitHub; 10-15 seconds at
-10 fps is enough to show the play-by-play advancing.
+Keep `replay.gif` under ~5 MB. GitHub does not render GIFs inside markdown
+tables, so the root README embeds it with an `<img>` tag, not a table cell.

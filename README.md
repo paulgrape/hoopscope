@@ -27,9 +27,11 @@ Built as a full-stack TypeScript monorepo: a **Next.js 16** frontend backed by a
 
 ## Screenshots
 
-| Match center | Historic replay |
-| --- | --- |
-| ![Match center](docs/screenshots/match-center.png) | ![Replay](docs/screenshots/replay.gif) |
+![Match center](docs/screenshots/match-center.png)
+
+<p align="center">
+  <img src="docs/screenshots/replay.gif" alt="Historic game replay" />
+</p>
 
 | Shot heatmap | Standings |
 | --- | --- |
