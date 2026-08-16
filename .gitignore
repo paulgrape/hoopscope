@@ -5,3 +5,8 @@ dist/
 .next/
 *.log
 *.tsbuildinfo
+coverage/
+
+# Local editor/agent state. Durable agent guidance lives in AGENTS.md.
+.cursor/
+*.plan.md
