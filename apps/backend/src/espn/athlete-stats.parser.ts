@@ -19,6 +19,20 @@ export const SPLIT_BY_SEASON_TYPE: Record<EspnSeasonType, string> = {
   playoffs: 'Postseason',
 };
 
+export const ZERO_AVERAGES: AthleteSeasonAverages = {
+  gp: 0,
+  min: 0,
+  pts: 0,
+  reb: 0,
+  ast: 0,
+  stl: 0,
+  blk: 0,
+  tov: 0,
+  fgPct: 0,
+  threePointPct: 0,
+  freeThrowPct: 0,
+};
+
 export function formatSeasonLabel(season: number): string {
   const start = season - 1;
   return `${start}–${String(season).slice(-2)}`;
@@ -45,7 +59,9 @@ export function parseOverviewAverages(
   );
 
   const gp = Number(values.gamesPlayed ?? 0);
-  if (!Number.isFinite(gp) || gp <= 0) return null;
+  if (!Number.isFinite(gp) || gp <= 0) {
+    return { ...ZERO_AVERAGES };
+  }
 
   return {
     gp,
@@ -74,12 +90,9 @@ export function parseOverviewStats<T extends OverviewPlayerIdentity>(
   player: T,
   overview: EspnAthleteOverview,
   seasonType: EspnSeasonType,
-): (T & AthleteSeasonAverages) | null {
-  const averages = parseOverviewAverages(overview, seasonType);
-  if (!averages) return null;
-
+): T & AthleteSeasonAverages {
   return {
     ...player,
-    ...averages,
+    ...(parseOverviewAverages(overview, seasonType) ?? ZERO_AVERAGES),
   };
 }

@@ -11,6 +11,7 @@ import {
   EspnTeamResponse,
   EspnTeamsResponse,
 } from './espn.types';
+import { EspnSeasonMeta } from './season-year';
 
 export interface EspnCoreAthlete {
   id: string;
@@ -58,7 +59,12 @@ export interface EspnAthleteOverview {
 }
 
 export interface EspnRosterResponse {
-  season?: { year?: number; displayName?: string };
+  season?: {
+    year?: number;
+    displayName?: string;
+    type?: number;
+    name?: string;
+  };
   athletes?: Array<{
     id: string;
     fullName?: string;
@@ -397,15 +403,24 @@ export class EspnService {
       : this.TTL_SEASON_STATS_HISTORIC;
   }
 
-  async resolveCurrentSeasonYear(): Promise<number> {
-    const cacheKey = 'nba-current-season-year';
-    const cached = this.cache.get<number>(cacheKey);
+  async resolveCurrentSeason(): Promise<EspnSeasonMeta> {
+    const cacheKey = 'nba-current-season-meta';
+    const cached = this.cache.get<EspnSeasonMeta>(cacheKey);
     if (cached) return cached;
 
     const data = await this.getRoster('1');
-    const year = data.season?.year ?? new Date().getFullYear();
-    this.cache.set(cacheKey, year, this.TTL_PLAYERS);
-    return year;
+    const meta: EspnSeasonMeta = {
+      year: data.season?.year ?? new Date().getFullYear(),
+      type: data.season?.type,
+      name: data.season?.name,
+    };
+    this.cache.set(cacheKey, meta, this.TTL_PLAYERS);
+    return meta;
+  }
+
+  async resolveCurrentSeasonYear(): Promise<number> {
+    const meta = await this.resolveCurrentSeason();
+    return meta.year;
   }
 
   async getAthleteOverview(

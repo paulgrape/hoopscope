@@ -9,9 +9,11 @@ import {
   parseCareerStats,
 } from '../espn/athlete-career-stats.parser';
 import {
+  ZERO_AVERAGES,
   formatSeasonLabel,
   parseOverviewAverages,
 } from '../espn/athlete-stats.parser';
+import { isUnstartedCurrentSeason } from '../espn/season-year';
 import {
   EspnCoreAthlete,
   EspnSeasonType,
@@ -164,7 +166,7 @@ export class PlayersService {
     const cached = this.cache.get<PlayerProfile>(cacheKey);
     if (cached) return cached;
 
-    const [athlete, regularStats, injuries] = await Promise.all([
+    const [athlete, regularStats, injuries, index] = await Promise.all([
       this.espn
         .getPlayer(id)
         .catch(rethrowAsNotFound(`Player ${id} not found`)),
@@ -173,15 +175,21 @@ export class PlayersService {
         throw error;
       }),
       this.espn.getLeagueInjuries().catch(() => ({ items: [] })),
+      this.loadIndex(),
     ]);
 
     if (!athlete?.id) {
       throw new NotFoundException(`Player ${id} not found`);
     }
 
+    const rosterTeam = index.find((player) => player.id === id)?.team ?? null;
+    const latestTeam =
+      rosterTeam ??
+      getLatestTeamFromCareerStats(parseCareerStats(regularStats, 'regular'));
+
     const profile = this.mapProfile(
       athlete,
-      getLatestTeamFromCareerStats(parseCareerStats(regularStats, 'regular')),
+      latestTeam,
       findPlayerInjury(injuries, id),
     );
 
@@ -194,7 +202,8 @@ export class PlayersService {
     season?: number,
     seasonType: EspnSeasonType = 'regular',
   ): Promise<PlayerSeasonStatsResponse> {
-    const currentSeason = await this.espn.resolveCurrentSeasonYear();
+    const current = await this.espn.resolveCurrentSeason();
+    const currentSeason = current.year;
     const resolvedSeason = season ?? currentSeason;
     const cacheKey = `player-season-stats:${id}:${resolvedSeason}:${seasonType}`;
 
@@ -202,20 +211,38 @@ export class PlayersService {
     if (cached) return cached;
 
     const ttl = this.espn.seasonStatsTtl(resolvedSeason, currentSeason);
-    const overview = await this.espn.getAthleteOverview(
-      id,
-      resolvedSeason,
-      seasonType,
-      ttl,
-    );
-    const averages = parseOverviewAverages(overview, seasonType);
+    const unstarted = isUnstartedCurrentSeason(resolvedSeason, current);
+
+    if (unstarted && seasonType === 'playoffs') {
+      const empty: PlayerSeasonStatsResponse = {
+        season: resolvedSeason,
+        seasonLabel: formatSeasonLabel(resolvedSeason),
+        seasonType,
+        participated: false,
+        averages: null,
+      };
+      this.cache.set(cacheKey, empty, ttl);
+      return empty;
+    }
+
+    const averages = unstarted
+      ? { ...ZERO_AVERAGES }
+      : (parseOverviewAverages(
+          await this.espn.getAthleteOverview(
+            id,
+            resolvedSeason,
+            seasonType,
+            ttl,
+          ),
+          seasonType,
+        ) ?? ZERO_AVERAGES);
 
     const result: PlayerSeasonStatsResponse = {
       season: resolvedSeason,
       seasonLabel: formatSeasonLabel(resolvedSeason),
       seasonType,
-      participated: averages != null,
-      averages,
+      participated: averages.gp > 0,
+      averages: seasonType === 'playoffs' && averages.gp <= 0 ? null : averages,
     };
 
     this.cache.set(cacheKey, result, ttl);

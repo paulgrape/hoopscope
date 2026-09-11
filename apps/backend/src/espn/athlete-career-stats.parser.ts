@@ -148,3 +148,13 @@ export function getLatestTeamFromCareerStats(
       latestSplit.teamDisplayName ?? latestSplit.teamAbbr ?? latestSplit.teamId,
   };
 }
+
+export function careerIncludesTeamSeason(
+  seasons: ParsedCareerSeasonStats[],
+  season: number,
+  teamId: string,
+): boolean {
+  return seasons.some(
+    (row) => row.season === season && row.teamId === teamId,
+  );
+}

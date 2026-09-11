@@ -116,7 +116,7 @@ export async function searchPlayers(options: PlayerSearchOptions = {}): Promise<
 }
 
 export async function getPlayer(playerId: string): Promise<PlayerProfile | null> {
-  return apiFetchOrNull<PlayerProfile>(`/players/${playerId}`, {revalidate: 3600})
+  return apiFetchOrNull<PlayerProfile>(`/players/${playerId}`, {revalidate: 1800})
 }
 
 type PlayerSeasonStatsOptions = {

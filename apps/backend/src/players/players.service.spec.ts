@@ -134,3 +134,162 @@ describe('PlayersService.search', () => {
     ]);
   });
 });
+
+const hornetsCareerStats = {
+  teams: {
+    'charlotte-hornets': {
+      id: '30',
+      abbreviation: 'CHA',
+      displayName: 'Charlotte Hornets',
+    },
+  },
+  categories: [
+    {
+      name: 'averages',
+      names: ['gamesPlayed'],
+      statistics: [
+        {
+          teamId: '30',
+          teamSlug: 'charlotte-hornets',
+          season: { year: 2026, displayName: '2025-26' },
+          stats: ['72'],
+        },
+      ],
+    },
+  ],
+};
+
+describe('PlayersService.findOne', () => {
+  let service: PlayersService;
+  let espn: {
+    getTeams: jest.Mock;
+    getRoster: jest.Mock;
+    getPlayer: jest.Mock;
+    getAthleteStats: jest.Mock;
+    getLeagueInjuries: jest.Mock;
+  };
+
+  beforeEach(() => {
+    espn = {
+      getTeams: jest.fn().mockResolvedValue(teamsPayload),
+      getRoster: jest
+        .fn()
+        .mockImplementation((teamId: string) =>
+          Promise.resolve(teamId === '13' ? lakersRoster : nuggetsRoster),
+        ),
+      getPlayer: jest.fn(),
+      getAthleteStats: jest.fn().mockResolvedValue(hornetsCareerStats),
+      getLeagueInjuries: jest.fn().mockResolvedValue({ items: [] }),
+    };
+    service = new PlayersService(
+      espn as unknown as EspnService,
+      new CacheService(),
+    );
+  });
+
+  it('uses the current roster team when career stats still list a previous club', async () => {
+    espn.getPlayer.mockResolvedValue({
+      id: '1966',
+      fullName: 'LeBron James',
+      jersey: '23',
+      position: { displayName: 'Small Forward' },
+      headshot: { href: 'https://headshot/1966.png' },
+      active: true,
+      status: { name: 'Active' },
+    });
+
+    await expect(service.findOne('1966')).resolves.toMatchObject({
+      id: '1966',
+      fullName: 'LeBron James',
+      latestTeam: {
+        id: '13',
+        abbreviation: 'LAL',
+        displayName: 'Los Angeles Lakers',
+      },
+    });
+  });
+
+  it('falls back to career stats when the player is not on any current roster', async () => {
+    espn.getPlayer.mockResolvedValue({
+      id: '2544',
+      fullName: 'Free Agent',
+      active: false,
+      status: { name: 'Free Agent' },
+    });
+
+    await expect(service.findOne('2544')).resolves.toMatchObject({
+      id: '2544',
+      fullName: 'Free Agent',
+      latestTeam: {
+        id: '30',
+        abbreviation: 'CHA',
+        displayName: 'Charlotte Hornets',
+      },
+    });
+  });
+});
+
+describe('PlayersService.findSeasonStats', () => {
+  let service: PlayersService;
+  let espn: {
+    resolveCurrentSeason: jest.Mock;
+    seasonStatsTtl: jest.Mock;
+    getAthleteOverview: jest.Mock;
+  };
+
+  beforeEach(() => {
+    espn = {
+      resolveCurrentSeason: jest.fn().mockResolvedValue({
+        year: 2027,
+        type: 1,
+        name: 'Preseason',
+      }),
+      seasonStatsTtl: jest.fn().mockReturnValue(30_000),
+      getAthleteOverview: jest.fn(),
+    };
+    service = new PlayersService(
+      espn as unknown as EspnService,
+      new CacheService(),
+    );
+  });
+
+  it('returns zero regular-season averages without calling overview in preseason', async () => {
+    await expect(service.findSeasonStats('4432816')).resolves.toMatchObject({
+      season: 2027,
+      seasonLabel: '2026–27',
+      participated: false,
+      averages: { gp: 0, pts: 0 },
+    });
+    expect(espn.getAthleteOverview).not.toHaveBeenCalled();
+  });
+
+  it('does not treat leaked overview as playoff participation while unstarted', async () => {
+    await expect(
+      service.findSeasonStats('4432816', undefined, 'playoffs'),
+    ).resolves.toMatchObject({
+      participated: false,
+      averages: null,
+    });
+    expect(espn.getAthleteOverview).not.toHaveBeenCalled();
+  });
+
+  it('uses overview once the live year is regular season', async () => {
+    espn.resolveCurrentSeason.mockResolvedValue({
+      year: 2027,
+      type: 2,
+      name: 'Regular Season',
+    });
+    espn.getAthleteOverview.mockResolvedValue({
+      statistics: {
+        names: ['gamesPlayed', 'avgPoints'],
+        splits: [{ displayName: 'Regular Season', stats: ['4', '28.1'] }],
+      },
+    });
+
+    await expect(service.findSeasonStats('4432816')).resolves.toMatchObject({
+      participated: true,
+      averages: { gp: 4, pts: 28.1 },
+    });
+    expect(espn.getAthleteOverview).toHaveBeenCalled();
+  });
+});
