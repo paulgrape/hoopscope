@@ -86,5 +86,5 @@ export async function getTeamSeasonStats(
 
   const query = params.toString()
   const path = query ? `/teams/${teamId}/stats?${query}` : `/teams/${teamId}/stats`
-  return apiFetch<TeamSeasonStatsResponse>(path, {revalidate: 1800})
+  return apiFetch<TeamSeasonStatsResponse>(path, {timeoutMs: 30_000})
 }

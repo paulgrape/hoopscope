@@ -1,11 +1,11 @@
 import {ApiError} from '@/lib/api-client'
 import {
+  TEAM_SEASON_OPTION_COUNT,
   formatSeasonLabel,
   getTeam,
   getTeamSeasonStats,
   listTeamSeasonYears,
-  parseSeasonQuery,
-  TEAM_SEASON_OPTION_COUNT
+  parseSeasonQuery
 } from '@/lib/teams-api'
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
 
@@ -80,13 +80,12 @@ describe('getTeamSeasonStats', () => {
     expect(String(fetchMock.mock.calls[0][0])).toBe(
       'http://localhost:3000/teams/16/stats?season=2026&seasonType=regular'
     )
+    expect(fetchMock.mock.calls[0][1]).toMatchObject({cache: 'no-store'})
   })
 
   it('omits season when the caller does not pass one', async () => {
     await getTeamSeasonStats('16', {seasonType: 'playoffs'})
 
-    expect(String(fetchMock.mock.calls[0][0])).toBe(
-      'http://localhost:3000/teams/16/stats?seasonType=playoffs'
-    )
+    expect(String(fetchMock.mock.calls[0][0])).toBe('http://localhost:3000/teams/16/stats?seasonType=playoffs')
   })
 })

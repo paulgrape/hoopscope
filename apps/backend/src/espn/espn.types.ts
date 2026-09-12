@@ -162,10 +162,14 @@ export interface EspnTeamResponse {
 
 /** One row of the `statistics/byathlete` feed, or the athlete itself. */
 export interface EspnByAthleteEntry extends EspnAthleteRef {
-  athlete?: EspnAthleteRef;
+  athlete?: EspnAthleteRef & {
+    teamId?: string;
+    teams?: Array<{ name?: string; abbreviation?: string }>;
+  };
 }
 
 export interface EspnByAthleteResponse {
+  pagination?: { pages?: number };
   athletes?: EspnByAthleteEntry[];
   items?: EspnByAthleteEntry[];
   leaders?: EspnByAthleteEntry[];

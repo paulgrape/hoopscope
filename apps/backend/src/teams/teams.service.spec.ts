@@ -153,7 +153,12 @@ describe('TeamsService.findSeasonStats', () => {
       }),
       getAthleteOverview: jest.fn(),
       getAthleteStats: jest.fn(),
-      getTeamAthleteStatsFallback: jest.fn(),
+      getTeamAthleteStatsFallback: jest.fn().mockResolvedValue({
+        athletes: [
+          { athlete: { id: '4432816', displayName: 'LaMelo Ball' } },
+          { athlete: { id: '4594268', displayName: 'Anthony Edwards' } },
+        ],
+      }),
     };
     service = new TeamsService(
       espn as unknown as EspnService,
@@ -199,33 +204,40 @@ describe('TeamsService.findSeasonStats', () => {
     });
   });
 
-  it('fetches overview once the live year is regular season', async () => {
+  it('uses the exact year and team career row once the season starts', async () => {
     espn.resolveCurrentSeason.mockResolvedValue({
       year: 2027,
       type: 2,
       name: 'Regular Season',
     });
-    espn.getAthleteOverview.mockResolvedValue({
-      statistics: {
-        names: ['gamesPlayed', 'avgPoints'],
-        splits: [{ displayName: 'Regular Season', stats: ['4', '28.1'] }],
-      },
+    espn.getAthleteStats.mockResolvedValue({
+      categories: [
+        {
+          name: 'averages',
+          names: ['gamesPlayed', 'avgPoints'],
+          statistics: [
+            { season: { year: 2026 }, teamId: '16', stats: ['82', '30'] },
+            { season: { year: 2027 }, teamId: '30', stats: ['10', '25'] },
+            { season: { year: 2027 }, teamId: '16', stats: ['4', '28.1'] },
+          ],
+        },
+      ],
     });
 
     const result = await service.findSeasonStats('16');
 
-    expect(espn.getAthleteOverview).toHaveBeenCalled();
-    expect(espn.getAthleteStats).not.toHaveBeenCalled();
+    expect(espn.getAthleteOverview).not.toHaveBeenCalled();
+    expect(espn.getAthleteStats).toHaveBeenCalledTimes(2);
     expect(result.players[0]).toMatchObject({ gp: 4, pts: 28.1 });
   });
 
-  it('keeps roster players with zeros when overview is missing', async () => {
+  it('keeps zeros when metadata says regular season but only last year has stats', async () => {
     espn.resolveCurrentSeason.mockResolvedValue({
       year: 2027,
       type: 2,
       name: 'Regular Season',
     });
-    espn.getAthleteOverview.mockResolvedValue({});
+    espn.getAthleteStats.mockResolvedValue(wolvesCareerStats);
 
     const result = await service.findSeasonStats('16');
 
@@ -246,7 +258,9 @@ describe('TeamsService.findSeasonStats', () => {
 
   it('drops historical players whose career row is another franchise', async () => {
     espn.getAthleteStats.mockImplementation((id: string) =>
-      Promise.resolve(id === '4432816' ? hornetsCareerStats : wolvesCareerStats),
+      Promise.resolve(
+        id === '4432816' ? hornetsCareerStats : wolvesCareerStats,
+      ),
     );
     espn.getAthleteOverview.mockResolvedValue({
       statistics: {
@@ -258,6 +272,8 @@ describe('TeamsService.findSeasonStats', () => {
     const result = await service.findSeasonStats('16', 2026);
 
     expect(result.players.map((player) => player.id)).toEqual(['4594268']);
+    expect(result.players[0].gp).toBe(61);
+    expect(espn.getAthleteOverview).not.toHaveBeenCalled();
     expect(result.currentSeason).toBe(2027);
   });
 
@@ -276,5 +292,32 @@ describe('TeamsService.findSeasonStats', () => {
     expect(result.players).toEqual([
       expect.objectContaining({ id: '4594268', fullName: 'Anthony Edwards' }),
     ]);
+  });
+
+  it('uses the season feed even when the roster endpoint contains current players', async () => {
+    espn.getTeamAthleteStatsFallback.mockResolvedValue({
+      athletes: [
+        { athlete: { id: '4594268', displayName: 'Anthony Edwards' } },
+      ],
+    });
+    espn.getAthleteStats.mockResolvedValue(wolvesCareerStats);
+
+    const result = await service.findSeasonStats('16', 2026);
+
+    expect(result.players).toEqual([
+      expect.objectContaining({ id: '4594268', gp: 61 }),
+    ]);
+    expect(espn.getAthleteStats).toHaveBeenCalledTimes(1);
+    expect(espn.getAthleteOverview).not.toHaveBeenCalled();
+    expect(espn.getRoster).not.toHaveBeenCalled();
+  });
+
+  it('does not cache an upstream failure as an empty historical roster', async () => {
+    espn.getAthleteStats.mockRejectedValue(new Error('upstream unavailable'));
+    await expect(service.findSeasonStats('16', 2026)).rejects.toThrow(
+      'upstream unavailable',
+    );
+    espn.getAthleteStats.mockResolvedValue(wolvesCareerStats);
+    expect((await service.findSeasonStats('16', 2026)).players).toHaveLength(2);
   });
 });

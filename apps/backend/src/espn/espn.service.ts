@@ -452,22 +452,45 @@ export class EspnService {
   ): Promise<EspnByAthleteResponse> {
     const seasontype = this.toEspnSeasonType(seasonType);
     const url = `${this.webApiBase}/statistics/byathlete`;
-    const cacheKey = `byathlete:${teamId}:${season}:${seasontype}`;
-
-    return this.fetchJson<EspnByAthleteResponse>(
-      cacheKey,
-      this.TTL_PLAYERS,
-      async () => {
-        this.logger.log(
-          `ESPN fetch: ${url}?team=${teamId}&season=${season}&seasontype=${seasontype}`,
-        );
-        const { data } = await this.http.get<EspnByAthleteResponse>(url, {
-          params: { team: teamId, season, seasontype, limit: 200 },
-          timeout: 20_000,
-        });
-        return data;
-      },
-    );
+    const fetchPage = (page: number) =>
+      this.fetchJson<EspnByAthleteResponse>(
+        `byathlete:${season}:${seasontype}:${page}`,
+        this.TTL_PLAYERS,
+        async () => {
+          const { data } = await this.http.get<EspnByAthleteResponse>(url, {
+            params: {
+              season,
+              seasontype,
+              limit: 1000,
+              page,
+              isqualified: false,
+            },
+            timeout: 20_000,
+          });
+          return data;
+        },
+      );
+    const [first, teamData] = await Promise.all([
+      fetchPage(1),
+      this.getTeam(teamId),
+    ]);
+    const athletes = [...(first.athletes ?? [])];
+    for (let page = 2; page <= (first.pagination?.pages ?? 1); page++) {
+      athletes.push(...((await fetchPage(page)).athletes ?? []));
+    }
+    const team = teamData.team;
+    return {
+      athletes: athletes.filter(
+        ({ athlete }) =>
+          athlete?.teamId === teamId ||
+          athlete?.teams?.some(
+            (entry) =>
+              (team?.abbreviation != null &&
+                entry.abbreviation === team.abbreviation) ||
+              (team?.name != null && entry.name === team.name),
+          ),
+      ),
+    };
   }
 
   async getPlayer(id: string): Promise<EspnCoreAthlete> {

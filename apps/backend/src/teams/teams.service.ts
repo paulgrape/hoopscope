@@ -1,15 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CacheService } from '../cache/cache.service';
 import { rethrowAsNotFound } from '../common/upstream-errors';
-import {
-  careerIncludesTeamSeason,
-  parseCareerStats,
-} from '../espn/athlete-career-stats.parser';
-import {
-  ZERO_AVERAGES,
-  formatSeasonLabel,
-  parseOverviewStats,
-} from '../espn/athlete-stats.parser';
+import { parseCareerStats } from '../espn/athlete-career-stats.parser';
+import { ZERO_AVERAGES, formatSeasonLabel } from '../espn/athlete-stats.parser';
 import { EspnSeasonType, EspnService } from '../espn/espn.service';
 import { EspnByAthleteEntry, espnHeadshotHref } from '../espn/espn.types';
 import { flattenRosterAthletes } from '../espn/roster.parser';
@@ -132,36 +125,42 @@ export class TeamsService {
       return result;
     }
 
-    const roster = await this.resolveSeasonRoster(
-      teamId,
-      resolvedSeason,
-      seasonType,
-    );
+    const roster =
+      resolvedSeason < currentSeason
+        ? await this.rosterFromByAthleteFallback(
+            teamId,
+            resolvedSeason,
+            seasonType,
+          )
+        : await this.resolveSeasonRoster(teamId, resolvedSeason, seasonType);
 
-    let players = unstarted
+    const seasonPlayers = unstarted
       ? roster.map((player) => ({ ...player, ...ZERO_AVERAGES }))
       : await this.mapWithConcurrency(
           roster,
           async (player) => {
-            const overview = await this.espn.getAthleteOverview(
-              player.id,
-              resolvedSeason,
-              seasonType,
-              ttl,
+            const data = await this.espn.getAthleteStats(player.id, seasonType);
+            const row = parseCareerStats(data, seasonType).find(
+              (entry) =>
+                entry.season === resolvedSeason && entry.teamId === teamId,
             );
-            return parseOverviewStats(player, overview, seasonType);
+            if (!row && resolvedSeason < currentSeason) return null;
+            const averages = { ...ZERO_AVERAGES };
+            if (row) {
+              for (const key of Object.keys(averages) as Array<
+                keyof typeof averages
+              >) {
+                averages[key] = row[key];
+              }
+            }
+            return { ...player, ...averages };
           },
           8,
         );
 
-    if (resolvedSeason < currentSeason) {
-      players = await this.keepPlayersOnTeam(
-        players,
-        teamId,
-        resolvedSeason,
-        seasonType,
-      );
-    }
+    const players = seasonPlayers.filter(
+      (player): player is TeamSeasonStatPlayer => player != null,
+    );
 
     players.sort((a, b) => b.pts - a.pts);
 
@@ -195,31 +194,6 @@ export class TeamsService {
       participated: false,
       players: [],
     };
-  }
-
-  private async keepPlayersOnTeam(
-    players: TeamSeasonStatPlayer[],
-    teamId: string,
-    season: number,
-    seasonType: TeamSeasonType,
-  ): Promise<TeamSeasonStatPlayer[]> {
-    const kept = await this.mapWithConcurrency(
-      players,
-      async (player) => {
-        const data = await this.espn
-          .getAthleteStats(player.id, seasonType)
-          .catch(() => ({}));
-        const seasons = parseCareerStats(data, seasonType);
-        return careerIncludesTeamSeason(seasons, season, teamId)
-          ? player
-          : null;
-      },
-      8,
-    );
-
-    return kept.filter(
-      (player): player is TeamSeasonStatPlayer => player != null,
-    );
   }
 
   private async resolveSeasonRoster(
