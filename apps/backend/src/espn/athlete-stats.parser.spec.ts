@@ -32,7 +32,12 @@ describe('parseOverviewAverages', () => {
   });
 
   it('returns null when the requested split is missing', () => {
-    expect(parseOverviewAverages({ statistics: { names: [], splits: [] } }, 'regular')).toBeNull();
+    expect(
+      parseOverviewAverages(
+        { statistics: { names: [], splits: [] } },
+        'regular',
+      ),
+    ).toBeNull();
   });
 });
 

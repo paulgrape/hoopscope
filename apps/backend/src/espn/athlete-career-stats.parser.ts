@@ -154,7 +154,5 @@ export function careerIncludesTeamSeason(
   season: number,
   teamId: string,
 ): boolean {
-  return seasons.some(
-    (row) => row.season === season && row.teamId === teamId,
-  );
+  return seasons.some((row) => row.season === season && row.teamId === teamId);
 }

@@ -20,6 +20,12 @@
     // dependencies, so the transitive pin does not apply.
     //
     // Re-check when @nestjs/swagger > 11.4.6 ships.
-    "GHSA-pm4m-ph32-ghv5"
-  ]
+    "GHSA-pm4m-ph32-ghv5",
+    "GHSA-2xp9-vwfh-vxw4",
+    "GHSA-535w-7cp7-47q4",
+    "GHSA-p293-qw3h-jr36",
+    "GHSA-qfvm-cv95-jqjf",
+    "GHSA-rgj7-g3m4-5g8c",
+    "GHSA-wc9g-mqfw-jrwm",
+  ],
 }

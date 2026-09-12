@@ -1,7 +1,4 @@
-import {
-  isUnstartedCurrentSeason,
-  isUnstartedEspnSeason,
-} from './season-year';
+import { isUnstartedCurrentSeason, isUnstartedEspnSeason } from './season-year';
 
 describe('isUnstartedEspnSeason', () => {
   it('treats ESPN type 1 and 4 as unstarted', () => {
