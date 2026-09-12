@@ -1,12 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CacheService } from '../cache/cache.service';
 import { rethrowAsNotFound } from '../common/upstream-errors';
-import {
-  formatSeasonLabel,
-  parseOverviewStats,
-} from '../espn/athlete-stats.parser';
+import { parseCareerStats } from '../espn/athlete-career-stats.parser';
+import { ZERO_AVERAGES, formatSeasonLabel } from '../espn/athlete-stats.parser';
 import { EspnSeasonType, EspnService } from '../espn/espn.service';
 import { EspnByAthleteEntry, espnHeadshotHref } from '../espn/espn.types';
+import { flattenRosterAthletes } from '../espn/roster.parser';
+import { isUnstartedCurrentSeason } from '../espn/season-year';
 
 export type TeamSeasonType = EspnSeasonType;
 
@@ -33,6 +33,7 @@ export type TeamSeasonStatsResponse = {
   season: number;
   seasonLabel: string;
   seasonType: TeamSeasonType;
+  currentSeason: number;
   participated: boolean;
   players: TeamSeasonStatPlayer[];
 };
@@ -107,7 +108,8 @@ export class TeamsService {
     season?: number,
     seasonType: TeamSeasonType = 'regular',
   ): Promise<TeamSeasonStatsResponse> {
-    const currentSeason = await this.espn.resolveCurrentSeasonYear();
+    const current = await this.espn.resolveCurrentSeason();
+    const currentSeason = current.year;
     const resolvedSeason = season ?? currentSeason;
     const cacheKey = `team-stats:${teamId}:${resolvedSeason}:${seasonType}`;
 
@@ -115,37 +117,63 @@ export class TeamsService {
     if (cached) return cached;
 
     const ttl = this.espn.seasonStatsTtl(resolvedSeason, currentSeason);
-    const roster = await this.resolveSeasonRoster(
-      teamId,
-      resolvedSeason,
-      seasonType,
-    );
+    const unstarted = isUnstartedCurrentSeason(resolvedSeason, current);
 
-    const players = (
-      await this.mapWithConcurrency(
-        roster,
-        async (player) => {
-          const overview = await this.espn.getAthleteOverview(
-            player.id,
+    if (unstarted && seasonType === 'playoffs') {
+      const result = this.emptyPlayoffStats(resolvedSeason, currentSeason);
+      this.cache.set(cacheKey, result, ttl);
+      return result;
+    }
+
+    const roster =
+      resolvedSeason < currentSeason
+        ? await this.rosterFromByAthleteFallback(
+            teamId,
             resolvedSeason,
             seasonType,
-            ttl,
-          );
-          return parseOverviewStats(player, overview, seasonType);
-        },
-        8,
-      )
-    ).filter((player): player is TeamSeasonStatPlayer => player != null);
+          )
+        : await this.resolveSeasonRoster(teamId, resolvedSeason, seasonType);
+
+    const seasonPlayers = unstarted
+      ? roster.map((player) => ({ ...player, ...ZERO_AVERAGES }))
+      : await this.mapWithConcurrency(
+          roster,
+          async (player) => {
+            const data = await this.espn.getAthleteStats(player.id, seasonType);
+            const row = parseCareerStats(data, seasonType).find(
+              (entry) =>
+                entry.season === resolvedSeason && entry.teamId === teamId,
+            );
+            if (!row && resolvedSeason < currentSeason) return null;
+            const averages = { ...ZERO_AVERAGES };
+            if (row) {
+              for (const key of Object.keys(averages) as Array<
+                keyof typeof averages
+              >) {
+                averages[key] = row[key];
+              }
+            }
+            return { ...player, ...averages };
+          },
+          8,
+        );
+
+    const players = seasonPlayers.filter(
+      (player): player is TeamSeasonStatPlayer => player != null,
+    );
 
     players.sort((a, b) => b.pts - a.pts);
 
     const participated =
-      seasonType === 'regular' ? players.length > 0 : players.length > 0;
+      seasonType === 'regular'
+        ? players.length > 0
+        : players.some((player) => player.gp > 0);
 
     const result: TeamSeasonStatsResponse = {
       season: resolvedSeason,
       seasonLabel: formatSeasonLabel(resolvedSeason),
       seasonType,
+      currentSeason,
       participated,
       players: seasonType === 'playoffs' && !participated ? [] : players,
     };
@@ -154,23 +182,42 @@ export class TeamsService {
     return result;
   }
 
+  private emptyPlayoffStats(
+    season: number,
+    currentSeason: number,
+  ): TeamSeasonStatsResponse {
+    return {
+      season,
+      seasonLabel: formatSeasonLabel(season),
+      seasonType: 'playoffs',
+      currentSeason,
+      participated: false,
+      players: [],
+    };
+  }
+
   private async resolveSeasonRoster(
     teamId: string,
     season: number,
     seasonType: TeamSeasonType,
   ): Promise<RosterPlayer[]> {
     const data = await this.espn.getRoster(teamId, season);
-    const athletes = data.athletes ?? [];
+    const athletes = flattenRosterAthletes(data)
+      .map((p) => {
+        const id = p.id ? String(p.id) : '';
+        if (!id) return null;
 
-    if (athletes.length > 0) {
-      return athletes.map((p) => ({
-        id: p.id,
-        fullName: p.fullName ?? 'Unknown',
-        jersey: p.jersey ?? null,
-        position: p.position?.abbreviation ?? null,
-        headshot: p.headshot?.href ?? null,
-      }));
-    }
+        return {
+          id,
+          fullName: p.fullName ?? 'Unknown',
+          jersey: p.jersey ?? null,
+          position: p.position?.abbreviation ?? null,
+          headshot: p.headshot?.href ?? null,
+        } satisfies RosterPlayer;
+      })
+      .filter((player): player is RosterPlayer => player != null);
+
+    if (athletes.length > 0) return athletes;
 
     return this.rosterFromByAthleteFallback(teamId, season, seasonType);
   }

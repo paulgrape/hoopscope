@@ -3,7 +3,7 @@ import {JsonLd} from '@/components/seo/json-ld'
 import {TeamSeasonStats} from '@/components/teams/team-season-stats'
 import {breadcrumbSchema, sportsTeamSchema} from '@/lib/seo-schema'
 import {SITE_NAME, createPageMetadata} from '@/lib/site'
-import {getTeam, getTeamSeasonStats} from '@/lib/teams-api'
+import {getTeam, getTeamSeasonStats, parseSeasonQuery} from '@/lib/teams-api'
 import type {Metadata} from 'next'
 import Image from 'next/image'
 import {notFound} from 'next/navigation'
@@ -11,6 +11,9 @@ import {notFound} from 'next/navigation'
 type TeamDetailsPageProps = {
   params: Promise<{
     teamId: string
+  }>
+  searchParams: Promise<{
+    season?: string
   }>
 }
 
@@ -34,17 +37,19 @@ export async function generateMetadata({params}: TeamDetailsPageProps): Promise<
   })
 }
 
-export default async function TeamDetailsPage({params}: TeamDetailsPageProps) {
+export default async function TeamDetailsPage({params, searchParams}: TeamDetailsPageProps) {
   const {teamId} = await params
+  const {season: seasonQuery} = await searchParams
   const team = await getTeam(teamId)
 
   if (!team) {
     notFound()
   }
 
+  const season = parseSeasonQuery(seasonQuery)
   const [regularStats, playoffStats] = await Promise.all([
-    getTeamSeasonStats(teamId, {seasonType: 'regular'}),
-    getTeamSeasonStats(teamId, {seasonType: 'playoffs'})
+    getTeamSeasonStats(teamId, {season, seasonType: 'regular'}),
+    getTeamSeasonStats(teamId, {season, seasonType: 'playoffs'})
   ])
 
   return (

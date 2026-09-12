@@ -51,6 +51,70 @@ describe('EspnService resilience', () => {
     expect(httpGet).toHaveBeenCalledTimes(1);
   });
 
+  it('filters every fallback page before returning historical roster candidates', async () => {
+    httpGet.mockImplementation(
+      (url: string, options?: { params?: { page?: number } }) => {
+        if (url === '/teams/16')
+          return Promise.resolve({
+            data: {
+              team: { id: '16', name: 'Timberwolves', abbreviation: 'MIN' },
+            },
+          });
+        return Promise.resolve({
+          data:
+            options?.params?.page === 2
+              ? {
+                  athletes: [
+                    {
+                      athlete: {
+                        id: 'traded',
+                        teamId: '30',
+                        teams: [
+                          { abbreviation: 'CHA' },
+                          { abbreviation: 'MIN' },
+                        ],
+                      },
+                    },
+                  ],
+                }
+              : {
+                  pagination: { pages: 2 },
+                  athletes: [
+                    { athlete: { id: 'other', teamId: '25' } },
+                    { athlete: { id: 'wolf', teamId: '16' } },
+                  ],
+                },
+        });
+      },
+    );
+
+    const result = await service.getTeamAthleteStatsFallback(
+      '16',
+      2025,
+      'regular',
+    );
+
+    expect(result.athletes?.map((entry) => entry.athlete?.id)).toEqual([
+      'wolf',
+      'traded',
+    ]);
+    expect(httpGet).toHaveBeenCalledWith(
+      expect.stringContaining('/statistics/byathlete'),
+      {
+        params: {
+          season: 2025,
+          seasontype: 2,
+          limit: 1000,
+          page: 1,
+          isqualified: false,
+        },
+        timeout: 20_000,
+      },
+    );
+    await service.getTeamAthleteStatsFallback('16', 2025, 'regular');
+    expect(httpGet).toHaveBeenCalledTimes(3);
+  });
+
   it('de-duplicates concurrent requests for the same key', async () => {
     let resolveRequest!: (value: { data: unknown }) => void;
     httpGet.mockReturnValue(

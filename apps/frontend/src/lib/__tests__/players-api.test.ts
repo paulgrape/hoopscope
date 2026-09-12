@@ -30,5 +30,8 @@ describe('getPlayer', () => {
     fetchMock.mockResolvedValue(new Response(JSON.stringify({id: '1966', fullName: 'LeBron James'}), {status: 200}))
 
     await expect(getPlayer('1966')).resolves.toMatchObject({fullName: 'LeBron James'})
+
+    const [, init] = fetchMock.mock.calls[0]
+    expect(init.next).toEqual({revalidate: 1800})
   })
 })

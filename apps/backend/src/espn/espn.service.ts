@@ -11,6 +11,7 @@ import {
   EspnTeamResponse,
   EspnTeamsResponse,
 } from './espn.types';
+import { EspnSeasonMeta } from './season-year';
 
 export interface EspnCoreAthlete {
   id: string;
@@ -58,7 +59,12 @@ export interface EspnAthleteOverview {
 }
 
 export interface EspnRosterResponse {
-  season?: { year?: number; displayName?: string };
+  season?: {
+    year?: number;
+    displayName?: string;
+    type?: number;
+    name?: string;
+  };
   athletes?: Array<{
     id: string;
     fullName?: string;
@@ -397,15 +403,24 @@ export class EspnService {
       : this.TTL_SEASON_STATS_HISTORIC;
   }
 
-  async resolveCurrentSeasonYear(): Promise<number> {
-    const cacheKey = 'nba-current-season-year';
-    const cached = this.cache.get<number>(cacheKey);
+  async resolveCurrentSeason(): Promise<EspnSeasonMeta> {
+    const cacheKey = 'nba-current-season-meta';
+    const cached = this.cache.get<EspnSeasonMeta>(cacheKey);
     if (cached) return cached;
 
     const data = await this.getRoster('1');
-    const year = data.season?.year ?? new Date().getFullYear();
-    this.cache.set(cacheKey, year, this.TTL_PLAYERS);
-    return year;
+    const meta: EspnSeasonMeta = {
+      year: data.season?.year ?? new Date().getFullYear(),
+      type: data.season?.type,
+      name: data.season?.name,
+    };
+    this.cache.set(cacheKey, meta, this.TTL_PLAYERS);
+    return meta;
+  }
+
+  async resolveCurrentSeasonYear(): Promise<number> {
+    const meta = await this.resolveCurrentSeason();
+    return meta.year;
   }
 
   async getAthleteOverview(
@@ -437,22 +452,45 @@ export class EspnService {
   ): Promise<EspnByAthleteResponse> {
     const seasontype = this.toEspnSeasonType(seasonType);
     const url = `${this.webApiBase}/statistics/byathlete`;
-    const cacheKey = `byathlete:${teamId}:${season}:${seasontype}`;
-
-    return this.fetchJson<EspnByAthleteResponse>(
-      cacheKey,
-      this.TTL_PLAYERS,
-      async () => {
-        this.logger.log(
-          `ESPN fetch: ${url}?team=${teamId}&season=${season}&seasontype=${seasontype}`,
-        );
-        const { data } = await this.http.get<EspnByAthleteResponse>(url, {
-          params: { team: teamId, season, seasontype, limit: 200 },
-          timeout: 20_000,
-        });
-        return data;
-      },
-    );
+    const fetchPage = (page: number) =>
+      this.fetchJson<EspnByAthleteResponse>(
+        `byathlete:${season}:${seasontype}:${page}`,
+        this.TTL_PLAYERS,
+        async () => {
+          const { data } = await this.http.get<EspnByAthleteResponse>(url, {
+            params: {
+              season,
+              seasontype,
+              limit: 1000,
+              page,
+              isqualified: false,
+            },
+            timeout: 20_000,
+          });
+          return data;
+        },
+      );
+    const [first, teamData] = await Promise.all([
+      fetchPage(1),
+      this.getTeam(teamId),
+    ]);
+    const athletes = [...(first.athletes ?? [])];
+    for (let page = 2; page <= (first.pagination?.pages ?? 1); page++) {
+      athletes.push(...((await fetchPage(page)).athletes ?? []));
+    }
+    const team = teamData.team;
+    return {
+      athletes: athletes.filter(
+        ({ athlete }) =>
+          athlete?.teamId === teamId ||
+          athlete?.teams?.some(
+            (entry) =>
+              (team?.abbreviation != null &&
+                entry.abbreviation === team.abbreviation) ||
+              (team?.name != null && entry.name === team.name),
+          ),
+      ),
+    };
   }
 
   async getPlayer(id: string): Promise<EspnCoreAthlete> {
