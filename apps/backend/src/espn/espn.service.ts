@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios, { AxiosInstance } from 'axios';
 import { CacheService } from '../cache/cache.service';
@@ -189,6 +189,7 @@ export class EspnService {
   private readonly waiters: Array<() => void> = [];
   private lastDispatchAt = 0;
 
+  private readonly siteApiBase: string;
   private readonly webApiBase: string;
   private readonly coreApiBase: string;
   private readonly nowApiUrl: string;
@@ -198,6 +199,9 @@ export class EspnService {
     private readonly config: ConfigService,
     private readonly cache: CacheService,
   ) {
+    this.siteApiBase =
+      this.config.get<string>('ESPN_BASE_URL') ??
+      'https://site.api.espn.com/apis/site/v2/sports/basketball/nba';
     this.webApiBase =
       this.config.get<string>('ESPN_WEB_API_BASE_URL') ??
       'https://site.web.api.espn.com/apis/common/v3/sports/basketball/nba';
@@ -212,9 +216,7 @@ export class EspnService {
       'https://site.api.espn.com/apis/v2/sports/basketball';
 
     this.http = axios.create({
-      baseURL:
-        this.config.get<string>('ESPN_BASE_URL') ??
-        'https://site.api.espn.com/apis/site/v2/sports/basketball/nba',
+      baseURL: this.siteApiBase,
       timeout: 8000,
     });
 
@@ -372,6 +374,7 @@ export class EspnService {
   }
 
   async get<T>(path: string, ttlMs: number): Promise<T> {
+    assertEspnRequestUrl(path, this.siteApiBase);
     return this.fetchJson<T>(path, ttlMs, async () => {
       this.logger.log(`ESPN fetch: ${path}`);
       const { data } = await this.http.get<T>(path);
@@ -383,13 +386,14 @@ export class EspnService {
     return this.get<EspnTeamsResponse>('/teams', this.TTL_TEAMS);
   }
   getTeam(id: string) {
-    return this.get<EspnTeamResponse>(`/teams/${id}`, this.TTL_TEAMS);
+    return this.get<EspnTeamResponse>(`/teams/${espnId(id)}`, this.TTL_TEAMS);
   }
   getRoster(teamId: string, season?: number) {
+    const id = espnId(teamId);
     const path =
       season != null
-        ? `/teams/${teamId}/roster?season=${season}`
-        : `/teams/${teamId}/roster`;
+        ? `/teams/${id}/roster?season=${espnSeason(season)}`
+        : `/teams/${id}/roster`;
     return this.get<EspnRosterResponse>(path, this.TTL_PLAYERS);
   }
 
@@ -430,7 +434,8 @@ export class EspnService {
     ttlMs: number,
   ): Promise<EspnAthleteOverview> {
     const seasontype = this.toEspnSeasonType(seasonType);
-    const url = `${this.webApiBase}/athletes/${athleteId}/overview`;
+    const url = `${this.webApiBase}/athletes/${espnId(athleteId)}/overview`;
+    assertEspnRequestUrl(url, this.webApiBase);
     const cacheKey = `athlete-overview:${athleteId}:${season}:${seasontype}`;
 
     return this.fetchJson<EspnAthleteOverview>(cacheKey, ttlMs, async () => {
@@ -494,7 +499,8 @@ export class EspnService {
   }
 
   async getPlayer(id: string): Promise<EspnCoreAthlete> {
-    const url = `${this.coreApiBase}/athletes/${id}`;
+    const url = `${this.coreApiBase}/athletes/${espnId(id)}`;
+    assertEspnRequestUrl(url, this.coreApiBase);
 
     return this.fetchJson<EspnCoreAthlete>(url, this.TTL_PLAYERS, async () => {
       this.logger.log(`ESPN fetch: ${url}`);
@@ -505,7 +511,7 @@ export class EspnService {
     });
   }
   getScoreboard(date?: string) {
-    const path = date ? `/scoreboard?dates=${date}` : '/scoreboard';
+    const path = date ? `/scoreboard?dates=${espnDate(date)}` : '/scoreboard';
     return this.get<EspnScoreboardResponse>(path, this.TTL_SCORES);
   }
 
@@ -522,7 +528,7 @@ export class EspnService {
 
   getGameSummary(eventId: string) {
     return this.get<EspnGameSummaryResponse>(
-      `/summary?event=${eventId}`,
+      `/summary?event=${espnId(eventId)}`,
       this.TTL_SCORES,
     );
   }
@@ -535,7 +541,8 @@ export class EspnService {
     seasonType: EspnSeasonType = 'regular',
   ): Promise<EspnAthleteStatsResponse> {
     const seasontype = this.toEspnSeasonType(seasonType);
-    const url = `${this.webApiBase}/athletes/${athleteId}/stats`;
+    const url = `${this.webApiBase}/athletes/${espnId(athleteId)}/stats`;
+    assertEspnRequestUrl(url, this.webApiBase);
     const cacheKey = `athlete-stats:${athleteId}:${seasontype}`;
 
     return this.fetchJson<EspnAthleteStatsResponse>(
@@ -630,6 +637,51 @@ export class EspnService {
       const { data } = await this.http.get<unknown>(url, { timeout: 20_000 });
       return data;
     });
+  }
+}
+
+const FIRST_SEASON = 1947;
+const LAST_SEASON = 2100;
+
+function espnId(value: string): string {
+  if (!/^\d+$/.test(value)) {
+    throw new BadRequestException('id must be numeric');
+  }
+  return encodeURIComponent(value);
+}
+
+function espnSeason(season: number): string {
+  if (
+    !Number.isInteger(season) ||
+    season < FIRST_SEASON ||
+    season > LAST_SEASON
+  ) {
+    throw new BadRequestException('season must be a year from 1947 to 2100');
+  }
+  return encodeURIComponent(String(season));
+}
+
+function espnDate(value: string): string {
+  if (!/^\d{8}$/.test(value)) {
+    throw new BadRequestException('date must be YYYYMMDD');
+  }
+  return encodeURIComponent(value);
+}
+
+function assertEspnRequestUrl(pathOrUrl: string, base: string): void {
+  let resolved: URL;
+  let allowed: URL;
+  try {
+    allowed = new URL(base);
+    resolved = new URL(pathOrUrl, base);
+  } catch {
+    throw new BadRequestException('Refusing non-ESPN URL');
+  }
+  if (
+    resolved.protocol !== 'https:' ||
+    resolved.hostname !== allowed.hostname
+  ) {
+    throw new BadRequestException('Refusing non-ESPN URL');
   }
 }
 
