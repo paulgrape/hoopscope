@@ -1,3 +1,4 @@
+import { BadRequestException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
 import { CacheService } from '../cache/cache.service';
@@ -169,5 +170,81 @@ describe('EspnService resilience', () => {
     await expect(service.get('/unreachable', 1000)).rejects.toThrow('network');
     // 1 initial attempt + 2 retries.
     expect(httpGet).toHaveBeenCalledTimes(3);
+  });
+});
+
+describe('EspnService request targets', () => {
+  let service: EspnService;
+  let httpGet: jest.Mock;
+
+  beforeEach(() => {
+    httpGet = jest.fn().mockResolvedValue({ data: { ok: true } });
+    (axios.create as jest.Mock).mockReturnValue({ get: httpGet });
+
+    const config = {
+      get: (key: string) => fastRetryConfig[key],
+    } as unknown as ConfigService;
+
+    service = new EspnService(config, new CacheService());
+  });
+
+  it('keeps numeric ids on the ESPN path', async () => {
+    await service.getTeam('16');
+    await service.getPlayer('1966');
+    await service.getAthleteOverview('1966', 2025, 'regular', 1000);
+    await service.getAthleteStats('1966', 'regular');
+    await service.getScoreboard('20260131');
+    await service.getGameSummary('401585601');
+    await service.getRoster('16', 2025);
+
+    expect(httpGet).toHaveBeenCalledWith('/teams/16');
+    expect(httpGet).toHaveBeenCalledWith(
+      expect.stringContaining('/athletes/1966'),
+      { timeout: 15_000 },
+    );
+    expect(httpGet).toHaveBeenCalledWith(
+      expect.stringContaining('/athletes/1966/overview'),
+      {
+        params: { season: 2025, seasontype: 2 },
+        timeout: 12_000,
+      },
+    );
+    expect(httpGet).toHaveBeenCalledWith(
+      expect.stringContaining('/athletes/1966/stats'),
+      {
+        params: { seasontype: 2 },
+        timeout: 15_000,
+      },
+    );
+    expect(httpGet).toHaveBeenCalledWith('/scoreboard?dates=20260131');
+    expect(httpGet).toHaveBeenCalledWith('/summary?event=401585601');
+    expect(httpGet).toHaveBeenCalledWith('/teams/16/roster?season=2025');
+  });
+
+  it('rejects path, query, and absolute URL input before requesting', async () => {
+    expect(() => service.getTeam('../evil')).toThrow(BadRequestException);
+    expect(() => service.getTeam('https://evil.example')).toThrow(
+      BadRequestException,
+    );
+    expect(() => service.getTeam('1?x=1')).toThrow(BadRequestException);
+    await expect(service.getPlayer('../evil')).rejects.toBeInstanceOf(
+      BadRequestException,
+    );
+    await expect(service.getAthleteStats('1?x=1')).rejects.toBeInstanceOf(
+      BadRequestException,
+    );
+    expect(() => service.getScoreboard('20260131&x=1')).toThrow(
+      BadRequestException,
+    );
+    expect(() => service.getRoster('16', 1800)).toThrow(BadRequestException);
+
+    await expect(
+      service.get('https://evil.example', 1000),
+    ).rejects.toBeInstanceOf(BadRequestException);
+    await expect(service.get('//evil.example', 1000)).rejects.toBeInstanceOf(
+      BadRequestException,
+    );
+
+    expect(httpGet).not.toHaveBeenCalled();
   });
 });
