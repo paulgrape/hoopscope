@@ -346,8 +346,7 @@ export class EspnService {
   private parseRetryAfter(err: unknown): number | null {
     if (!axios.isAxiosError(err)) return null;
     const headers = err.response?.headers as
-      | Record<string, unknown>
-      | undefined;
+      Record<string, unknown> | undefined;
     const header = headers?.['retry-after'];
     if (typeof header !== 'string' && typeof header !== 'number') return null;
 

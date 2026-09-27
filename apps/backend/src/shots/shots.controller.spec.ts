@@ -29,11 +29,11 @@ describe('ShotsController', () => {
     );
   });
 
-  it('falls back to 2025-26 when NBA_DEFAULT_SEASON is unset', () => {
+  it('falls back to 2025-26 when NBA_DEFAULT_SEASON is unset', async () => {
     const controller = buildController(undefined);
     shots.getHeatmap.mockReturnValue({ points: [] });
 
-    controller.getHeatmap({ playerId: '2544' });
+    await controller.getHeatmap({ playerId: '2544' });
 
     expect(shots.getHeatmap).toHaveBeenCalledWith(
       '2544',
@@ -42,11 +42,11 @@ describe('ShotsController', () => {
     );
   });
 
-  it('forwards explicit season and seasonType', () => {
+  it('forwards explicit season and seasonType', async () => {
     const controller = buildController('2025-26');
     shots.getHeatmap.mockReturnValue({ points: [] });
 
-    controller.getHeatmap({
+    await controller.getHeatmap({
       playerId: '2544',
       season: '2023-24',
       seasonType: 'Playoffs',
