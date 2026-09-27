@@ -51,10 +51,13 @@ describe('TeamsController', () => {
     expect(teams.findSeasonStats).toHaveBeenCalledWith('2', 2025, 'regular');
   });
 
-  it('forwards an explicit season type', () => {
+  it('forwards an explicit season type', async () => {
     teams.findSeasonStats.mockReturnValue({ players: [] });
 
-    controller.findSeasonStats('2', { season: 2024, seasonType: 'playoffs' });
+    await controller.findSeasonStats('2', {
+      season: 2024,
+      seasonType: 'playoffs',
+    });
 
     expect(teams.findSeasonStats).toHaveBeenCalledWith('2', 2024, 'playoffs');
   });

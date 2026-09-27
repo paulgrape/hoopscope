@@ -18,10 +18,10 @@ describe('NewsController', () => {
     expect(news.findAll).toHaveBeenCalledWith(12, 0);
   });
 
-  it('forwards explicit limit and offset', () => {
+  it('forwards explicit limit and offset', async () => {
     news.findAll.mockReturnValue({ articles: [] });
 
-    controller.findAll({ limit: 5, offset: 10 });
+    await controller.findAll({ limit: 5, offset: 10 });
 
     expect(news.findAll).toHaveBeenCalledWith(5, 10);
   });

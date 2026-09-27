@@ -9,10 +9,7 @@ const RETRY_ATTEMPTS = 3;
 const RETRY_BASE_DELAY_MS = 750;
 
 export type NbaSeasonType =
-  | 'Regular Season'
-  | 'Playoffs'
-  | 'Pre Season'
-  | 'All Star';
+  'Regular Season' | 'Playoffs' | 'Pre Season' | 'All Star';
 
 export type ShotChartDetailParams = {
   playerId: string | number;

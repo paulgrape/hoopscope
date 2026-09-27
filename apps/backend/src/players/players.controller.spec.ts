@@ -34,10 +34,10 @@ describe('PlayersController', () => {
     });
   });
 
-  it('forwards an explicit search limit and team filter', () => {
+  it('forwards an explicit search limit and team filter', async () => {
     players.search.mockReturnValue({ total: 0, players: [] });
 
-    controller.search({ teamId: '13', limit: 10 });
+    await controller.search({ teamId: '13', limit: 10 });
 
     expect(players.search).toHaveBeenCalledWith({
       q: undefined,
@@ -81,10 +81,10 @@ describe('PlayersController', () => {
     expect(players.findNews).toHaveBeenCalledWith('2544', 6);
   });
 
-  it('forwards an explicit news limit', () => {
+  it('forwards an explicit news limit', async () => {
     players.findNews.mockReturnValue([]);
 
-    controller.findNews('2544', { limit: 3 });
+    await controller.findNews('2544', { limit: 3 });
 
     expect(players.findNews).toHaveBeenCalledWith('2544', 3);
   });
