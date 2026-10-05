@@ -19,7 +19,8 @@ ENV NODE_ENV=production
 WORKDIR /app
 COPY package.json package-lock.json ./
 COPY apps/backend/package.json apps/backend/
-RUN npm ci --workspace apps/backend --include-workspace-root --omit=dev --ignore-scripts
+# Swagger's optional TypeScript peer must not land in the runtime image.
+RUN npm ci --workspace apps/backend --include-workspace-root --omit=dev --omit=optional --ignore-scripts
 
 FROM node:24-alpine AS runtime
 ENV NODE_ENV=production
