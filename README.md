@@ -125,7 +125,7 @@ hoopscope/
 
 ### Prerequisites
 
-- Node.js >= 22 (see [`.nvmrc`](.nvmrc); CI runs the same version)
+- Node.js >= 24.9 (see [`.nvmrc`](.nvmrc); CI runs the same version)
 - npm >= 10
 
 ### Setup

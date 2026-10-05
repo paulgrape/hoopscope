@@ -1,27 +1,27 @@
 # Multi-stage build for the Hoopscope NestJS backend.
 # Built from the repo root: docker build -f apps/backend/Dockerfile .
 
-FROM node:22-alpine AS deps
+FROM node:24-alpine AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
 COPY apps/backend/package.json apps/backend/
 RUN npm ci --workspace apps/backend --include-workspace-root --ignore-scripts
 
-FROM node:22-alpine AS build
+FROM node:24-alpine AS build
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY package.json package-lock.json ./
 COPY apps/backend apps/backend
 RUN npm run build -w apps/backend
 
-FROM node:22-alpine AS prod-deps
+FROM node:24-alpine AS prod-deps
 ENV NODE_ENV=production
 WORKDIR /app
 COPY package.json package-lock.json ./
 COPY apps/backend/package.json apps/backend/
 RUN npm ci --workspace apps/backend --include-workspace-root --omit=dev --ignore-scripts
 
-FROM node:22-alpine AS runtime
+FROM node:24-alpine AS runtime
 ENV NODE_ENV=production
 WORKDIR /app
 RUN addgroup -S app && adduser -S app -G app
