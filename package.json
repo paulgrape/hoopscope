@@ -17,7 +17,7 @@
   "author": "Pavel Vinogradov <vin.pavel13@gmail.com>",
   "license": "MIT",
   "engines": {
-    "node": ">=22",
+    "node": ">=24.9",
     "npm": ">=10"
   },
   "lint-staged": {
