@@ -1,6 +1,8 @@
 'use client'
 
 import {ScoreboardMiniCardSkeleton} from '@/components/match/scoreboard-mini-skeleton'
+import {SeasonTypeKicker, groupGamesBySeasonType} from '@/components/match/season-type'
+import {useScheduleSeed} from '@/components/match/use-schedule-seed'
 import {Button} from '@/components/ui/button'
 import {Calendar} from '@/components/ui/calendar'
 import {Popover, PopoverContent, PopoverTrigger} from '@/components/ui/popover'
@@ -13,16 +15,13 @@ import {
   getNearestScheduleDate,
   getOffsetMinutesForDate,
   getSchedule,
-  getTodayDateKey,
-  isValidDateKey,
   parseLocalDateKey
 } from '@/lib/games-api'
 import {cn} from '@/lib/utils'
 import {ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon} from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import {usePathname, useRouter, useSearchParams} from 'next/navigation'
-import {useEffect, useRef, useState, useTransition} from 'react'
+import {useEffect, useState} from 'react'
 
 const REFRESH_INTERVAL_MS = 60_000
 const DISPLAY_LOCALE = 'en-US'
@@ -30,60 +29,44 @@ const PLACEHOLDER_CARDS = 4
 
 type ScoreboardMiniProps = {
   initialDate?: string
+  initialToday?: string
   initialGames?: ScoreboardGame[]
+  initialOffsetMinutes?: number
+  initialTimeZone?: string
 }
 
-export function ScoreboardMini({initialDate, initialGames = []}: ScoreboardMiniProps) {
-  const router = useRouter()
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
-  const [, startTransition] = useTransition()
+export function ScoreboardMini({
+  initialDate,
+  initialToday,
+  initialGames = [],
+  initialOffsetMinutes,
+  initialTimeZone
+}: ScoreboardMiniProps) {
+  const {
+    today,
+    selectedDate,
+    setSelectedDate,
+    games,
+    setGames,
+    isLoading,
+    setIsLoading,
+    timeZone,
+    clockReady,
+    reuseSeed,
+    markScheduleLoaded
+  } = useScheduleSeed({initialDate, initialToday, initialGames, initialOffsetMinutes, initialTimeZone})
 
-  const today = getTodayDateKey()
-  const urlDate = searchParams.get('date')
-  const startingDate = (isValidDateKey(urlDate) && urlDate) || (isValidDateKey(initialDate) && initialDate) || today
-  const hasInitialGames = initialGames.length > 0 && startingDate === (initialDate ?? today)
-
-  const [selectedDate, setSelectedDateState] = useState(startingDate)
-  const [games, setGames] = useState<ScoreboardGame[]>(hasInitialGames ? initialGames : [])
-  const [isLoading, setIsLoading] = useState(!hasInitialGames)
   const [error, setError] = useState<string | null>(null)
   const [calendarOpen, setCalendarOpen] = useState(false)
   const [isFindingLastGame, setIsFindingLastGame] = useState(false)
-  const skipInitialFetchRef = useRef(hasInitialGames)
-
-  // Follow back/forward navigation: sync the selected date from the URL
-  // during render instead of a cascading effect.
-  const [prevUrlDate, setPrevUrlDate] = useState(urlDate)
-  if (urlDate !== prevUrlDate) {
-    setPrevUrlDate(urlDate)
-    if (isValidDateKey(urlDate) && urlDate !== selectedDate) {
-      setSelectedDateState(urlDate)
-    }
-  }
-
-  function setSelectedDate(nextDate: string) {
-    setSelectedDateState(nextDate)
-    const params = new URLSearchParams(searchParams.toString())
-    if (nextDate === today) {
-      params.delete('date')
-    } else {
-      params.set('date', nextDate)
-    }
-    const query = params.toString()
-    startTransition(() => {
-      router.replace(query ? `${pathname}?${query}` : pathname, {scroll: false})
-    })
-  }
 
   useEffect(() => {
+    if (!clockReady) return
+
     let isActive = true
 
     async function loadGames(showLoading: boolean) {
-      if (skipInitialFetchRef.current) {
-        skipInitialFetchRef.current = false
-        return
-      }
+      if (showLoading && reuseSeed) return
 
       if (showLoading) setIsLoading(true)
 
@@ -100,7 +83,10 @@ export function ScoreboardMini({initialDate, initialGames = []}: ScoreboardMiniP
           if (showLoading) setGames([])
         }
       } finally {
-        if (isActive) setIsLoading(false)
+        if (isActive) {
+          setIsLoading(false)
+          markScheduleLoaded(selectedDate)
+        }
       }
     }
 
@@ -111,7 +97,7 @@ export function ScoreboardMini({initialDate, initialGames = []}: ScoreboardMiniP
       isActive = false
       window.clearInterval(refresh)
     }
-  }, [selectedDate])
+  }, [clockReady, markScheduleLoaded, reuseSeed, selectedDate, setGames, setIsLoading])
 
   async function jumpToLastGameDay() {
     setIsFindingLastGame(true)
@@ -197,7 +183,7 @@ export function ScoreboardMini({initialDate, initialGames = []}: ScoreboardMiniP
             type='button'
             variant='outline'
             size='sm'
-            disabled={isFindingLastGame}
+            disabled={isFindingLastGame || games.length > 0}
             onClick={() => void jumpToLastGameDay()}
           >
             {isFindingLastGame ? 'Finding…' : 'Last game day'}
@@ -240,19 +226,30 @@ export function ScoreboardMini({initialDate, initialGames = []}: ScoreboardMiniP
         </div>
       ) : (
         <>
-          <ul className='grid min-w-0 gap-3 sm:grid-cols-2'>
-            {games.map(game => (
-              <li
-                key={game.id}
-                className='min-w-0'
+          <div className='flex min-w-0 flex-col gap-4'>
+            {groupGamesBySeasonType(games).map((group, index) => (
+              <section
+                key={`${group.seasonType ?? 'none'}-${index}`}
+                className='flex min-w-0 flex-col gap-2'
               >
-                <ScoreboardMiniCard
-                  game={game}
-                  dateKey={selectedDate}
-                />
-              </li>
+                <SeasonTypeKicker seasonType={group.seasonType} />
+                <ul className='grid min-w-0 gap-3 sm:grid-cols-2'>
+                  {group.games.map(game => (
+                    <li
+                      key={game.id}
+                      className='min-w-0'
+                    >
+                      <ScoreboardMiniCard
+                        game={game}
+                        dateKey={selectedDate}
+                        timeZone={timeZone}
+                      />
+                    </li>
+                  ))}
+                </ul>
+              </section>
             ))}
-          </ul>
+          </div>
           {error ? (
             <p
               role='alert'
@@ -267,7 +264,7 @@ export function ScoreboardMini({initialDate, initialGames = []}: ScoreboardMiniP
   )
 }
 
-function ScoreboardMiniCard({game, dateKey}: {game: ScoreboardGame; dateKey: string}) {
+function ScoreboardMiniCard({game, dateKey, timeZone}: {game: ScoreboardGame; dateKey: string; timeZone?: string}) {
   const showScore = game.status !== 'scheduled'
   const awayLeads = showScore && (game.awayScore ?? 0) > (game.homeScore ?? 0)
   const homeLeads = showScore && (game.homeScore ?? 0) > (game.awayScore ?? 0)
@@ -297,7 +294,7 @@ function ScoreboardMiniCard({game, dateKey}: {game: ScoreboardGame; dateKey: str
         )}
       >
         {game.status === 'live' ? <span className='sr-only'>{game.statusDetail} - </span> : null}
-        {statusLabel(game)}
+        {statusLabel(game, timeZone)}
       </p>
     </Link>
   )
@@ -332,22 +329,23 @@ function TeamLine({team, score, leading}: {team: ScoreboardTeam | null; score: n
   )
 }
 
-function statusLabel(game: ScoreboardGame) {
+function statusLabel(game: ScoreboardGame, timeZone?: string) {
   if (game.status === 'live') {
     return game.period ? `Q${game.period}${game.clock ? ` ${game.clock}` : ''}` : game.statusDetail
   }
 
   if (game.status === 'scheduled') {
-    return formatGameTime(new Date(game.date))
+    return formatGameTime(new Date(game.date), timeZone)
   }
 
   return game.statusDetail
 }
 
-function formatGameTime(date: Date) {
+function formatGameTime(date: Date, timeZone?: string) {
   return new Intl.DateTimeFormat(DISPLAY_LOCALE, {
     hour: 'numeric',
     minute: '2-digit',
-    timeZoneName: 'short'
+    timeZoneName: 'short',
+    ...(timeZone ? {timeZone} : {})
   }).format(date)
 }

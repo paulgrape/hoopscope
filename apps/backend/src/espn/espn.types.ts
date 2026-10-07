@@ -58,11 +58,17 @@ export interface EspnCompetition {
   competitors?: EspnCompetitor[];
 }
 
+export interface EspnEventSeason {
+  type?: number;
+  slug?: string;
+}
+
 export interface EspnScoreboardEvent {
   id: string;
   name?: string;
   shortName?: string;
   date?: string;
+  season?: EspnEventSeason;
   status?: EspnStatus;
   competitions?: EspnCompetition[];
 }
@@ -136,6 +142,7 @@ export interface EspnGameSummaryResponse {
     id?: string;
     name?: string;
     date?: string;
+    season?: EspnEventSeason;
     competitions?: EspnCompetition[];
   };
   boxscore?: {

@@ -1,7 +1,8 @@
 import {MatchCenterTimeline} from '@/components/match/match-center-timeline'
 import {MatchCenterTimelineSkeleton} from '@/components/match/match-center-timeline-skeleton'
 import {JsonLd} from '@/components/seo/json-ld'
-import {getOffsetMinutesForDate, getServerSchedule, getTodayDateKey, isValidDateKey} from '@/lib/games-api'
+import {getServerSchedule} from '@/lib/games-api'
+import {readScheduleSeed} from '@/lib/schedule-request'
 import {webPageSchema} from '@/lib/seo-schema'
 import {createPageMetadata} from '@/lib/site'
 import {Suspense} from 'react'
@@ -19,7 +20,6 @@ type MatchCenterPageProps = {
 
 export default async function MatchCenterPage({searchParams}: MatchCenterPageProps) {
   const params = await searchParams
-  const initialDate = isValidDateKey(params.date) ? params.date : getTodayDateKey()
 
   return (
     <main
@@ -45,19 +45,23 @@ export default async function MatchCenterPage({searchParams}: MatchCenterPagePro
       </header>
 
       <Suspense fallback={<MatchCenterTimelineSkeleton />}>
-        <ScheduleTimeline initialDate={initialDate} />
+        <ScheduleTimeline explicitDate={params.date} />
       </Suspense>
     </main>
   )
 }
 
-async function ScheduleTimeline({initialDate}: {initialDate: string}) {
-  const initialGames = await getServerSchedule(initialDate, getOffsetMinutesForDate(initialDate)).catch(() => [])
+async function ScheduleTimeline({explicitDate}: {explicitDate?: string}) {
+  const seed = await readScheduleSeed(explicitDate)
+  const initialGames = await getServerSchedule(seed.date, seed.offsetMinutes).catch(() => [])
 
   return (
     <MatchCenterTimeline
-      initialDate={initialDate}
+      initialDate={seed.date}
+      initialToday={seed.today}
       initialGames={initialGames}
+      initialOffsetMinutes={seed.offsetMinutes}
+      initialTimeZone={seed.timeZone}
     />
   )
 }

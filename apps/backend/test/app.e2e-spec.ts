@@ -15,6 +15,7 @@ function scoreboardEvent(date: string, id = '401585601') {
     name: 'Away at Home',
     shortName: 'AWY @ HOM',
     date,
+    season: { type: 1, slug: 'preseason' },
     status: {
       type: {
         state: 'post',
@@ -105,6 +106,7 @@ const espnStub = {
         id: gameId,
         name: 'Away at Home',
         date: '2026-01-14T20:00:00.000Z',
+        season: { type: 2, slug: 'regular-season' },
         competitions: [
           {
             date: '2026-01-14T20:00:00.000Z',
@@ -238,6 +240,7 @@ describe('API (e2e)', () => {
         expect.objectContaining({
           id: '401585601',
           date: '2026-01-14T20:00:00.000Z',
+          seasonType: 'preseason',
         }),
       ]),
     );
@@ -259,6 +262,7 @@ describe('API (e2e)', () => {
     expect(response.body).toMatchObject({
       id: '401585601',
       name: 'Away at Home',
+      seasonType: 'regular',
       status: 'final',
       homeScore: 110,
       awayScore: 108,

@@ -1,6 +1,7 @@
 'use client'
 
 import {type BoxScoreLine, BoxScoreTable as BoxScoreTableBase} from '@/components/match/box-score-table'
+import {SeasonTypeKicker} from '@/components/match/season-type'
 import {Tabs, TabsContent, TabsList, TabsTrigger} from '@/components/ui/tabs'
 import {
   type BoxScorePlayer,
@@ -67,6 +68,10 @@ export function MatchSummary({initialSummary}: MatchSummaryProps) {
       <section className='bg-card border-border rounded-xl border p-4 sm:p-6'>
         <div className='flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between'>
           <div>
+            <SeasonTypeKicker
+              seasonType={summary.seasonType}
+              className='mb-1'
+            />
             <p className='text-muted-foreground text-sm'>{tipLabel}</p>
             {summary.venue ? <p className='text-muted-foreground mt-1 text-sm'>{summary.venue}</p> : null}
           </div>

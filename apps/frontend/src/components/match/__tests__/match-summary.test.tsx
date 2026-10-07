@@ -31,6 +31,7 @@ function makeSummary(overrides: Partial<GameSummary> = {}): GameSummary {
     name: 'Lakers at Celtics',
     shortName: 'LAL @ BOS',
     date: '2026-01-15T00:00:00.000Z',
+    seasonType: null,
     status: 'final',
     statusDetail: 'Final',
     period: 4,
@@ -205,5 +206,20 @@ describe('MatchSummary', () => {
     expect(screen.getByRole('heading', {name: 'Leaders'})).toBeInTheDocument()
     expect(screen.getAllByText('J. Tatum').length).toBeGreaterThan(0)
     expect(screen.getAllByText('28').length).toBeGreaterThan(0)
+  })
+
+  it('shows a preseason label above the tip time', () => {
+    render(<MatchSummary initialSummary={makeSummary({seasonType: 'preseason'})} />)
+
+    expect(screen.getAllByText('Preseason')).toHaveLength(1)
+  })
+
+  it('hides the season label when the season type is missing', () => {
+    render(<MatchSummary initialSummary={makeSummary({seasonType: null})} />)
+
+    expect(screen.queryByText('Preseason')).not.toBeInTheDocument()
+    expect(screen.queryByText('Regular')).not.toBeInTheDocument()
+    expect(screen.queryByText('Playoffs')).not.toBeInTheDocument()
+    expect(screen.queryByText('Play-in')).not.toBeInTheDocument()
   })
 })

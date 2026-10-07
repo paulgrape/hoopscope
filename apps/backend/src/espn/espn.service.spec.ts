@@ -221,6 +221,56 @@ describe('EspnService request targets', () => {
     expect(httpGet).toHaveBeenCalledWith('/teams/16/roster?season=2025');
   });
 
+  it('requests the previous regular season while ESPN is still in preseason', async () => {
+    httpGet.mockImplementation((url: string) => {
+      if (url === '/teams/1/roster') {
+        return Promise.resolve({
+          data: { season: { year: 2027, type: 1, name: 'Preseason' } },
+        });
+      }
+      return Promise.resolve({ data: { children: [] } });
+    });
+
+    await service.getStandings();
+
+    expect(httpGet).toHaveBeenCalledWith(
+      'https://site.api.espn.com/apis/v2/sports/basketball/nba/standings?season=2026&seasontype=2',
+      { timeout: 20_000 },
+    );
+  });
+
+  it('requests the current regular season once the season has started', async () => {
+    for (const season of [
+      { type: 2, name: 'Regular Season' },
+      { type: 3, name: 'Postseason' },
+    ]) {
+      const httpGetForSeason = jest.fn().mockImplementation((url: string) => {
+        if (url === '/teams/1/roster') {
+          return Promise.resolve({
+            data: {
+              season: { year: 2027, type: season.type, name: season.name },
+            },
+          });
+        }
+        return Promise.resolve({ data: { children: [] } });
+      });
+      (axios.create as jest.Mock).mockReturnValue({ get: httpGetForSeason });
+      const seasonService = new EspnService(
+        {
+          get: (key: string) => fastRetryConfig[key],
+        } as unknown as ConfigService,
+        new CacheService(),
+      );
+
+      await seasonService.getStandings();
+
+      expect(httpGetForSeason).toHaveBeenCalledWith(
+        'https://site.api.espn.com/apis/v2/sports/basketball/nba/standings?season=2027&seasontype=2',
+        { timeout: 20_000 },
+      );
+    }
+  });
+
   it('rejects path, query, and absolute URL input before requesting', async () => {
     expect(() => service.getTeam('../evil')).toThrow(BadRequestException);
     expect(() => service.getTeam('https://evil.example')).toThrow(
