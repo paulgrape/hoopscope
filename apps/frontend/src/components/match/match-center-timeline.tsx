@@ -1,6 +1,8 @@
 'use client'
 
 import {GameTimelineCardSkeleton} from '@/components/match/match-center-timeline-skeleton'
+import {SeasonTypeKicker, groupGamesBySeasonType} from '@/components/match/season-type'
+import {useScheduleSeed} from '@/components/match/use-schedule-seed'
 import {Button} from '@/components/ui/button'
 import {Calendar} from '@/components/ui/calendar'
 import {Popover, PopoverContent, PopoverTrigger} from '@/components/ui/popover'
@@ -13,75 +15,56 @@ import {
   getNearestScheduleDate,
   getOffsetMinutesForDate,
   getSchedule,
-  getTodayDateKey,
-  isValidDateKey,
   parseLocalDateKey
 } from '@/lib/games-api'
 import {ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon} from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import {usePathname, useRouter, useSearchParams} from 'next/navigation'
-import {useEffect, useRef, useState, useTransition} from 'react'
+import {useEffect, useState} from 'react'
 
 const REFRESH_INTERVAL_MS = 60_000
 const DISPLAY_LOCALE = 'en-US'
 
 type MatchCenterTimelineProps = {
   initialDate?: string
+  initialToday?: string
   initialGames?: ScoreboardGame[]
+  initialOffsetMinutes?: number
+  initialTimeZone?: string
 }
 
-export function MatchCenterTimeline({initialDate, initialGames = []}: MatchCenterTimelineProps) {
-  const router = useRouter()
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
-  const [, startTransition] = useTransition()
+export function MatchCenterTimeline({
+  initialDate,
+  initialToday,
+  initialGames = [],
+  initialOffsetMinutes,
+  initialTimeZone
+}: MatchCenterTimelineProps) {
+  const {
+    today,
+    selectedDate,
+    setSelectedDate,
+    games,
+    setGames,
+    isLoading,
+    setIsLoading,
+    timeZone,
+    clockReady,
+    reuseSeed,
+    markScheduleLoaded
+  } = useScheduleSeed({initialDate, initialToday, initialGames, initialOffsetMinutes, initialTimeZone})
 
-  const today = getTodayDateKey()
-  const urlDate = searchParams.get('date')
-  const startingDate = (isValidDateKey(urlDate) && urlDate) || (isValidDateKey(initialDate) && initialDate) || today
-  const hasInitialGames = initialGames.length > 0 && startingDate === (initialDate ?? today)
-
-  const [selectedDate, setSelectedDateState] = useState(startingDate)
-  const [games, setGames] = useState<ScoreboardGame[]>(hasInitialGames ? initialGames : [])
-  const [isLoading, setIsLoading] = useState(!hasInitialGames)
   const [error, setError] = useState<string | null>(null)
   const [calendarOpen, setCalendarOpen] = useState(false)
   const [isFindingLastGame, setIsFindingLastGame] = useState(false)
-  const skipInitialFetchRef = useRef(hasInitialGames)
-
-  // Follow back/forward navigation: sync the selected date from the URL
-  // during render instead of a cascading effect.
-  const [prevUrlDate, setPrevUrlDate] = useState(urlDate)
-  if (urlDate !== prevUrlDate) {
-    setPrevUrlDate(urlDate)
-    if (isValidDateKey(urlDate) && urlDate !== selectedDate) {
-      setSelectedDateState(urlDate)
-    }
-  }
-
-  function setSelectedDate(nextDate: string) {
-    setSelectedDateState(nextDate)
-    const params = new URLSearchParams(searchParams.toString())
-    if (nextDate === today) {
-      params.delete('date')
-    } else {
-      params.set('date', nextDate)
-    }
-    const query = params.toString()
-    startTransition(() => {
-      router.replace(query ? `${pathname}?${query}` : pathname, {scroll: false})
-    })
-  }
 
   useEffect(() => {
+    if (!clockReady) return
+
     let isActive = true
 
     async function loadGames(showLoading: boolean) {
-      if (skipInitialFetchRef.current) {
-        skipInitialFetchRef.current = false
-        return
-      }
+      if (showLoading && reuseSeed) return
 
       if (showLoading) setIsLoading(true)
       setError(null)
@@ -95,7 +78,10 @@ export function MatchCenterTimeline({initialDate, initialGames = []}: MatchCente
           setGames([])
         }
       } finally {
-        if (isActive) setIsLoading(false)
+        if (isActive) {
+          setIsLoading(false)
+          markScheduleLoaded(selectedDate)
+        }
       }
     }
 
@@ -106,7 +92,7 @@ export function MatchCenterTimeline({initialDate, initialGames = []}: MatchCente
       isActive = false
       window.clearInterval(refresh)
     }
-  }, [selectedDate])
+  }, [clockReady, markScheduleLoaded, reuseSeed, selectedDate, setGames, setIsLoading])
 
   async function jumpToLastGameDay() {
     setIsFindingLastGame(true)
@@ -126,7 +112,6 @@ export function MatchCenterTimeline({initialDate, initialGames = []}: MatchCente
   }
 
   const selectedDateLabel = formatCompactDateLabel(selectedDate, DISPLAY_LOCALE)
-  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
   const selectedCalendarDate = parseLocalDateKey(selectedDate)
 
   return (
@@ -191,7 +176,7 @@ export function MatchCenterTimeline({initialDate, initialGames = []}: MatchCente
           <Button
             type='button'
             variant='outline'
-            disabled={isFindingLastGame}
+            disabled={isFindingLastGame || games.length > 0}
             onClick={() => void jumpToLastGameDay()}
           >
             {isFindingLastGame ? 'Finding…' : 'Last game day'}
@@ -199,7 +184,9 @@ export function MatchCenterTimeline({initialDate, initialGames = []}: MatchCente
         </div>
       </div>
 
-      <p className='text-muted-foreground text-sm'>Times are shown in {timeZone}.</p>
+      <p className='text-muted-foreground text-sm'>
+        {timeZone ? `Times are shown in ${timeZone}.` : 'Times are shown in your local time.'}
+      </p>
 
       <div className='relative flex min-w-0 flex-col gap-3 sm:gap-4'>
         <div className='bg-border absolute top-2 bottom-2 left-4 hidden w-px md:block' />
@@ -245,12 +232,24 @@ export function MatchCenterTimeline({initialDate, initialGames = []}: MatchCente
             </Button>
           </div>
         ) : (
-          games.map(game => (
-            <GameTimelineCard
-              key={game.id}
-              game={game}
-              dateKey={selectedDate}
-            />
+          groupGamesBySeasonType(games).map((group, index) => (
+            <div
+              key={`${group.seasonType ?? 'none'}-${index}`}
+              className='flex flex-col gap-3 sm:gap-4'
+            >
+              <SeasonTypeKicker
+                seasonType={group.seasonType}
+                className='md:pl-12'
+              />
+              {group.games.map(game => (
+                <GameTimelineCard
+                  key={game.id}
+                  game={game}
+                  dateKey={selectedDate}
+                  timeZone={timeZone}
+                />
+              ))}
+            </div>
           ))
         )}
       </div>
@@ -258,7 +257,7 @@ export function MatchCenterTimeline({initialDate, initialGames = []}: MatchCente
   )
 }
 
-function GameTimelineCard({game, dateKey}: {game: ScoreboardGame; dateKey: string}) {
+function GameTimelineCard({game, dateKey, timeZone}: {game: ScoreboardGame; dateKey: string; timeZone?: string}) {
   const startsAt = new Date(game.date)
   const showScore = game.status !== 'scheduled'
   const matchHref = `/match-center/${game.id}?date=${dateKey}`
@@ -275,11 +274,14 @@ function GameTimelineCard({game, dateKey}: {game: ScoreboardGame; dateKey: strin
 
         <div className='pointer-events-none relative z-10 flex flex-col gap-3 md:flex-row md:items-center md:justify-between'>
           <div className='min-w-0'>
-            <p className='text-muted-foreground text-sm'>{formatGameTime(startsAt)}</p>
+            <p className='text-muted-foreground text-sm'>{formatGameTime(startsAt, timeZone)}</p>
             <h3 className='mt-1 truncate text-base font-semibold sm:text-lg'>{game.shortName ?? game.name}</h3>
             {game.venue ? <p className='text-muted-foreground mt-1 text-sm'>{game.venue}</p> : null}
           </div>
-          <StatusBadge game={game} />
+          <StatusBadge
+            game={game}
+            timeZone={timeZone}
+          />
         </div>
 
         <div className='relative z-10 mt-4 grid gap-2 sm:mt-5 md:grid-cols-[1fr_auto_1fr] md:items-center md:gap-4'>
@@ -301,12 +303,12 @@ function GameTimelineCard({game, dateKey}: {game: ScoreboardGame; dateKey: strin
   )
 }
 
-function StatusBadge({game}: {game: ScoreboardGame}) {
+function StatusBadge({game, timeZone}: {game: ScoreboardGame; timeZone?: string}) {
   const label =
     game.status === 'live' && game.period
       ? `${game.statusDetail} - Q${game.period}${game.clock ? ` ${game.clock}` : ''}`
       : game.status === 'scheduled'
-        ? `Starts ${formatGameTime(new Date(game.date))}`
+        ? `Starts ${formatGameTime(new Date(game.date), timeZone)}`
         : game.statusDetail
 
   return (
@@ -371,10 +373,11 @@ function statusClassName(status: ScoreboardGame['status']) {
   return 'border-sky-500/30 bg-sky-500/10 text-sky-700 dark:text-sky-300'
 }
 
-function formatGameTime(date: Date) {
+function formatGameTime(date: Date, timeZone?: string) {
   return new Intl.DateTimeFormat(DISPLAY_LOCALE, {
     hour: 'numeric',
     minute: '2-digit',
-    timeZoneName: 'short'
+    timeZoneName: 'short',
+    ...(timeZone ? {timeZone} : {})
   }).format(date)
 }

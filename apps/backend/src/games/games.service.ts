@@ -15,6 +15,7 @@ import {
   EspnTeamLeaderGroup,
   espnHeadshotHref,
 } from '../espn/espn.types';
+import { type GameSeasonType, mapEspnSeasonType } from '../espn/season-year';
 import { SimulationService } from './simulation.service';
 
 type ScoreboardStatus = 'scheduled' | 'live' | 'final';
@@ -33,6 +34,7 @@ type ScoreboardGame = {
   name: string;
   shortName: string | null;
   date: string;
+  seasonType: GameSeasonType | null;
   status: ScoreboardStatus;
   statusDetail: string;
   homeTeam: ScoreboardTeam | null;
@@ -88,6 +90,7 @@ export type GameSummary = {
   name: string;
   shortName: string | null;
   date: string;
+  seasonType: GameSeasonType | null;
   status: ScoreboardStatus;
   statusDetail: string;
   period: number | null;
@@ -254,6 +257,7 @@ export class GamesService {
       name: data?.header?.name ?? buildGameName(away, home),
       shortName: buildShortName(away, home),
       date: competition.date ?? data?.header?.date ?? '',
+      seasonType: mapEspnSeasonType(data?.header?.season),
       status: normalizeStatus(statusType?.state),
       statusDetail:
         statusType?.shortDetail ??
@@ -373,6 +377,7 @@ function normalizeScoreboardEvent(event: EspnScoreboardEvent): ScoreboardGame {
     name: event.name ?? buildGameName(away, home),
     shortName: event.shortName ?? null,
     date: event.date ?? '',
+    seasonType: mapEspnSeasonType(event.season),
     status: normalizeStatus(statusType?.state),
     statusDetail:
       statusType?.shortDetail ??

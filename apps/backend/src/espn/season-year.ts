@@ -1,3 +1,5 @@
+import { type EspnEventSeason } from './espn.types';
+
 export type EspnRosterSeason = {
   year?: number;
   type?: number;
@@ -10,8 +12,40 @@ export type EspnSeasonMeta = {
   name?: string;
 };
 
-/** ESPN season.type: 1 preseason, 2 regular, 3 postseason, 4 offseason. */
+/** ESPN season.type: 1 preseason, 2 regular, 3 postseason, 4 offseason, 5 play-in. */
 const UNSTARTED_SEASON_TYPES = new Set([1, 4]);
+
+export type GameSeasonType = 'preseason' | 'regular' | 'playoffs' | 'play-in';
+
+const SEASON_TYPE_BY_CODE: Record<number, GameSeasonType> = {
+  1: 'preseason',
+  2: 'regular',
+  3: 'playoffs',
+  5: 'play-in',
+};
+
+const SEASON_TYPE_BY_SLUG: Record<string, GameSeasonType> = {
+  preseason: 'preseason',
+  'regular-season': 'regular',
+  'post-season': 'playoffs',
+  'play-in': 'play-in',
+};
+
+/** Map an ESPN event season onto a public game season type. Unknown values are omitted. */
+export function mapEspnSeasonType(
+  season?: EspnEventSeason | null,
+): GameSeasonType | null {
+  if (!season) return null;
+
+  if (season.type != null) {
+    const code = Number(season.type);
+    const mapped = SEASON_TYPE_BY_CODE[code];
+    if (mapped) return mapped;
+  }
+
+  const slug = season.slug?.trim().toLowerCase() ?? '';
+  return SEASON_TYPE_BY_SLUG[slug] ?? null;
+}
 
 export function isUnstartedEspnSeason(
   season?: EspnRosterSeason | null,

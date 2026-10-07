@@ -11,7 +11,7 @@ import {
   EspnTeamResponse,
   EspnTeamsResponse,
 } from './espn.types';
-import { EspnSeasonMeta } from './season-year';
+import { EspnSeasonMeta, isUnstartedEspnSeason } from './season-year';
 
 export interface EspnCoreAthlete {
   id: string;
@@ -629,7 +629,12 @@ export class EspnService {
   }
 
   async getStandings(league = 'nba') {
-    const url = `${this.standingsApiBase}/${league}/standings`;
+    const current = await this.resolveCurrentSeason();
+    const season = isUnstartedEspnSeason(current)
+      ? current.year - 1
+      : current.year;
+    const seasontype = this.toEspnSeasonType('regular');
+    const url = `${this.standingsApiBase}/${league}/standings?season=${espnSeason(season)}&seasontype=${seasontype}`;
 
     return this.fetchJson<unknown>(url, this.TTL_STANDINGS, async () => {
       this.logger.log(`ESPN fetch: ${url}`);
