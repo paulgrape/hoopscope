@@ -15,7 +15,7 @@ const replace = vi.fn()
 const searchParams = new URLSearchParams()
 const {todayDateKey, offsetMinutes} = vi.hoisted(() => ({
   todayDateKey: vi.fn(() => '2026-01-15'),
-  offsetMinutes: vi.fn(() => 0)
+  offsetMinutes: vi.fn((_dateKey: string) => 0)
 }))
 
 vi.mock('next/navigation', () => ({

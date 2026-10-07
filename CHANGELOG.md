@@ -19,6 +19,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+- Forced `shell-quote` to 1.12.0. `concurrently` 10.0.5 still depends on 1.9.0,
+  which is affected by [GHSA-pqg4-j6r4-53mv](https://github.com/advisories/GHSA-pqg4-j6r4-53mv)
+  (`quote()` command injection)
 - Resolved 11 advisories via in-range dependency upgrades, including a critical
   `shell-quote` issue and memory-exhaustion denial-of-service bugs in `ws` and
   `socket.io-parser` that affect the replay WebSocket path
