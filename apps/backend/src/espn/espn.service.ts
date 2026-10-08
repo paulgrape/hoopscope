@@ -47,6 +47,41 @@ export interface EspnCoreAthlete {
 
 export type EspnSeasonType = 'regular' | 'playoffs';
 
+export interface EspnRecordStat {
+  name?: string;
+  displayValue?: string;
+  value?: number;
+}
+
+export interface EspnRecordItem {
+  name?: string;
+  type?: string;
+  summary?: string;
+  displayValue?: string;
+  stats?: EspnRecordStat[];
+}
+
+export interface EspnTeamSeasonRecord {
+  items?: EspnRecordItem[];
+}
+
+export interface EspnSeasonGroup {
+  id?: string;
+  name?: string;
+  isConference?: boolean;
+}
+
+export interface EspnCoachList {
+  items?: Array<{ id?: string; $ref?: string }>;
+}
+
+export interface EspnCoach {
+  id?: string;
+  firstName?: string;
+  lastName?: string;
+  displayName?: string;
+}
+
 export interface EspnAthleteOverview {
   statistics?: {
     labels?: string[];
@@ -387,6 +422,84 @@ export class EspnService {
   getTeam(id: string) {
     return this.get<EspnTeamResponse>(`/teams/${espnId(id)}`, this.TTL_TEAMS);
   }
+
+  getTeamSeasonRecord(
+    teamId: string,
+    season: number,
+    currentSeason: number,
+  ): Promise<EspnTeamSeasonRecord> {
+    const id = espnId(teamId);
+    const year = espnSeason(season);
+    const seasontype = this.toEspnSeasonType('regular');
+    const url = `${this.coreApiBase}/seasons/${year}/types/${seasontype}/teams/${id}/record`;
+    assertEspnRequestUrl(url, this.coreApiBase);
+
+    return this.fetchJson<EspnTeamSeasonRecord>(
+      `team-record:${id}:${year}:${seasontype}`,
+      this.seasonStatsTtl(season, currentSeason),
+      async () => {
+        this.logger.log(`ESPN fetch: ${url}`);
+        const { data } = await this.http.get<EspnTeamSeasonRecord>(url, {
+          timeout: 12_000,
+        });
+        return data;
+      },
+    );
+  }
+
+  getSeasonGroup(season: number, groupId: string): Promise<EspnSeasonGroup> {
+    const year = espnSeason(season);
+    const id = espnId(groupId);
+    const seasontype = this.toEspnSeasonType('regular');
+    const url = `${this.coreApiBase}/seasons/${year}/types/${seasontype}/groups/${id}`;
+    assertEspnRequestUrl(url, this.coreApiBase);
+
+    return this.fetchJson<EspnSeasonGroup>(
+      `season-group:${year}:${seasontype}:${id}`,
+      this.TTL_TEAMS,
+      async () => {
+        this.logger.log(`ESPN fetch: ${url}`);
+        const { data } = await this.http.get<EspnSeasonGroup>(url, {
+          timeout: 12_000,
+        });
+        return data;
+      },
+    );
+  }
+
+  async getTeamHeadCoach(teamId: string): Promise<EspnCoach | null> {
+    const id = espnId(teamId);
+    const listUrl = `${this.coreApiBase}/teams/${id}/coaches`;
+    assertEspnRequestUrl(listUrl, this.coreApiBase);
+    const list = await this.fetchJson<EspnCoachList>(
+      `team-coaches:${id}`,
+      this.TTL_TEAMS,
+      async () => {
+        this.logger.log(`ESPN fetch: ${listUrl}`);
+        const { data } = await this.http.get<EspnCoachList>(listUrl, {
+          timeout: 12_000,
+        });
+        return data;
+      },
+    );
+
+    const coachId = coachIdFromList(list);
+    if (!coachId) return null;
+
+    const coachUrl = `${this.coreApiBase}/coaches/${espnId(coachId)}`;
+    assertEspnRequestUrl(coachUrl, this.coreApiBase);
+    return this.fetchJson<EspnCoach>(
+      `coach:${coachId}`,
+      this.TTL_TEAMS,
+      async () => {
+        this.logger.log(`ESPN fetch: ${coachUrl}`);
+        const { data } = await this.http.get<EspnCoach>(coachUrl, {
+          timeout: 12_000,
+        });
+        return data;
+      },
+    );
+  }
   getRoster(teamId: string, season?: number) {
     const id = espnId(teamId);
     const path =
@@ -646,6 +759,21 @@ export class EspnService {
 
 const FIRST_SEASON = 1947;
 const LAST_SEASON = 2100;
+
+function coachIdFromList(list: EspnCoachList): string | null {
+  const item = list.items?.[0];
+  if (!item) return null;
+  if (item.id && /^\d+$/.test(item.id)) return item.id;
+
+  const ref = item.$ref;
+  if (!ref) return null;
+  try {
+    const match = /\/coaches\/(\d+)$/.exec(new URL(ref).pathname);
+    return match?.[1] ?? null;
+  } catch {
+    return null;
+  }
+}
 
 function espnId(value: string): string {
   if (!/^\d+$/.test(value)) {

@@ -11,8 +11,27 @@ export type TeamSummary = {
   location: string
 }
 
+export type TeamRecord = {
+  season: number
+  seasonLabel: string
+  summary: string | null
+  home: string | null
+  road: string | null
+  divisionRecord: string | null
+  conferenceRecord: string | null
+  pointsPerGame: string | null
+  opponentPointsPerGame: string | null
+  streak: string | null
+  playoffSeed: string | null
+}
+
 export type TeamDetails = TeamSummary & {
-  record: string | null
+  record: TeamRecord
+  conference: string | null
+  division: string | null
+  venue: string | null
+  venueLocation: string | null
+  coach: string | null
 }
 
 export type SeasonType = 'regular' | 'playoffs'

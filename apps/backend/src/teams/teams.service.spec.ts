@@ -18,37 +18,182 @@ function upstreamNotFound(): AxiosError {
 
 describe('TeamsService.findOne', () => {
   let service: TeamsService;
-  let espn: { getTeam: jest.Mock };
+  let espn: {
+    getTeam: jest.Mock;
+    resolveCurrentSeason: jest.Mock;
+    getTeamSeasonRecord: jest.Mock;
+    getSeasonGroup: jest.Mock;
+    getTeamHeadCoach: jest.Mock;
+  };
 
   beforeEach(() => {
-    espn = { getTeam: jest.fn() };
+    espn = {
+      getTeam: jest.fn(),
+      resolveCurrentSeason: jest.fn().mockResolvedValue({
+        year: 2027,
+        type: 2,
+        name: 'Regular Season',
+      }),
+      getTeamSeasonRecord: jest.fn().mockResolvedValue(null),
+      getSeasonGroup: jest.fn().mockResolvedValue(null),
+      getTeamHeadCoach: jest.fn().mockResolvedValue(null),
+    };
     service = new TeamsService(
       espn as unknown as EspnService,
       new CacheService(),
     );
   });
 
-  it('maps an ESPN team payload', async () => {
+  it('uses the previous regular season during preseason and ignores the live record', async () => {
+    espn.resolveCurrentSeason.mockResolvedValue({
+      year: 2027,
+      type: 1,
+      name: 'Preseason',
+    });
+    espn.getTeam.mockResolvedValue({
+      team: {
+        id: '16',
+        name: 'Timberwolves',
+        abbreviation: 'MIN',
+        displayName: 'Minnesota Timberwolves',
+        logos: [{ href: 'https://logo/16.png' }],
+        color: '266092',
+        alternateColor: '79bc43',
+        location: 'Minnesota',
+        record: { items: [{ type: 'total', summary: '1-1' }] },
+        groups: { id: '11', parent: { id: '6' }, isConference: false },
+        franchise: {
+          venue: {
+            fullName: 'Target Center',
+            address: { city: 'Minneapolis', state: 'MN' },
+          },
+        },
+      },
+    });
+    espn.getTeamSeasonRecord.mockResolvedValue({
+      items: [
+        {
+          type: 'total',
+          summary: '49-33',
+          stats: [
+            { name: 'avgPointsFor', displayValue: '118.0' },
+            { name: 'avgPointsAgainst', displayValue: '114.6' },
+            { name: 'streak', displayValue: 'W2' },
+            { name: 'playoffSeed', displayValue: '6', value: 6 },
+          ],
+        },
+        { type: 'home', summary: '26-15' },
+        { type: 'road', summary: '23-18' },
+        { type: 'vsdiv', summary: '9-7' },
+        { type: 'vsconf', summary: '31-21' },
+      ],
+    });
+    espn.getSeasonGroup.mockImplementation(
+      (_season: number, groupId: string) => {
+        if (groupId === '11') {
+          return Promise.resolve({
+            id: '11',
+            name: 'Northwest',
+            isConference: false,
+          });
+        }
+        if (groupId === '6') {
+          return Promise.resolve({
+            id: '6',
+            name: 'Western Conference',
+            isConference: true,
+          });
+        }
+        return Promise.resolve(null);
+      },
+    );
+    espn.getTeamHeadCoach.mockResolvedValue({
+      firstName: 'Chris',
+      lastName: 'Finch',
+    });
+
+    await expect(service.findOne('16')).resolves.toMatchObject({
+      id: '16',
+      displayName: 'Minnesota Timberwolves',
+      logo: 'https://logo/16.png',
+      conference: 'Western Conference',
+      division: 'Northwest',
+      venue: 'Target Center',
+      venueLocation: 'Minneapolis, MN',
+      coach: 'Chris Finch',
+      record: {
+        season: 2026,
+        seasonLabel: '2025–26',
+        summary: '49-33',
+        home: '26-15',
+        road: '23-18',
+        divisionRecord: '9-7',
+        conferenceRecord: '31-21',
+        pointsPerGame: '118.0',
+        opponentPointsPerGame: '114.6',
+        streak: 'W2',
+        playoffSeed: '6',
+      },
+    });
+    expect(espn.getTeamSeasonRecord).toHaveBeenCalledWith('16', 2026, 2027);
+    expect(espn.getSeasonGroup).toHaveBeenCalledWith(2026, '11');
+    expect(espn.getSeasonGroup).toHaveBeenCalledWith(2026, '6');
+  });
+
+  it('uses the current regular season once it has started', async () => {
     espn.getTeam.mockResolvedValue({
       team: {
         id: '13',
         name: 'Lakers',
         abbreviation: 'LAL',
         displayName: 'Los Angeles Lakers',
-        logos: [{ href: 'https://logo/13.png' }],
-        color: '552583',
-        alternateColor: 'fdb927',
         location: 'Los Angeles',
-        record: { items: [{ summary: '40-20' }] },
+        record: { items: [{ summary: '1-1' }] },
       },
     });
-
-    await expect(service.findOne('13')).resolves.toMatchObject({
-      id: '13',
-      displayName: 'Los Angeles Lakers',
-      logo: 'https://logo/13.png',
-      record: '40-20',
+    espn.getTeamSeasonRecord.mockResolvedValue({
+      items: [
+        {
+          type: 'total',
+          summary: '10-2',
+          stats: [{ name: 'playoffSeed', displayValue: '0', value: 0 }],
+        },
+      ],
     });
+
+    const result = await service.findOne('13');
+
+    expect(espn.getTeamSeasonRecord).toHaveBeenCalledWith('13', 2027, 2027);
+    expect(result.record.summary).toBe('10-2');
+    expect(result.record.seasonLabel).toBe('2026–27');
+    expect(result.record.playoffSeed).toBeNull();
+    expect(result.coach).toBeNull();
+  });
+
+  it('keeps the team when supplemental ESPN calls fail', async () => {
+    espn.getTeam.mockResolvedValue({
+      team: {
+        id: '13',
+        name: 'Lakers',
+        abbreviation: 'LAL',
+        displayName: 'Los Angeles Lakers',
+        location: 'Los Angeles',
+        groups: { id: '7', parent: { id: '5' } },
+        record: { items: [{ summary: '1-1' }] },
+      },
+    });
+    espn.getTeamSeasonRecord.mockRejectedValue(new Error('down'));
+    espn.getSeasonGroup.mockRejectedValue(new Error('down'));
+    espn.getTeamHeadCoach.mockRejectedValue(new Error('down'));
+
+    const result = await service.findOne('13');
+
+    expect(result.displayName).toBe('Los Angeles Lakers');
+    expect(result.record.summary).toBeNull();
+    expect(result.record.season).toBe(2027);
+    expect(result.conference).toBeNull();
+    expect(result.division).toBeNull();
+    expect(result.coach).toBeNull();
   });
 
   it('turns an upstream 404 into a NotFoundException', async () => {

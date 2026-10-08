@@ -221,6 +221,48 @@ describe('EspnService request targets', () => {
     expect(httpGet).toHaveBeenCalledWith('/teams/16/roster?season=2025');
   });
 
+  it('loads the regular-season record, group, and coach from the core API', async () => {
+    httpGet.mockImplementation((url: string) => {
+      if (url.endsWith('/teams/16/coaches')) {
+        return Promise.resolve({
+          data: {
+            items: [
+              {
+                $ref: 'https://sports.core.api.espn.pvt/v2/sports/basketball/leagues/nba/coaches/2613479?lang=en&region=us',
+              },
+            ],
+          },
+        });
+      }
+      if (url.endsWith('/coaches/2613479')) {
+        return Promise.resolve({
+          data: { firstName: 'Chris', lastName: 'Finch' },
+        });
+      }
+      return Promise.resolve({ data: { name: 'Northwest' } });
+    });
+
+    await service.getTeamSeasonRecord('16', 2026, 2027);
+    await service.getSeasonGroup(2026, '11');
+    await expect(service.getTeamHeadCoach('16')).resolves.toEqual({
+      firstName: 'Chris',
+      lastName: 'Finch',
+    });
+
+    const urls = httpGet.mock.calls.map((call: readonly unknown[]) => call[0]);
+    expect(urls).toEqual([
+      'https://sports.core.api.espn.com/v2/sports/basketball/leagues/nba/seasons/2026/types/2/teams/16/record',
+      'https://sports.core.api.espn.com/v2/sports/basketball/leagues/nba/seasons/2026/types/2/groups/11',
+      'https://sports.core.api.espn.com/v2/sports/basketball/leagues/nba/teams/16/coaches',
+      'https://sports.core.api.espn.com/v2/sports/basketball/leagues/nba/coaches/2613479',
+    ]);
+    expect(urls.some((url) => String(url).includes('espn.pvt'))).toBe(false);
+    expect(httpGet).toHaveBeenCalledWith(
+      'https://sports.core.api.espn.com/v2/sports/basketball/leagues/nba/seasons/2026/types/2/teams/16/record',
+      { timeout: 12_000 },
+    );
+  });
+
   it('requests the previous regular season while ESPN is still in preseason', async () => {
     httpGet.mockImplementation((url: string) => {
       if (url === '/teams/1/roster') {
@@ -287,6 +329,15 @@ describe('EspnService request targets', () => {
       BadRequestException,
     );
     expect(() => service.getRoster('16', 1800)).toThrow(BadRequestException);
+    expect(() => service.getTeamSeasonRecord('16', 1800, 2026)).toThrow(
+      BadRequestException,
+    );
+    expect(() => service.getSeasonGroup(2026, 'nope')).toThrow(
+      BadRequestException,
+    );
+    await expect(service.getTeamHeadCoach('../x')).rejects.toBeInstanceOf(
+      BadRequestException,
+    );
 
     await expect(
       service.get('https://evil.example', 1000),

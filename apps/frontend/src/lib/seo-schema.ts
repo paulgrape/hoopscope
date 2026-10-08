@@ -100,7 +100,7 @@ export function sportsTeamSchema({
     },
     url: absoluteUrl(`/teams/${id}`),
     ...(logo ? {logo} : {}),
-    ...(record ? {description: `Current record: ${record}`} : {})
+    ...(record ? {description: `Regular season record: ${record}`} : {})
   }
 }
 
