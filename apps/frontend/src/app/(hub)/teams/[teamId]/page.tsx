@@ -1,11 +1,11 @@
 import {PageBreadcrumb} from '@/components/layout/page-breadcrumb'
 import {JsonLd} from '@/components/seo/json-ld'
+import {TeamFacts, TeamPageHeader} from '@/components/teams/team-page-header'
 import {TeamSeasonStats} from '@/components/teams/team-season-stats'
 import {breadcrumbSchema, sportsTeamSchema} from '@/lib/seo-schema'
 import {SITE_NAME, createPageMetadata} from '@/lib/site'
 import {getTeam, getTeamSeasonStats, parseSeasonQuery} from '@/lib/teams-api'
 import type {Metadata} from 'next'
-import Image from 'next/image'
 import {notFound} from 'next/navigation'
 
 type TeamDetailsPageProps = {
@@ -65,7 +65,7 @@ export default async function TeamDetailsPage({params, searchParams}: TeamDetail
             name: team.displayName,
             location: team.location,
             logo: team.logo,
-            record: team.record
+            record: team.record?.summary ? `${team.record.summary} (${team.record.seasonLabel})` : null
           }),
           breadcrumbSchema([
             {name: 'Teams', path: '/teams'},
@@ -73,38 +73,10 @@ export default async function TeamDetailsPage({params, searchParams}: TeamDetail
           ])
         ]}
       />
-      <PageBreadcrumb
-        items={[
-          {name: 'Teams', href: '/teams'},
-          {name: team.displayName}
-        ]}
-      />
+      <PageBreadcrumb items={[{name: 'Teams', href: '/teams'}, {name: team.displayName}]} />
 
-      <header className='bg-card border-border flex flex-col items-start gap-4 rounded-xl border p-3 sm:flex-row sm:items-center sm:gap-8 sm:p-5'>
-        {team.logo ? (
-          <Image
-            src={team.logo}
-            alt={`${team.displayName} logo`}
-            className='h-20 w-20 shrink-0 object-contain sm:h-25 sm:w-25'
-            width={100}
-            height={100}
-          />
-        ) : (
-          <div className='bg-muted h-20 w-20 shrink-0 rounded-full sm:h-25 sm:w-25' />
-        )}
-        <div className='min-w-0'>
-          <p className='text-muted-foreground text-xs tracking-wider uppercase'>{team.abbreviation}</p>
-          <h1 className='text-card-foreground mt-1 text-2xl font-semibold sm:text-3xl'>{team.displayName}</h1>
-          <div className='text-muted-foreground mt-3 flex flex-col gap-1 text-sm sm:flex-row sm:flex-wrap sm:gap-4'>
-            <p>
-              <span className='text-foreground'>Location:</span> {team.location}
-            </p>
-            <p>
-              <span className='text-foreground'>Record:</span> {team.record ?? 'N/A'}
-            </p>
-          </div>
-        </div>
-      </header>
+      <TeamPageHeader team={team} />
+      <TeamFacts team={team} />
 
       <TeamSeasonStats
         regularStats={regularStats}

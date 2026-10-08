@@ -1,4 +1,7 @@
+import {getTeam, getTeamSeasonStats} from '@/lib/teams-api'
 import {beforeEach, describe, expect, it, vi} from 'vitest'
+
+import TeamDetailsPage from '../page'
 
 const notFound = vi.fn(() => {
   throw new Error('NEXT_NOT_FOUND')
@@ -25,9 +28,6 @@ vi.mock('@/components/seo/json-ld', () => ({
   JsonLd: () => null
 }))
 
-import TeamDetailsPage from '../page'
-import {getTeam, getTeamSeasonStats} from '@/lib/teams-api'
-
 const team = {
   id: '16',
   name: 'Timberwolves',
@@ -37,7 +37,24 @@ const team = {
   color: null,
   alternateColor: null,
   location: 'Minnesota',
-  record: '0-0'
+  record: {
+    season: 2026,
+    seasonLabel: '2025–26',
+    summary: '49-33',
+    home: '26-15',
+    road: '23-18',
+    divisionRecord: '9-7',
+    conferenceRecord: '31-21',
+    pointsPerGame: '118.0',
+    opponentPointsPerGame: '114.6',
+    streak: 'W2',
+    playoffSeed: '6'
+  },
+  conference: 'Western Conference',
+  division: 'Northwest',
+  venue: 'Target Center',
+  venueLocation: 'Minneapolis, MN',
+  coach: 'Chris Finch'
 }
 
 function emptyStats(season: number) {

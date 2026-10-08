@@ -15,7 +15,7 @@ export default function TeamDetailsLoading() {
       {/* Team header card */}
       <header className='bg-card border-border flex flex-col items-start gap-4 rounded-xl border p-3 sm:flex-row sm:items-center sm:gap-8 sm:p-5'>
         <Skeleton className='h-20 w-20 shrink-0 rounded-full sm:h-25 sm:w-25' />
-        <div className='flex min-w-0 flex-col gap-1 w-full max-w-sm'>
+        <div className='flex w-full max-w-sm min-w-0 flex-col gap-1'>
           <Skeleton className='h-3.5 w-10' />
           <Skeleton className='mt-1 h-8 w-56 sm:h-9 sm:w-72' />
           <div className='mt-3 flex flex-col gap-1 sm:flex-row sm:flex-wrap sm:gap-4'>
@@ -24,6 +24,18 @@ export default function TeamDetailsLoading() {
           </div>
         </div>
       </header>
+
+      <section className='bg-card border-border rounded-xl border p-3 sm:p-5'>
+        <Skeleton className='h-6 w-36 sm:h-7' />
+        <div className='mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6'>
+          {Array.from({length: 8}).map((_, index) => (
+            <Skeleton
+              key={index}
+              className='h-16 rounded-lg'
+            />
+          ))}
+        </div>
+      </section>
 
       {/* Season stats card */}
       <section className='bg-card border-border min-w-0 rounded-xl border p-3 sm:p-5'>

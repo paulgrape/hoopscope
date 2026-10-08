@@ -22,6 +22,20 @@ export interface EspnTeamCore {
   record?: {
     items?: Array<{ summary?: string }>;
   };
+  groups?: {
+    id?: string;
+    parent?: { id?: string };
+    isConference?: boolean;
+  };
+  franchise?: {
+    venue?: {
+      fullName?: string;
+      address?: {
+        city?: string;
+        state?: string;
+      };
+    };
+  };
 }
 
 export interface EspnStatusType {
