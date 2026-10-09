@@ -1,5 +1,6 @@
 'use client'
 
+import {LiveBadge, formatLiveClock} from '@/components/match/live-status'
 import {GameTimelineCardSkeleton} from '@/components/match/match-center-timeline-skeleton'
 import {SeasonTypeKicker, groupGamesBySeasonType} from '@/components/match/season-type'
 import {useScheduleSeed} from '@/components/match/use-schedule-seed'
@@ -289,9 +290,18 @@ function GameTimelineCard({game, dateKey, timeZone}: {game: ScoreboardGame; date
             team={game.awayTeam}
             score={showScore ? game.awayScore : null}
           />
-          <div className='text-muted-foreground pointer-events-none py-1 text-center text-xs font-semibold tracking-wider uppercase md:text-sm'>
-            {showScore ? 'at' : 'vs'}
-          </div>
+          {showScore ? (
+            <div
+              className='text-muted-foreground pointer-events-none py-1 text-center text-xs font-semibold tracking-wider uppercase md:text-sm'
+              aria-hidden='true'
+            >
+              –
+            </div>
+          ) : (
+            <div className='text-muted-foreground pointer-events-none py-1 text-center text-xs font-semibold tracking-wider uppercase md:text-sm'>
+              vs
+            </div>
+          )}
           <TeamPanel
             team={game.homeTeam}
             score={showScore ? game.homeScore : null}
@@ -304,12 +314,17 @@ function GameTimelineCard({game, dateKey, timeZone}: {game: ScoreboardGame; date
 }
 
 function StatusBadge({game, timeZone}: {game: ScoreboardGame; timeZone?: string}) {
+  if (game.status === 'live') {
+    return (
+      <span className='inline-flex w-fit items-center gap-2'>
+        <LiveBadge />
+        <span className='text-sm font-medium text-red-700 tabular-nums dark:text-red-300'>{formatLiveClock(game)}</span>
+      </span>
+    )
+  }
+
   const label =
-    game.status === 'live' && game.period
-      ? `${game.statusDetail} - Q${game.period}${game.clock ? ` ${game.clock}` : ''}`
-      : game.status === 'scheduled'
-        ? `Starts ${formatGameTime(new Date(game.date), timeZone)}`
-        : game.statusDetail
+    game.status === 'scheduled' ? `Starts ${formatGameTime(new Date(game.date), timeZone)}` : game.statusDetail
 
   return (
     <span className={`w-fit rounded-full border px-3 py-1 text-sm font-medium ${statusClassName(game.status)}`}>

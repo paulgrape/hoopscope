@@ -1,5 +1,6 @@
 'use client'
 
+import {LiveBadge, formatLiveClock} from '@/components/match/live-status'
 import {ScoreboardMiniCardSkeleton} from '@/components/match/scoreboard-mini-skeleton'
 import {SeasonTypeKicker, groupGamesBySeasonType} from '@/components/match/season-type'
 import {useScheduleSeed} from '@/components/match/use-schedule-seed'
@@ -289,12 +290,12 @@ function ScoreboardMiniCard({game, dateKey, timeZone}: {game: ScoreboardGame; da
       </div>
       <p
         className={cn(
-          'w-16 shrink-0 text-right text-xs',
-          game.status === 'live' ? 'font-medium text-red-600 dark:text-red-400' : 'text-muted-foreground'
+          'flex shrink-0 flex-col items-end gap-1 text-right text-xs',
+          game.status === 'live' ? 'font-medium text-red-600 dark:text-red-400' : 'text-muted-foreground w-16'
         )}
       >
-        {game.status === 'live' ? <span className='sr-only'>{game.statusDetail} - </span> : null}
-        {statusLabel(game, timeZone)}
+        {game.status === 'live' ? <LiveBadge compact /> : null}
+        <span className='tabular-nums'>{statusLabel(game, timeZone)}</span>
       </p>
     </Link>
   )
@@ -331,7 +332,7 @@ function TeamLine({team, score, leading}: {team: ScoreboardTeam | null; score: n
 
 function statusLabel(game: ScoreboardGame, timeZone?: string) {
   if (game.status === 'live') {
-    return game.period ? `Q${game.period}${game.clock ? ` ${game.clock}` : ''}` : game.statusDetail
+    return formatLiveClock(game)
   }
 
   if (game.status === 'scheduled') {

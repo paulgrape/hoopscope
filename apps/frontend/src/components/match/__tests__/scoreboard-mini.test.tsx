@@ -125,7 +125,9 @@ describe('ScoreboardMini', () => {
 
     render(<ScoreboardMini initialDate='2026-01-15' />)
 
-    expect(await screen.findByText(/Q3 4:21/)).toHaveTextContent('In Progress - Q3 4:21')
+    expect(await screen.findByText('Q3 4:21')).toBeInTheDocument()
+    expect(screen.getByText('Live')).toBeInTheDocument()
+    expect(screen.queryByText('In Progress - Q3 4:21')).not.toBeInTheDocument()
     expect(getSchedule).toHaveBeenCalledWith('2026-01-15', 0)
   })
 
