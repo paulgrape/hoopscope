@@ -1,6 +1,7 @@
 'use client'
 
 import {type BoxScoreLine, BoxScoreTable as BoxScoreTableBase} from '@/components/match/box-score-table'
+import {LiveBadge, formatLiveClock} from '@/components/match/live-status'
 import {SeasonTypeKicker} from '@/components/match/season-type'
 import {Tabs, TabsContent, TabsList, TabsTrigger} from '@/components/ui/tabs'
 import {
@@ -83,9 +84,18 @@ export function MatchSummary({initialSummary}: MatchSummaryProps) {
             team={summary.awayTeam}
             score={showScore ? summary.awayScore : null}
           />
-          <div className='text-muted-foreground py-0.5 text-center text-xs font-semibold tracking-wider uppercase md:text-sm'>
-            {summary.status === 'scheduled' ? 'vs' : 'at'}
-          </div>
+          {summary.status === 'scheduled' ? (
+            <div className='text-muted-foreground py-0.5 text-center text-xs font-semibold tracking-wider uppercase md:text-sm'>
+              vs
+            </div>
+          ) : (
+            <div
+              className='text-muted-foreground py-0.5 text-center text-xs font-semibold tracking-wider uppercase md:text-sm'
+              aria-hidden='true'
+            >
+              –
+            </div>
+          )}
           <TeamScorePanel
             team={summary.homeTeam}
             score={showScore ? summary.homeScore : null}
@@ -133,21 +143,26 @@ export function MatchSummary({initialSummary}: MatchSummaryProps) {
 }
 
 function StatusPill({summary}: {summary: GameSummary}) {
-  const label =
-    summary.status === 'live' && summary.period
-      ? `${summary.statusDetail}${summary.clock ? ` · ${summary.clock}` : ''}`
-      : summary.statusDetail
+  if (summary.status === 'live') {
+    return (
+      <span className='inline-flex w-fit items-center gap-2'>
+        <LiveBadge />
+        <span className='text-sm font-medium text-red-600 tabular-nums dark:text-red-300'>
+          {formatLiveClock(summary)}
+        </span>
+      </span>
+    )
+  }
 
   return (
     <span
       className={cn(
         'w-fit rounded-full border px-3 py-1 text-sm font-medium',
-        summary.status === 'live' && 'border-red-500/30 bg-red-500/10 text-red-600 dark:text-red-300',
         summary.status === 'final' && 'border-border bg-muted text-muted-foreground',
         summary.status === 'scheduled' && 'border-sky-500/30 bg-sky-500/10 text-sky-700 dark:text-sky-300'
       )}
     >
-      {label}
+      {summary.statusDetail}
     </span>
   )
 }

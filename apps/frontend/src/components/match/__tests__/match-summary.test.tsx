@@ -132,6 +132,8 @@ describe('MatchSummary', () => {
 
     expect(screen.getByText('TD Garden')).toBeInTheDocument()
     expect(screen.getByText('Final')).toBeInTheDocument()
+    expect(screen.getByText('–')).toHaveAttribute('aria-hidden', 'true')
+    expect(screen.queryByText('at')).not.toBeInTheDocument()
     expect(screen.getAllByText('LAL').length).toBeGreaterThan(0)
     expect(screen.getAllByText('BOS').length).toBeGreaterThan(0)
     expect(screen.getAllByText('104').length).toBeGreaterThan(0)
@@ -159,8 +161,47 @@ describe('MatchSummary', () => {
     )
 
     expect(screen.getByText('vs')).toBeInTheDocument()
+    expect(screen.queryByText('–')).not.toBeInTheDocument()
     expect(screen.queryByText('110')).not.toBeInTheDocument()
     expect(screen.queryByText('104')).not.toBeInTheDocument()
+  })
+
+  it('shows a live badge and one clock while the game is in progress', () => {
+    render(
+      <MatchSummary
+        initialSummary={makeSummary({
+          status: 'live',
+          statusDetail: '6:44 - 4th',
+          period: 4,
+          clock: '6:44',
+          homeScore: 91,
+          awayScore: 114
+        })}
+      />
+    )
+
+    expect(screen.getByText('Live')).toBeInTheDocument()
+    expect(screen.getByText('Q4 6:44')).toBeInTheDocument()
+    expect(screen.queryByText('6:44 - 4th · 6:44')).not.toBeInTheDocument()
+    expect(screen.queryByText('6:44 - 4th')).not.toBeInTheDocument()
+    expect(screen.getByText('–')).toBeInTheDocument()
+  })
+
+  it('keeps a break label when the clock is stopped', () => {
+    render(
+      <MatchSummary
+        initialSummary={makeSummary({
+          status: 'live',
+          statusDetail: 'Halftime',
+          period: 2,
+          clock: '0:00'
+        })}
+      />
+    )
+
+    expect(screen.getByText('Live')).toBeInTheDocument()
+    expect(screen.getByText('Halftime')).toBeInTheDocument()
+    expect(screen.queryByText('Q2 0:00')).not.toBeInTheDocument()
   })
 
   it('renders box score tabs and player links', async () => {
