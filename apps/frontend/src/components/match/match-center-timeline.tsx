@@ -2,6 +2,7 @@
 
 import {LiveBadge, formatLiveClock} from '@/components/match/live-status'
 import {GameTimelineCardSkeleton} from '@/components/match/match-center-timeline-skeleton'
+import {sortScoreboardGames} from '@/components/match/scoreboard-order'
 import {SeasonTypeKicker, groupGamesBySeasonType} from '@/components/match/season-type'
 import {useScheduleSeed} from '@/components/match/use-schedule-seed'
 import {Button} from '@/components/ui/button'
@@ -165,24 +166,15 @@ export function MatchCenterTimeline({
           </Button>
         </div>
 
-        <div className='flex flex-wrap items-center gap-2'>
+        {selectedDate !== today ? (
           <Button
             type='button'
             variant='outline'
-            disabled={selectedDate === today}
             onClick={() => setSelectedDate(today)}
           >
             Today
           </Button>
-          <Button
-            type='button'
-            variant='outline'
-            disabled={isFindingLastGame || games.length > 0}
-            onClick={() => void jumpToLastGameDay()}
-          >
-            {isFindingLastGame ? 'Finding…' : 'Last game day'}
-          </Button>
-        </div>
+        ) : null}
       </div>
 
       <p className='text-muted-foreground text-sm'>
@@ -233,7 +225,7 @@ export function MatchCenterTimeline({
             </Button>
           </div>
         ) : (
-          groupGamesBySeasonType(games).map((group, index) => (
+          groupGamesBySeasonType(sortScoreboardGames(games)).map((group, index) => (
             <div
               key={`${group.seasonType ?? 'none'}-${index}`}
               className='flex flex-col gap-3 sm:gap-4'

@@ -104,8 +104,58 @@ describe('MatchCenterTimeline', () => {
     expect(screen.getByText('TD Garden')).toBeInTheDocument()
     expect(screen.getAllByText('104').length).toBeGreaterThan(0)
     expect(screen.getAllByText('110').length).toBeGreaterThan(0)
-    expect(screen.getByRole('button', {name: 'Last game day'})).toBeDisabled()
+    expect(screen.queryByRole('button', {name: 'Last game day'})).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', {name: 'Today'})).not.toBeInTheDocument()
     expect(getSchedule).not.toHaveBeenCalled()
+  })
+
+  it('lists live games, then scheduled games, then finals', () => {
+    render(
+      <MatchCenterTimeline
+        initialDate='2026-01-15'
+        initialOffsetMinutes={0}
+        initialGames={[
+          makeGame({
+            id: 'final',
+            shortName: 'EARLY @ FINAL',
+            status: 'final',
+            date: '2026-01-15T00:00:00.000Z'
+          }),
+          makeGame({
+            id: 'live-late',
+            shortName: 'LATE @ LIVE',
+            status: 'live',
+            statusDetail: '6:44 - 4th',
+            period: 4,
+            clock: '6:44',
+            date: '2026-01-15T03:00:00.000Z'
+          }),
+          makeGame({
+            id: 'scheduled',
+            shortName: 'MID @ SOON',
+            status: 'scheduled',
+            statusDetail: 'Scheduled',
+            date: '2026-01-15T02:00:00.000Z'
+          }),
+          makeGame({
+            id: 'live-early',
+            shortName: 'EARLY @ LIVE',
+            status: 'live',
+            statusDetail: '12:00 - 1st',
+            period: 1,
+            clock: '12:00',
+            date: '2026-01-15T01:00:00.000Z'
+          })
+        ]}
+      />
+    )
+
+    expect(screen.getAllByRole('link', {name: /^View /}).map(link => link.getAttribute('aria-label'))).toEqual([
+      'View EARLY @ LIVE',
+      'View LATE @ LIVE',
+      'View MID @ SOON',
+      'View EARLY @ FINAL'
+    ])
   })
 
   it('shows the empty state when a date has no games', async () => {
@@ -122,7 +172,7 @@ describe('MatchCenterTimeline', () => {
     await waitFor(() => {
       expect(screen.getByText('No NBA games for this local date.')).toBeInTheDocument()
     })
-    expect(screen.getAllByRole('button', {name: 'Last game day'})[0]).toBeEnabled()
+    expect(screen.getByRole('button', {name: 'Last game day'})).toBeEnabled()
   })
 
   it('shows an alert when schedule loading fails', async () => {
@@ -153,7 +203,7 @@ describe('MatchCenterTimeline', () => {
     )
 
     await screen.findByText('No NBA games for this local date.')
-    await userEvent.click(screen.getAllByRole('button', {name: 'Last game day'})[0])
+    await userEvent.click(screen.getByRole('button', {name: 'Last game day'}))
 
     expect(getNearestScheduleDate).toHaveBeenCalledWith('2026-01-16', 0, 'before')
     await waitFor(() => {
