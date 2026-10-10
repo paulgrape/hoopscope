@@ -11,10 +11,7 @@ export function MatchCenterTimelineSkeleton() {
           <Skeleton className='h-8 w-44 rounded-lg' />
           <Skeleton className='size-8 rounded-lg' />
         </div>
-        <div className='flex flex-wrap items-center gap-2'>
-          <Skeleton className='h-8 w-20 rounded-lg' />
-          <Skeleton className='h-8 w-32 rounded-lg' />
-        </div>
+        <Skeleton className='h-8 w-20 rounded-lg' />
       </div>
 
       <Skeleton className='h-5 w-56' />

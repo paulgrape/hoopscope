@@ -2,6 +2,7 @@
 
 import {LiveBadge, formatLiveClock} from '@/components/match/live-status'
 import {ScoreboardMiniCardSkeleton} from '@/components/match/scoreboard-mini-skeleton'
+import {sortScoreboardGames} from '@/components/match/scoreboard-order'
 import {SeasonTypeKicker, groupGamesBySeasonType} from '@/components/match/season-type'
 import {useScheduleSeed} from '@/components/match/use-schedule-seed'
 import {Button} from '@/components/ui/button'
@@ -170,26 +171,16 @@ export function ScoreboardMini({
           </Button>
         </div>
 
-        <div className='flex items-center gap-1.5'>
+        {selectedDate !== today ? (
           <Button
             type='button'
             variant='outline'
             size='sm'
-            disabled={selectedDate === today}
             onClick={() => setSelectedDate(today)}
           >
             Today
           </Button>
-          <Button
-            type='button'
-            variant='outline'
-            size='sm'
-            disabled={isFindingLastGame || games.length > 0}
-            onClick={() => void jumpToLastGameDay()}
-          >
-            {isFindingLastGame ? 'Finding…' : 'Last game day'}
-          </Button>
-        </div>
+        ) : null}
       </div>
 
       <p
@@ -228,7 +219,7 @@ export function ScoreboardMini({
       ) : (
         <>
           <div className='flex min-w-0 flex-col gap-4'>
-            {groupGamesBySeasonType(games).map((group, index) => (
+            {groupGamesBySeasonType(sortScoreboardGames(games)).map((group, index) => (
               <section
                 key={`${group.seasonType ?? 'none'}-${index}`}
                 className='flex min-w-0 flex-col gap-2'
@@ -274,36 +265,57 @@ function ScoreboardMiniCard({game, dateKey, timeZone}: {game: ScoreboardGame; da
     <Link
       href={`/match-center/${game.id}?date=${dateKey}`}
       aria-label={`View ${game.shortName ?? game.name}`}
-      className='bg-card border-border hover:border-foreground/20 flex h-full min-w-0 items-center gap-3 rounded-xl border px-3 py-2.5 transition'
+      className={cn(
+        'bg-card border-border hover:border-foreground/20 grid h-full min-w-0 items-center gap-x-3 gap-y-1 rounded-xl border px-3 py-2.5 transition',
+        showScore ? 'grid-cols-[minmax(0,1fr)_auto_auto]' : 'grid-cols-[minmax(0,1fr)_auto]'
+      )}
     >
-      <div className='flex min-w-0 flex-1 flex-col gap-1'>
-        <TeamLine
-          team={game.awayTeam}
-          score={showScore ? game.awayScore : null}
-          leading={awayLeads}
-        />
-        <TeamLine
-          team={game.homeTeam}
-          score={showScore ? game.homeScore : null}
-          leading={homeLeads}
-        />
-      </div>
+      <TeamLine
+        team={game.awayTeam}
+        leading={awayLeads}
+        row={1}
+      />
+      <TeamLine
+        team={game.homeTeam}
+        leading={homeLeads}
+        row={2}
+      />
       <p
         className={cn(
-          'flex shrink-0 flex-col items-end gap-1 text-right text-xs',
-          game.status === 'live' ? 'font-medium text-red-600 dark:text-red-400' : 'text-muted-foreground w-16'
+          'col-start-2 row-span-2 row-start-1 flex flex-col items-center justify-center gap-1 self-center text-center text-xs',
+          game.status === 'live' ? 'font-medium text-red-600 dark:text-red-400' : 'text-muted-foreground'
         )}
       >
         {game.status === 'live' ? <LiveBadge compact /> : null}
-        <span className='tabular-nums'>{statusLabel(game, timeZone)}</span>
+        <span className='whitespace-nowrap tabular-nums'>{statusLabel(game, timeZone)}</span>
       </p>
+      {showScore ? (
+        <>
+          <span
+            className={cn(
+              'col-start-3 row-start-1 pl-6 text-right text-lg tabular-nums',
+              awayLeads ? 'font-semibold' : 'font-medium'
+            )}
+          >
+            {game.awayScore ?? '—'}
+          </span>
+          <span
+            className={cn(
+              'col-start-3 row-start-2 pl-6 text-right text-lg tabular-nums',
+              homeLeads ? 'font-semibold' : 'font-medium'
+            )}
+          >
+            {game.homeScore ?? '—'}
+          </span>
+        </>
+      ) : null}
     </Link>
   )
 }
 
-function TeamLine({team, score, leading}: {team: ScoreboardTeam | null; score: number | null; leading: boolean}) {
+function TeamLine({team, leading, row}: {team: ScoreboardTeam | null; leading: boolean; row: 1 | 2}) {
   return (
-    <div className='flex min-w-0 items-center gap-2'>
+    <div className={cn('col-start-1 flex min-w-0 items-center gap-2', row === 1 ? 'row-start-1' : 'row-start-2')}>
       {team?.logo ? (
         <Image
           src={team.logo}
@@ -321,11 +333,6 @@ function TeamLine({team, score, leading}: {team: ScoreboardTeam | null; score: n
       <span className='text-muted-foreground hidden min-w-0 flex-1 truncate text-sm sm:block'>
         {team?.displayName ?? 'To be determined'}
       </span>
-      {score !== null ? (
-        <span className={cn('ml-auto shrink-0 text-lg tabular-nums', leading ? 'font-semibold' : 'font-medium')}>
-          {score}
-        </span>
-      ) : null}
     </div>
   )
 }
