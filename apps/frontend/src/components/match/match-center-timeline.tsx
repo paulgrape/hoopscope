@@ -177,10 +177,6 @@ export function MatchCenterTimeline({
         ) : null}
       </div>
 
-      <p className='text-muted-foreground text-sm'>
-        {timeZone ? `Times are shown in ${timeZone}.` : 'Times are shown in your local time.'}
-      </p>
-
       <div className='relative flex min-w-0 flex-col gap-3 sm:gap-4'>
         <div className='bg-border absolute top-2 bottom-2 left-4 hidden w-px md:block' />
 
@@ -384,7 +380,6 @@ function formatGameTime(date: Date, timeZone?: string) {
   return new Intl.DateTimeFormat(DISPLAY_LOCALE, {
     hour: 'numeric',
     minute: '2-digit',
-    timeZoneName: 'short',
     ...(timeZone ? {timeZone} : {})
   }).format(date)
 }

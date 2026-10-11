@@ -147,7 +147,7 @@ describe('MatchSummary', () => {
       <MatchSummary
         initialSummary={makeSummary({
           status: 'scheduled',
-          statusDetail: 'Scheduled',
+          statusDetail: '7:00 PM EDT',
           homeScore: null,
           awayScore: null,
           periodScores: {home: [], away: []},
@@ -160,6 +160,12 @@ describe('MatchSummary', () => {
       />
     )
 
+    const start = new Intl.DateTimeFormat('en-US', {hour: 'numeric', minute: '2-digit'}).format(
+      new Date('2026-01-15T00:00:00.000Z')
+    )
+
+    expect(screen.getByText(`Starts ${start}`)).toBeInTheDocument()
+    expect(screen.queryByText('7:00 PM EDT')).not.toBeInTheDocument()
     expect(screen.getByText('vs')).toBeInTheDocument()
     expect(screen.queryByText('–')).not.toBeInTheDocument()
     expect(screen.queryByText('110')).not.toBeInTheDocument()

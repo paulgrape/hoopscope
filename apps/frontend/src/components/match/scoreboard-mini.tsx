@@ -353,7 +353,6 @@ function formatGameTime(date: Date, timeZone?: string) {
   return new Intl.DateTimeFormat(DISPLAY_LOCALE, {
     hour: 'numeric',
     minute: '2-digit',
-    timeZoneName: 'short',
     ...(timeZone ? {timeZone} : {})
   }).format(date)
 }

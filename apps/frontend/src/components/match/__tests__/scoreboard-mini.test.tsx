@@ -144,7 +144,7 @@ describe('ScoreboardMini', () => {
             id: 'scheduled',
             shortName: 'MID @ SOON',
             status: 'scheduled',
-            statusDetail: 'Scheduled',
+            statusDetail: '7:00 PM EDT',
             date: '2026-01-15T02:00:00.000Z'
           }),
           makeGame({
@@ -160,12 +160,18 @@ describe('ScoreboardMini', () => {
       />
     )
 
+    const start = new Intl.DateTimeFormat('en-US', {hour: 'numeric', minute: '2-digit'}).format(
+      new Date('2026-01-15T02:00:00.000Z')
+    )
+
     expect(screen.getAllByRole('link').map(link => link.getAttribute('aria-label'))).toEqual([
       'View EARLY @ LIVE',
       'View LATE @ LIVE',
       'View MID @ SOON',
       'View EARLY @ FINAL'
     ])
+    expect(screen.getByText(start)).toBeInTheDocument()
+    expect(screen.queryByText('7:00 PM EDT')).not.toBeInTheDocument()
   })
 
   it('shows the live period and clock while a game is in progress', async () => {
