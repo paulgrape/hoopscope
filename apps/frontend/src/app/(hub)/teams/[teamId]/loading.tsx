@@ -27,8 +27,8 @@ export default function TeamDetailsLoading() {
 
       <section className='bg-card border-border rounded-xl border p-3 sm:p-5'>
         <Skeleton className='h-6 w-36 sm:h-7' />
-        <div className='mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6'>
-          {Array.from({length: 8}).map((_, index) => (
+        <div className='mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5'>
+          {Array.from({length: 5}).map((_, index) => (
             <Skeleton
               key={index}
               className='h-16 rounded-lg'

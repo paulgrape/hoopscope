@@ -150,12 +150,18 @@ describe('MatchCenterTimeline', () => {
       />
     )
 
+    const start = new Intl.DateTimeFormat('en-US', {hour: 'numeric', minute: '2-digit'}).format(
+      new Date('2026-01-15T02:00:00.000Z')
+    )
+
     expect(screen.getAllByRole('link', {name: /^View /}).map(link => link.getAttribute('aria-label'))).toEqual([
       'View EARLY @ LIVE',
       'View LATE @ LIVE',
       'View MID @ SOON',
       'View EARLY @ FINAL'
     ])
+    expect(screen.getByText(`Starts ${start}`)).toBeInTheDocument()
+    expect(screen.queryByText(/Times are shown/)).not.toBeInTheDocument()
   })
 
   it('shows the empty state when a date has no games', async () => {

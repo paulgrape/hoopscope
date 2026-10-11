@@ -74,28 +74,30 @@ describe('TeamPageHeader', () => {
 })
 
 describe('TeamFacts', () => {
-  it('lists regular-season facts and hides empty values', () => {
-    render(
-      <TeamFacts
-        team={makeTeam({
-          record: {...makeTeam().record, playoffSeed: null},
-          coach: null
-        })}
-      />
-    )
+  it('lists conference, division, arena, location, and head coach', () => {
+    render(<TeamFacts team={makeTeam()} />)
 
     expect(screen.getByRole('heading', {name: 'Team details'})).toBeInTheDocument()
     expect(screen.getByText('Western Conference')).toBeInTheDocument()
     expect(screen.getByText('Northwest')).toBeInTheDocument()
     expect(screen.getByText('Target Center')).toBeInTheDocument()
     expect(screen.getByText('Minneapolis, MN')).toBeInTheDocument()
-    expect(screen.getByText('26-15')).toBeInTheDocument()
-    expect(screen.getByText('23-18')).toBeInTheDocument()
-    expect(screen.getByText('118.0')).toBeInTheDocument()
-    expect(screen.getByText('114.6')).toBeInTheDocument()
+    expect(screen.getByText('Chris Finch')).toBeInTheDocument()
+    expect(screen.queryByText('Home')).not.toBeInTheDocument()
+    expect(screen.queryByText('Road')).not.toBeInTheDocument()
+    expect(screen.queryByText('Division record')).not.toBeInTheDocument()
+    expect(screen.queryByText('Conference record')).not.toBeInTheDocument()
+    expect(screen.queryByText('PPG')).not.toBeInTheDocument()
+    expect(screen.queryByText('Opponent PPG')).not.toBeInTheDocument()
+    expect(screen.queryByText('Streak')).not.toBeInTheDocument()
     expect(screen.queryByText('Playoff seed')).not.toBeInTheDocument()
+  })
+
+  it('hides empty facts', () => {
+    render(<TeamFacts team={makeTeam({coach: null})} />)
+
     expect(screen.queryByText('Head coach')).not.toBeInTheDocument()
-    expect(screen.queryByText('1-1')).not.toBeInTheDocument()
+    expect(screen.getByText('Target Center')).toBeInTheDocument()
   })
 
   it('renders nothing when every fact is empty', () => {

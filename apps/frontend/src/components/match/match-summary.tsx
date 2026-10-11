@@ -60,8 +60,7 @@ export function MatchSummary({initialSummary}: MatchSummaryProps) {
     month: 'long',
     day: 'numeric',
     hour: 'numeric',
-    minute: '2-digit',
-    timeZoneName: 'short'
+    minute: '2-digit'
   }).format(new Date(summary.date))
 
   return (
@@ -154,6 +153,9 @@ function StatusPill({summary}: {summary: GameSummary}) {
     )
   }
 
+  const label =
+    summary.status === 'scheduled' ? `Starts ${formatStartTime(new Date(summary.date))}` : summary.statusDetail
+
   return (
     <span
       className={cn(
@@ -162,9 +164,16 @@ function StatusPill({summary}: {summary: GameSummary}) {
         summary.status === 'scheduled' && 'border-sky-500/30 bg-sky-500/10 text-sky-700 dark:text-sky-300'
       )}
     >
-      {summary.statusDetail}
+      {label}
     </span>
   )
+}
+
+function formatStartTime(date: Date) {
+  return new Intl.DateTimeFormat(DISPLAY_LOCALE, {
+    hour: 'numeric',
+    minute: '2-digit'
+  }).format(date)
 }
 
 function TeamScorePanel({

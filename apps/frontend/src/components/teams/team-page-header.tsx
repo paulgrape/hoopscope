@@ -42,14 +42,6 @@ export function TeamFacts({team}: TeamPageHeaderProps) {
     {label: 'Division', value: team.division},
     {label: 'Arena', value: team.venue},
     {label: 'Location', value: team.venueLocation},
-    {label: 'Home', value: team.record?.home},
-    {label: 'Road', value: team.record?.road},
-    {label: 'Division record', value: team.record?.divisionRecord},
-    {label: 'Conference record', value: team.record?.conferenceRecord},
-    {label: 'PPG', value: team.record?.pointsPerGame},
-    {label: 'Opponent PPG', value: team.record?.opponentPointsPerGame},
-    {label: 'Streak', value: team.record?.streak},
-    {label: 'Playoff seed', value: team.record?.playoffSeed},
     {label: 'Head coach', value: team.coach}
   ].filter((item): item is {label: string; value: string} => Boolean(item.value))
 
@@ -58,7 +50,7 @@ export function TeamFacts({team}: TeamPageHeaderProps) {
   return (
     <section className='bg-card border-border rounded-xl border p-3 sm:p-5'>
       <h2 className='text-card-foreground text-lg font-semibold sm:text-xl'>Team details</h2>
-      <dl className='mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6'>
+      <dl className='mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5'>
         {items.map(item => (
           <div
             key={item.label}
