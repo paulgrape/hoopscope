@@ -1,5 +1,6 @@
 'use client'
 
+import {ChangedValue} from '@/components/match/changed-value'
 import {LiveBadge, formatLiveClock} from '@/components/match/live-status'
 import {GameTimelineCardSkeleton} from '@/components/match/match-center-timeline-skeleton'
 import {sortScoreboardGames} from '@/components/match/scoreboard-order'
@@ -19,6 +20,7 @@ import {
   getSchedule,
   parseLocalDateKey
 } from '@/lib/games-api'
+import {cn} from '@/lib/utils'
 import {ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon} from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -302,21 +304,30 @@ function GameTimelineCard({game, dateKey, timeZone}: {game: ScoreboardGame; date
 }
 
 function StatusBadge({game, timeZone}: {game: ScoreboardGame; timeZone?: string}) {
+  const label =
+    game.status === 'live'
+      ? formatLiveClock(game)
+      : game.status === 'scheduled'
+        ? `Starts ${formatGameTime(new Date(game.date), timeZone)}`
+        : game.statusDetail
+
   if (game.status === 'live') {
     return (
       <span className='inline-flex w-fit items-center gap-2'>
         <LiveBadge />
-        <span className='text-sm font-medium text-red-700 tabular-nums dark:text-red-300'>{formatLiveClock(game)}</span>
+        <ChangedValue
+          value={label}
+          className='text-sm font-medium text-red-700 dark:text-red-300'
+        >
+          {label}
+        </ChangedValue>
       </span>
     )
   }
 
-  const label =
-    game.status === 'scheduled' ? `Starts ${formatGameTime(new Date(game.date), timeZone)}` : game.statusDetail
-
   return (
     <span className={`w-fit rounded-full border px-3 py-1 text-sm font-medium ${statusClassName(game.status)}`}>
-      {label}
+      <ChangedValue value={label}>{label}</ChangedValue>
     </span>
   )
 }
@@ -346,9 +357,21 @@ function TeamPanel({
       <div className='min-w-0 flex-1'>
         <p className='text-card-foreground font-semibold'>{team?.abbreviation ?? 'TBD'}</p>
         <p className='text-muted-foreground truncate text-sm'>{team?.displayName ?? 'To be determined'}</p>
-        {score !== null ? <p className='mt-2 hidden text-3xl font-semibold md:block'>{score}</p> : null}
+        {score !== null ? (
+          <p className='mt-2 hidden text-3xl font-semibold tabular-nums md:block'>
+            <span className={cn('inline-block w-[4.5ch] text-right', align === 'right' && 'md:text-left')}>
+              <ChangedValue value={score}>{score}</ChangedValue>
+            </span>
+          </p>
+        ) : null}
       </div>
-      {score !== null ? <p className='shrink-0 text-2xl font-semibold md:hidden'>{score}</p> : null}
+      {score !== null ? (
+        <p className='shrink-0 text-2xl font-semibold tabular-nums md:hidden'>
+          <span className='inline-block w-[4.5ch] text-right'>
+            <ChangedValue value={score}>{score}</ChangedValue>
+          </span>
+        </p>
+      ) : null}
     </>
   )
 

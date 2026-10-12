@@ -10,6 +10,17 @@ import {periodLabel, teamAccent} from './replay-utils'
 
 const SCROLL_HINT_OFFSET = 160
 
+type FeedMotion = {
+  length: number
+  arrivingId: string | null
+}
+
+/** The newest play animates only when the feed grows by exactly one entry. */
+export function arrivingPlayId(previousLength: number, plays: {id: string}[]): string | null {
+  if (plays.length !== previousLength + 1) return null
+  return plays[plays.length - 1]?.id ?? null
+}
+
 type FeedFilter = 'all' | 'scoring' | 'away' | 'home'
 
 type ReplayFeedProps = {
@@ -22,7 +33,12 @@ type ReplayFeedProps = {
 export function ReplayFeed({plays, homeTeam, awayTeam, onSelectPlay}: ReplayFeedProps) {
   const [filter, setFilter] = useState<FeedFilter>('all')
   const [showScrollTop, setShowScrollTop] = useState(false)
+  const [feedMotion, setFeedMotion] = useState<FeedMotion>({length: plays.length, arrivingId: null})
   const listRef = useRef<HTMLOListElement | null>(null)
+
+  if (plays.length !== feedMotion.length) {
+    setFeedMotion({length: plays.length, arrivingId: arrivingPlayId(feedMotion.length, plays)})
+  }
 
   const filters: {value: FeedFilter; label: string}[] = [
     {value: 'all', label: 'All'},
@@ -98,7 +114,14 @@ export function ReplayFeed({plays, homeTeam, awayTeam, onSelectPlay}: ReplayFeed
             const team = play.teamId === homeTeam.id ? homeTeam : play.teamId === awayTeam.id ? awayTeam : null
 
             return (
-              <li key={play.id}>
+              <li
+                key={play.id}
+                className={cn(play.id === feedMotion.arrivingId && 'animate-text-arrive')}
+                onAnimationEnd={event => {
+                  if (event.target !== event.currentTarget) return
+                  setFeedMotion(current => (current.arrivingId === play.id ? {...current, arrivingId: null} : current))
+                }}
+              >
                 {showPeriodHeader ? (
                   <p className='text-muted-foreground bg-card sticky top-0 z-10 py-1 text-xs font-medium tracking-wider uppercase'>
                     {periodLabel(play.period)}

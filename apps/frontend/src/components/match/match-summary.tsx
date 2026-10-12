@@ -1,6 +1,7 @@
 'use client'
 
 import {type BoxScoreLine, BoxScoreTable as BoxScoreTableBase} from '@/components/match/box-score-table'
+import {ChangedValue} from '@/components/match/changed-value'
 import {LiveBadge, formatLiveClock} from '@/components/match/live-status'
 import {SeasonTypeKicker} from '@/components/match/season-type'
 import {Tabs, TabsContent, TabsList, TabsTrigger} from '@/components/ui/tabs'
@@ -55,6 +56,10 @@ export function MatchSummary({initialSummary}: MatchSummaryProps) {
   }, [summary.id, summary.status])
 
   const showScore = summary.status !== 'scheduled'
+  const scoreAnnouncement =
+    summary.awayScore != null && summary.homeScore != null
+      ? `${summary.awayTeam?.displayName ?? 'Away'} ${summary.awayScore}, ${summary.homeTeam?.displayName ?? 'Home'} ${summary.homeScore}.`
+      : ''
   const tipLabel = new Intl.DateTimeFormat(DISPLAY_LOCALE, {
     weekday: 'short',
     month: 'long',
@@ -65,6 +70,12 @@ export function MatchSummary({initialSummary}: MatchSummaryProps) {
 
   return (
     <div className='flex flex-col gap-6 sm:gap-8'>
+      <p
+        className='sr-only'
+        aria-live='polite'
+      >
+        {scoreAnnouncement}
+      </p>
       <section className='bg-card border-border rounded-xl border p-4 sm:p-6'>
         <div className='flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between'>
           <div>
@@ -142,19 +153,26 @@ export function MatchSummary({initialSummary}: MatchSummaryProps) {
 }
 
 function StatusPill({summary}: {summary: GameSummary}) {
+  const label =
+    summary.status === 'live'
+      ? formatLiveClock(summary)
+      : summary.status === 'scheduled'
+        ? `Starts ${formatStartTime(new Date(summary.date))}`
+        : summary.statusDetail
+
   if (summary.status === 'live') {
     return (
       <span className='inline-flex w-fit items-center gap-2'>
         <LiveBadge />
-        <span className='text-sm font-medium text-red-600 tabular-nums dark:text-red-300'>
-          {formatLiveClock(summary)}
-        </span>
+        <ChangedValue
+          value={label}
+          className='text-sm font-medium text-red-600 dark:text-red-300'
+        >
+          {label}
+        </ChangedValue>
       </span>
     )
   }
-
-  const label =
-    summary.status === 'scheduled' ? `Starts ${formatStartTime(new Date(summary.date))}` : summary.statusDetail
 
   return (
     <span
@@ -164,7 +182,7 @@ function StatusPill({summary}: {summary: GameSummary}) {
         summary.status === 'scheduled' && 'border-sky-500/30 bg-sky-500/10 text-sky-700 dark:text-sky-300'
       )}
     >
-      {label}
+      <ChangedValue value={label}>{label}</ChangedValue>
     </span>
   )
 }
@@ -209,7 +227,14 @@ function TeamScorePanel({
 
   const scoreEl =
     score !== null ? (
-      <p className='shrink-0 text-3xl leading-none font-semibold tabular-nums md:text-5xl'>{score}</p>
+      <span
+        className={cn(
+          'inline-block w-[4.5ch] shrink-0 text-right text-3xl leading-none font-semibold md:text-5xl',
+          align === 'right' && 'md:text-left'
+        )}
+      >
+        <ChangedValue value={score}>{score}</ChangedValue>
+      </span>
     ) : null
 
   const className = cn(
@@ -301,10 +326,12 @@ function LineScoreRow({
           key={index}
           className='px-1.5 py-2 text-center tabular-nums sm:px-2'
         >
-          {periods[index] ?? '—'}
+          <ChangedValue value={periods[index] ?? '—'}>{periods[index] ?? '—'}</ChangedValue>
         </td>
       ))}
-      <td className='px-3 py-2 text-center font-semibold tabular-nums'>{total ?? '—'}</td>
+      <td className='px-3 py-2 text-center font-semibold tabular-nums'>
+        <ChangedValue value={total ?? '—'}>{total ?? '—'}</ChangedValue>
+      </td>
     </tr>
   )
 }

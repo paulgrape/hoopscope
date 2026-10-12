@@ -1,3 +1,4 @@
+import {ChangedValue} from '@/components/match/changed-value'
 import type {GameTeam, LiveGameState} from '@/lib/games-api'
 
 import {type PeriodScoreRow, periodScoreRowsFromTotals, periodScoresFromPlays} from './replay-utils'
@@ -88,10 +89,14 @@ function LineScoreRow({
           key={row.period}
           className='px-2 py-2 text-center tabular-nums'
         >
-          {side === 'home' ? row.home : row.away}
+          <ChangedValue value={side === 'home' ? row.home : row.away}>
+            {side === 'home' ? row.home : row.away}
+          </ChangedValue>
         </td>
       ))}
-      <td className='px-3 py-2 text-center font-semibold tabular-nums'>{total}</td>
+      <td className='px-3 py-2 text-center font-semibold tabular-nums'>
+        <ChangedValue value={total}>{total}</ChangedValue>
+      </td>
     </tr>
   )
 }

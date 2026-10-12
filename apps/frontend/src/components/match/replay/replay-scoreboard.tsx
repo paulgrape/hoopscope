@@ -1,3 +1,4 @@
+import {ChangedValue} from '@/components/match/changed-value'
 import type {GameTeam, LiveGameState} from '@/lib/games-api'
 import {cn} from '@/lib/utils'
 import Image from 'next/image'
@@ -64,7 +65,14 @@ export function ReplayScoreboard({game, pace, connectionStatus}: ReplayScoreboar
         />
       </div>
 
-      <p className='text-muted-foreground border-border mt-4 truncate border-t pt-3 text-sm'>{game.lastPlay}</p>
+      <p className='text-muted-foreground border-border mt-4 truncate border-t pt-3 text-sm'>
+        <ChangedValue
+          value={game.lastPlay}
+          variant='text'
+        >
+          {game.lastPlay}
+        </ChangedValue>
+      </p>
     </div>
   )
 }
@@ -146,7 +154,14 @@ function TeamRow({
         <p className={cn('text-muted-foreground text-xs sm:text-sm', truncateName && 'truncate')}>{team.name}</p>
       </div>
 
-      <p className='shrink-0 text-3xl leading-none font-semibold tabular-nums sm:text-5xl'>{score}</p>
+      <span
+        className={cn(
+          'inline-block w-[4.5ch] shrink-0 text-3xl leading-none font-semibold sm:text-5xl',
+          align === 'right' ? 'text-left' : 'text-right'
+        )}
+      >
+        <ChangedValue value={score}>{score}</ChangedValue>
+      </span>
     </div>
   )
 }
