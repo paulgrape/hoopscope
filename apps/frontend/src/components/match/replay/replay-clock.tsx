@@ -1,5 +1,6 @@
 'use client'
 
+import {ChangedValue} from '@/components/match/changed-value'
 import {useEffect, useRef, useState} from 'react'
 
 import {clockToSeconds, formatGameClock, periodLabel} from './replay-utils'
@@ -23,9 +24,12 @@ export function ReplayClock({clock, playIndex, quarter, paused, isFinal, pace}: 
       <p className='text-muted-foreground text-xs font-medium tracking-wider uppercase'>
         {isFinal ? 'Final' : periodLabel(quarter)}
       </p>
-      <p className='mt-0.5 text-2xl leading-none font-semibold tabular-nums sm:text-3xl'>
+      <ChangedValue
+        value={isFinal ? 'final' : `${quarter}:${playIndex}:${clock}`}
+        className='mt-0.5 text-2xl leading-none font-semibold sm:text-3xl'
+      >
         {isFinal ? '—' : displayClock}
-      </p>
+      </ChangedValue>
     </div>
   )
 }

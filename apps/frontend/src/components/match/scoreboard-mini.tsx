@@ -1,5 +1,6 @@
 'use client'
 
+import {ChangedValue} from '@/components/match/changed-value'
 import {LiveBadge, formatLiveClock} from '@/components/match/live-status'
 import {ScoreboardMiniCardSkeleton} from '@/components/match/scoreboard-mini-skeleton'
 import {sortScoreboardGames} from '@/components/match/scoreboard-order'
@@ -256,7 +257,15 @@ export function ScoreboardMini({
   )
 }
 
-function ScoreboardMiniCard({game, dateKey, timeZone}: {game: ScoreboardGame; dateKey: string; timeZone?: string}) {
+function ScoreboardMiniCard({
+  game,
+  dateKey,
+  timeZone
+}: {
+  game: ScoreboardGame
+  dateKey: string
+  timeZone?: string
+}) {
   const showScore = game.status !== 'scheduled'
   const awayLeads = showScore && (game.awayScore ?? 0) > (game.homeScore ?? 0)
   const homeLeads = showScore && (game.homeScore ?? 0) > (game.awayScore ?? 0)
@@ -287,7 +296,12 @@ function ScoreboardMiniCard({game, dateKey, timeZone}: {game: ScoreboardGame; da
         )}
       >
         {game.status === 'live' ? <LiveBadge compact /> : null}
-        <span className='whitespace-nowrap tabular-nums'>{statusLabel(game, timeZone)}</span>
+        <ChangedValue
+          value={statusLabel(game, timeZone)}
+          className='whitespace-nowrap'
+        >
+          {statusLabel(game, timeZone)}
+        </ChangedValue>
       </p>
       {showScore ? (
         <>
@@ -297,7 +311,9 @@ function ScoreboardMiniCard({game, dateKey, timeZone}: {game: ScoreboardGame; da
               awayLeads ? 'font-semibold' : 'font-medium'
             )}
           >
-            {game.awayScore ?? '—'}
+            <span className='inline-block w-[4.5ch]'>
+              <ChangedValue value={game.awayScore}>{game.awayScore ?? '—'}</ChangedValue>
+            </span>
           </span>
           <span
             className={cn(
@@ -305,7 +321,9 @@ function ScoreboardMiniCard({game, dateKey, timeZone}: {game: ScoreboardGame; da
               homeLeads ? 'font-semibold' : 'font-medium'
             )}
           >
-            {game.homeScore ?? '—'}
+            <span className='inline-block w-[4.5ch]'>
+              <ChangedValue value={game.homeScore}>{game.homeScore ?? '—'}</ChangedValue>
+            </span>
           </span>
         </>
       ) : null}

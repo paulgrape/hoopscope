@@ -46,6 +46,28 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+  --animate-score-flash: score-flash 700ms ease-out;
+  --animate-text-arrive: text-arrive 700ms ease-out;
+}
+
+@keyframes score-flash {
+  0% {
+    background-color: color-mix(in oklab, var(--foreground) 18%, transparent);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+@keyframes text-arrive {
+  0% {
+    opacity: 0;
+    transform: translateY(-0.25rem);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 :root {
