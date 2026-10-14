@@ -140,6 +140,11 @@ describe('MatchSummary', () => {
     expect(screen.getAllByText('110').length).toBeGreaterThan(0)
     expect(screen.getByRole('link', {name: /Los Angeles Lakers/i})).toHaveAttribute('href', '/teams/13')
     expect(screen.getByRole('link', {name: /Boston Celtics/i})).toHaveAttribute('href', '/teams/2')
+    expect(
+      within(screen.getByRole('link', {name: /Los Angeles Lakers/i}))
+        .getByText('104')
+        .closest('[data-piece="score"]')
+    ).not.toHaveClass('text-red-600')
   })
 
   it('hides scores for scheduled games', () => {
@@ -172,7 +177,7 @@ describe('MatchSummary', () => {
     expect(screen.queryByText('104')).not.toBeInTheDocument()
   })
 
-  it('shows a live badge and one clock while the game is in progress', () => {
+  it('shows a live badge and the clock on the pill and the sticky bar', () => {
     render(
       <MatchSummary
         initialSummary={makeSummary({
@@ -187,10 +192,20 @@ describe('MatchSummary', () => {
     )
 
     expect(screen.getByText('Live')).toBeInTheDocument()
-    expect(screen.getByText('Q4 6:44')).toBeInTheDocument()
+    expect(screen.getAllByText('Q4 6:44')).toHaveLength(2)
     expect(screen.queryByText('6:44 - 4th · 6:44')).not.toBeInTheDocument()
     expect(screen.queryByText('6:44 - 4th')).not.toBeInTheDocument()
     expect(screen.getByText('–')).toBeInTheDocument()
+    expect(
+      within(screen.getByRole('link', {name: /Los Angeles Lakers/i}))
+        .getByText('114')
+        .closest('[data-piece="score"]')
+    ).toHaveClass('text-red-600')
+    expect(
+      within(screen.getByRole('link', {name: /Boston Celtics/i}))
+        .getByText('91')
+        .closest('[data-piece="score"]')
+    ).toHaveClass('text-red-600')
   })
 
   it('keeps a break label when the clock is stopped', () => {
@@ -206,7 +221,7 @@ describe('MatchSummary', () => {
     )
 
     expect(screen.getByText('Live')).toBeInTheDocument()
-    expect(screen.getByText('Halftime')).toBeInTheDocument()
+    expect(screen.getAllByText('Halftime')).toHaveLength(2)
     expect(screen.queryByText('Q2 0:00')).not.toBeInTheDocument()
   })
 

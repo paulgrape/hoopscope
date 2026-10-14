@@ -7,16 +7,16 @@ const LEADER_CARDS = 3
 function TeamScorePanelSkeleton({align = 'left'}: {align?: 'left' | 'right'}) {
   return (
     <div
-      className={`bg-muted/30 flex min-w-0 items-center gap-3 rounded-lg p-3 md:bg-transparent md:p-0 ${
+      className={`bg-muted/30 flex w-full min-w-0 items-center gap-3 rounded-lg p-3 md:w-auto md:bg-transparent md:p-0 ${
         align === 'right' ? 'md:flex-row-reverse' : ''
       }`}
     >
-      <Skeleton className='size-12 shrink-0 rounded-full sm:size-14' />
-      <div className={`flex min-w-0 flex-1 flex-col gap-1.5 ${align === 'right' ? 'md:items-end' : ''}`}>
-        <Skeleton className='h-5 w-12 sm:h-6' />
-        <Skeleton className='h-4 w-32' />
+      <Skeleton className='size-12 shrink-0 rounded-full md:size-14' />
+      <div className={`flex min-w-0 flex-1 flex-col gap-1.5 md:flex-none ${align === 'right' ? 'md:items-end' : ''}`}>
+        <Skeleton className='h-5 w-12 md:h-6' />
+        <Skeleton className='h-4 w-28 md:w-36' />
       </div>
-      <Skeleton className='h-8 w-14 shrink-0 md:h-11 md:w-20' />
+      <Skeleton className='ml-auto h-8 w-14 shrink-0 md:ml-0 md:h-11 md:w-20' />
     </div>
   )
 }
@@ -36,51 +36,55 @@ export default function MatchLoading() {
 
       <div className='flex flex-col gap-6 sm:gap-8'>
         {/* Scoreboard */}
-        <section className='bg-card border-border rounded-xl border p-4 sm:p-6'>
-          <div className='flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between'>
-            <div className='flex flex-col gap-1.5'>
-              <Skeleton className='h-4 w-56' />
-              <Skeleton className='h-4 w-40' />
+        <div className='flex flex-col'>
+          <div className='bg-card border-border rounded-t-xl border border-b-0 px-4 pt-4 sm:px-6 sm:pt-6'>
+            <div className='flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between'>
+              <div className='flex flex-col gap-1.5'>
+                <Skeleton className='h-4 w-56' />
+                <Skeleton className='h-4 w-40' />
+              </div>
+              <Skeleton className='h-7 w-28 rounded-full' />
             </div>
-            <Skeleton className='h-7 w-28 rounded-full' />
           </div>
 
-          <div className='mt-6 grid gap-3 md:grid-cols-[1fr_auto_1fr] md:items-center md:gap-4'>
+          <div className='bg-card border-border flex flex-col gap-3 border-x px-4 py-4 md:flex-row md:items-center md:justify-between md:px-6 md:py-6'>
             <TeamScorePanelSkeleton />
-            <Skeleton className='mx-auto h-4 w-6' />
+            <Skeleton className='mx-auto h-4 w-6 shrink-0' />
             <TeamScorePanelSkeleton align='right' />
           </div>
 
-          <div className='border-border mt-6 overflow-hidden rounded-lg border'>
-            <div className='bg-muted/40 flex items-center gap-3 px-3 py-2'>
-              <Skeleton className='h-3.5 w-12' />
-              <div className='ml-auto flex items-center gap-4'>
-                {Array.from({length: LINE_SCORE_COLUMNS + 1}).map((_, index) => (
-                  <Skeleton
-                    key={index}
-                    className='h-3.5 w-6'
-                  />
-                ))}
-              </div>
-            </div>
-            {Array.from({length: 2}).map((_, row) => (
-              <div
-                key={row}
-                className='border-border flex items-center gap-3 border-t px-3 py-2'
-              >
-                <Skeleton className='h-4 w-10' />
+          <div className='bg-card border-border rounded-b-xl border border-t-0 px-4 pb-4 sm:px-6 sm:pb-6'>
+            <div className='border-border mt-6 overflow-hidden rounded-lg border'>
+              <div className='bg-muted/40 flex items-center gap-3 px-3 py-2'>
+                <Skeleton className='h-3.5 w-12' />
                 <div className='ml-auto flex items-center gap-4'>
                   {Array.from({length: LINE_SCORE_COLUMNS + 1}).map((_, index) => (
                     <Skeleton
                       key={index}
-                      className='h-4 w-6'
+                      className='h-3.5 w-6'
                     />
                   ))}
                 </div>
               </div>
-            ))}
+              {Array.from({length: 2}).map((_, row) => (
+                <div
+                  key={row}
+                  className='border-border flex items-center gap-3 border-t px-3 py-2'
+                >
+                  <Skeleton className='h-4 w-10' />
+                  <div className='ml-auto flex items-center gap-4'>
+                    {Array.from({length: LINE_SCORE_COLUMNS + 1}).map((_, index) => (
+                      <Skeleton
+                        key={index}
+                        className='h-4 w-6'
+                      />
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-        </section>
+        </div>
 
         {/* Box score */}
         <section className='flex flex-col gap-3'>
