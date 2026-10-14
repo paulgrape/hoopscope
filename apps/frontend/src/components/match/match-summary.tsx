@@ -4,6 +4,7 @@ import {type BoxScoreLine, BoxScoreTable as BoxScoreTableBase} from '@/component
 import {ChangedValue} from '@/components/match/changed-value'
 import {LiveBadge, formatLiveClock} from '@/components/match/live-status'
 import {SeasonTypeKicker} from '@/components/match/season-type'
+import {StickyScoreHeader} from '@/components/match/sticky-score-header'
 import {Tabs, TabsContent, TabsList, TabsTrigger} from '@/components/ui/tabs'
 import {
   type BoxScorePlayer,
@@ -15,7 +16,6 @@ import {
 } from '@/lib/games-api'
 import {cn} from '@/lib/utils'
 import Image from 'next/image'
-import Link from 'next/link'
 import {useEffect, useState} from 'react'
 
 const REFRESH_INTERVAL_MS = 60_000
@@ -69,14 +69,14 @@ export function MatchSummary({initialSummary}: MatchSummaryProps) {
   }).format(new Date(summary.date))
 
   return (
-    <div className='flex flex-col gap-6 sm:gap-8'>
+    <div className='flex flex-col [overflow-anchor:none] [&_*]:[overflow-anchor:none]'>
       <p
         className='sr-only'
         aria-live='polite'
       >
         {scoreAnnouncement}
       </p>
-      <section className='bg-card border-border rounded-xl border p-4 sm:p-6'>
+      <div className='bg-card border-border rounded-t-xl border border-b-0 px-4 pt-4 sm:px-6 sm:pt-6'>
         <div className='flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between'>
           <div>
             <SeasonTypeKicker
@@ -88,66 +88,55 @@ export function MatchSummary({initialSummary}: MatchSummaryProps) {
           </div>
           <StatusPill summary={summary} />
         </div>
+      </div>
 
-        <div className='mt-6 grid gap-3 md:grid-cols-[1fr_auto_1fr] md:items-center md:gap-4'>
-          <TeamScorePanel
-            team={summary.awayTeam}
-            score={showScore ? summary.awayScore : null}
-          />
-          {summary.status === 'scheduled' ? (
-            <div className='text-muted-foreground py-0.5 text-center text-xs font-semibold tracking-wider uppercase md:text-sm'>
-              vs
-            </div>
-          ) : (
-            <div
-              className='text-muted-foreground py-0.5 text-center text-xs font-semibold tracking-wider uppercase md:text-sm'
-              aria-hidden='true'
-            >
-              –
-            </div>
-          )}
-          <TeamScorePanel
-            team={summary.homeTeam}
-            score={showScore ? summary.homeScore : null}
-            align='right'
-          />
-        </div>
+      <StickyScoreHeader
+        awayTeam={summary.awayTeam}
+        homeTeam={summary.homeTeam}
+        awayScore={showScore ? summary.awayScore : null}
+        homeScore={showScore ? summary.homeScore : null}
+        showVersus={summary.status === 'scheduled'}
+        liveLabel={summary.status === 'live' ? formatLiveClock(summary) : null}
+      />
 
+      <div className='bg-card border-border rounded-b-xl border border-t-0 px-4 pb-4 sm:px-6 sm:pb-6'>
         <LineScore summary={summary} />
-      </section>
+      </div>
 
-      {(summary.awayPlayers.length > 0 || summary.homePlayers.length > 0) && (
-        <section className='flex flex-col gap-3'>
-          <h2 className='text-lg font-semibold'>Box score</h2>
-          <BoxScoreTabs summary={summary} />
-        </section>
-      )}
+      <div className='mt-6 flex flex-col gap-6 sm:mt-8 sm:gap-8'>
+        {(summary.awayPlayers.length > 0 || summary.homePlayers.length > 0) && (
+          <section className='flex flex-col gap-3'>
+            <h2 className='text-lg font-semibold'>Box score</h2>
+            <BoxScoreTabs summary={summary} />
+          </section>
+        )}
 
-      {(summary.awayTotals.length > 0 || summary.homeTotals.length > 0) && (
-        <section className='flex flex-col gap-3'>
-          <h2 className='text-lg font-semibold'>Team totals</h2>
-          <TeamTotalsComparison
-            awayTeam={summary.awayTeam}
-            homeTeam={summary.homeTeam}
-            awayTotals={summary.awayTotals}
-            homeTotals={summary.homeTotals}
-          />
-        </section>
-      )}
+        {(summary.awayTotals.length > 0 || summary.homeTotals.length > 0) && (
+          <section className='flex flex-col gap-3'>
+            <h2 className='text-lg font-semibold'>Team totals</h2>
+            <TeamTotalsComparison
+              awayTeam={summary.awayTeam}
+              homeTeam={summary.homeTeam}
+              awayTotals={summary.awayTotals}
+              homeTotals={summary.homeTotals}
+            />
+          </section>
+        )}
 
-      {summary.leaders.length > 0 && (
-        <section className='flex flex-col gap-3'>
-          <h2 className='text-lg font-semibold'>Leaders</h2>
-          <div className='border-border divide-border grid divide-y rounded-xl border sm:grid-cols-3 sm:divide-x sm:divide-y-0'>
-            {summary.leaders.map(leader => (
-              <LeaderCard
-                key={`${leader.category}-${leader.athleteId}`}
-                leader={leader}
-              />
-            ))}
-          </div>
-        </section>
-      )}
+        {summary.leaders.length > 0 && (
+          <section className='flex flex-col gap-3'>
+            <h2 className='text-lg font-semibold'>Leaders</h2>
+            <div className='border-border divide-border grid divide-y rounded-xl border sm:grid-cols-3 sm:divide-x sm:divide-y-0'>
+              {summary.leaders.map(leader => (
+                <LeaderCard
+                  key={`${leader.category}-${leader.athleteId}`}
+                  leader={leader}
+                />
+              ))}
+            </div>
+          </section>
+        )}
+      </div>
     </div>
   )
 }
@@ -192,75 +181,6 @@ function formatStartTime(date: Date) {
     hour: 'numeric',
     minute: '2-digit'
   }).format(date)
-}
-
-function TeamScorePanel({
-  team,
-  score,
-  align = 'left'
-}: {
-  team: ScoreboardTeam | null
-  score: number | null
-  align?: 'left' | 'right'
-}) {
-  const identity = (
-    <>
-      {team?.logo ? (
-        <Image
-          src={team.logo}
-          alt={`${team.displayName} logo`}
-          width={64}
-          height={64}
-          className='size-12 shrink-0 object-contain sm:size-14'
-        />
-      ) : (
-        <div className='bg-muted size-12 shrink-0 rounded-full sm:size-14' />
-      )}
-      <div className={cn('min-w-0 flex-1', align === 'right' && 'md:text-right')}>
-        <p className='text-lg leading-tight font-semibold sm:text-xl'>{team?.abbreviation ?? 'TBD'}</p>
-        <p className='text-muted-foreground truncate text-sm leading-tight'>
-          {team?.displayName ?? 'To be determined'}
-        </p>
-      </div>
-    </>
-  )
-
-  const scoreEl =
-    score !== null ? (
-      <span
-        className={cn(
-          'inline-block w-[4.5ch] shrink-0 text-right text-3xl leading-none font-semibold md:text-5xl',
-          align === 'right' && 'md:text-left'
-        )}
-      >
-        <ChangedValue value={score}>{score}</ChangedValue>
-      </span>
-    ) : null
-
-  const className = cn(
-    'bg-muted/30 flex min-w-0 items-center gap-3 rounded-lg p-3 md:bg-transparent md:p-0',
-    align === 'right' && 'md:flex-row-reverse'
-  )
-
-  const body = (
-    <>
-      {identity}
-      {scoreEl}
-    </>
-  )
-
-  if (!team?.id) {
-    return <div className={className}>{body}</div>
-  }
-
-  return (
-    <Link
-      href={`/teams/${team.id}`}
-      className={cn(className, 'hover:opacity-90')}
-    >
-      {body}
-    </Link>
-  )
 }
 
 function LineScore({summary}: {summary: GameSummary}) {
