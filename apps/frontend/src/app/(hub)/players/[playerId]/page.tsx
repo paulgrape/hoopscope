@@ -101,16 +101,20 @@ export default async function PlayerDetailsPage({params, searchParams}: PlayerDe
         )}
       />
 
-      <PlayerPageHeader player={player} />
-      <PlayerBioGrid player={player} />
-      <PlayerProfileTabs
-        regularStats={regularStats}
-        playoffStats={playoffStats}
-        careerSeasons={careerStats.seasons}
-        news={news}
-        espnNewsHref={getEspnPlayerNewsHref(player.id, player.fullName)}
-        heatmap={heatmap}
-      />
+      <div className='flex min-w-0 flex-col [overflow-anchor:none] **:[overflow-anchor:none]'>
+        <PlayerPageHeader player={player} />
+        <div className='mt-5 flex flex-col gap-5 sm:mt-6 sm:gap-6'>
+          <PlayerBioGrid player={player} />
+          <PlayerProfileTabs
+            regularStats={regularStats}
+            playoffStats={playoffStats}
+            careerSeasons={careerStats.seasons}
+            news={news}
+            espnNewsHref={getEspnPlayerNewsHref(player.id, player.fullName)}
+            heatmap={heatmap}
+          />
+        </div>
+      </div>
     </main>
   )
 }
