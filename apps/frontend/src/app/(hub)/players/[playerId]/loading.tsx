@@ -22,7 +22,7 @@ export default function PlayerDetailsLoading() {
       <Skeleton className='h-5 w-36' />
 
       {/* Player header */}
-      <header className='bg-card border-border flex flex-col items-start gap-4 rounded-xl border p-3 sm:flex-row sm:items-center sm:gap-8 sm:p-5'>
+      <header className='bg-card border-border flex w-full flex-col items-start gap-4 rounded-xl border p-3 sm:flex-row sm:items-center sm:gap-8 sm:p-5'>
         <Skeleton className='h-24 w-24 shrink-0 rounded-full sm:h-28 sm:w-28' />
         <div className='flex min-w-0 flex-1 flex-col gap-1'>
           <Skeleton className='h-4 w-40' />
