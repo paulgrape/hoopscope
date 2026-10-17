@@ -23,14 +23,16 @@ const logoSize: CSSProperties = {
   height: 'calc(var(--logo-rest) - (var(--logo-rest) - 1.75rem) * var(--collapse))'
 }
 
-const homeLogoMotion: CSSProperties = {
-  ...logoSize,
-  transform: 'translateX(calc((1 - var(--collapse)) * var(--home-logo-slide, 0px)))'
-}
+const homeLogoMotionClass = cn(
+  'max-md:[transform:translateX(calc((1-var(--collapse))*var(--home-logo-slide)))]',
+  'md:[transform:translateX(calc((1-min(1,max(0,var(--collapse)-0.5)*100))*var(--home-logo-slide)))]',
+  'md:[opacity:clamp(0,1-min(1,var(--collapse)/0.4)+max(0,(var(--collapse)-0.6)/0.4),1)]'
+)
 
-const homeNameMotion: CSSProperties = {
-  transform: 'translateX(calc((1 - var(--collapse)) * var(--home-name-slide, 0px)))'
-}
+const homeNameMotionClass = cn(
+  'max-md:[transform:translateX(calc((1-var(--collapse))*var(--home-name-slide)))]',
+  'md:[transform:translateX(calc(clamp(0,(0.6-var(--collapse))/0.2,1)*var(--home-name-slide)))]'
+)
 
 const homeScoreMotion: CSSProperties = {
   fontSize: 'calc(var(--score-rest) - (var(--score-rest) - 1.25rem) * var(--collapse))',
@@ -155,8 +157,8 @@ function TeamCluster({
   const logo = (
     <span
       data-piece='logo'
-      className='relative z-10 mr-(--gap) inline-flex shrink-0'
-      style={isHome ? homeLogoMotion : logoSize}
+      className={cn('relative z-10 mr-(--gap) inline-flex shrink-0', isHome && homeLogoMotionClass)}
+      style={logoSize}
     >
       {team?.logo ? (
         <Image
@@ -174,8 +176,7 @@ function TeamCluster({
   const name = (
     <span
       data-piece='name'
-      className={cn('relative inline-flex shrink-0 flex-col', !isHome && 'mr-6 md:mr-(--gap)')}
-      style={isHome ? homeNameMotion : undefined}
+      className={cn('relative inline-flex shrink-0 flex-col', isHome ? homeNameMotionClass : 'mr-6 md:mr-(--gap)')}
     >
       <span className='relative block'>
         <span className='block text-lg leading-none font-semibold whitespace-nowrap md:text-xl'>
