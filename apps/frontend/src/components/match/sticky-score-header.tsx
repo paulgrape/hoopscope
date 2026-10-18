@@ -79,7 +79,7 @@ export function StickyScoreHeader({
       />
       <div
         ref={barRef}
-        className='border-border bg-card sticky top-14 z-10 border-x border-b px-4 [--away-packed:0px] [--away-shift-x:0px] [--away-shift-y:0px] [--collapse:0] [--gap:0.75rem] [--home-logo-slide:0px] [--home-name-slide:0px] [--home-packed:0px] [--home-score-slide:0px] [--home-shift-x:0px] [--home-shift-y:0px] [--logo-rest:3rem] [--name-max:12rem] [--phone-spread:0px] [--row-h:0px] [--score-rest:1.875rem] [--sep-shift-x:0px] [--sep-shift-y:0px] [--spread:0px] [--stack-h:0px] sm:px-6 md:[--home-logo-slide:calc(3ch+var(--gap))] md:[--home-name-slide:calc(-1*(var(--logo-rest)+var(--gap)))] md:[--logo-rest:3.5rem] md:[--name-max:14rem] md:[--score-rest:3rem]'
+        className='border-border bg-card sticky top-14 z-10 border-b px-4 [border-inline-width:calc((1-var(--collapse)*var(--drop-edge))*1px)] max-md:mx-[calc(var(--collapse)*var(--bleed))] max-md:w-[calc(100%-2*var(--collapse)*var(--bleed))] [--away-packed:0px] [--away-shift-x:0px] [--away-shift-y:0px] [--bleed:-1rem] [--collapse:0] [--drop-edge:1] [--gap:0.75rem] [--home-logo-slide:0px] [--home-name-slide:0px] [--home-packed:0px] [--home-score-slide:0px] [--home-shift-x:0px] [--home-shift-y:0px] [--logo-rest:3rem] [--name-max:12rem] [--phone-spread:0px] [--row-h:0px] [--score-rest:1.875rem] [--sep-shift-x:0px] [--sep-shift-y:0px] [--spread:0px] [--stack-h:0px] sm:px-6 sm:[--bleed:-1.5rem] md:[--drop-edge:0] md:[--home-logo-slide:calc(3ch+var(--gap))] md:[--home-name-slide:calc(-1*(var(--logo-rest)+var(--gap)))] md:[--logo-rest:3.5rem] md:[--name-max:14rem] md:[--score-rest:3rem]'
       >
         {liveLabel ? (
           <p className='pt-2 text-center text-xs font-medium text-red-600 dark:text-red-400'>
