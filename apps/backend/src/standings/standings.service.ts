@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { EspnService } from '../espn/espn.service';
+import { assignPlaces, type StandingSplit } from './standings-rank';
 
 type EspnStandingStat = {
   name?: string;
@@ -68,6 +69,12 @@ export type StandingsResponse = {
   conferences: ConferenceStandings[];
 };
 
+type ParsedStanding = StandingTeam & {
+  conference: StandingSplit;
+  division: StandingSplit;
+  differential: number;
+};
+
 @Injectable()
 export class StandingsService {
   constructor(private readonly espn: EspnService) {}
@@ -85,18 +92,34 @@ export class StandingsService {
         id: conference.id,
         name: conference.name,
         abbreviation: conference.abbreviation,
-        teams: (conference.standings?.entries ?? [])
-          .map((entry) => this.mapEntry(entry))
-          .sort((a, b) => a.seed - b.seed),
+        teams: this.rankEntries(conference.standings?.entries ?? []),
       })),
     };
   }
 
-  private mapEntry(entry: EspnStandingEntry): StandingTeam {
+  private rankEntries(entries: EspnStandingEntry[]): StandingTeam[] {
+    return assignPlaces(entries.map((entry) => this.mapEntry(entry))).map(
+      (team) => this.present(team),
+    );
+  }
+
+  private present(team: ParsedStanding): StandingTeam {
+    const {
+      conference: _conference,
+      division: _division,
+      differential: _differential,
+      ...standing
+    } = team;
+    return {
+      ...standing,
+      playoffStatus: this.resolvePlayoffStatus(standing.seed),
+    };
+  }
+
+  private mapEntry(entry: EspnStandingEntry): ParsedStanding {
     const { stats, team } = entry;
-    const seed = Number(this.getStat(stats, 'playoffSeed') ?? 0);
-    const wins = Number(this.getStat(stats, 'wins') ?? 0);
-    const losses = Number(this.getStat(stats, 'losses') ?? 0);
+    const wins = this.readCount(stats, 'wins');
+    const losses = this.readCount(stats, 'losses');
 
     return {
       id: team.id,
@@ -105,7 +128,7 @@ export class StandingsService {
       abbreviation: team.abbreviation,
       logo: team.logos?.[0]?.href ?? null,
       color: team.color ?? null,
-      seed,
+      seed: 0,
       wins,
       losses,
       winPct: this.getStat(stats, 'winPercent') ?? '—',
@@ -117,8 +140,16 @@ export class StandingsService {
       vsConf: this.getStat(stats, 'vs. Conf.') ?? '—',
       lastTen: this.getStat(stats, 'Last Ten Games') ?? '—',
       clincher: this.getStat(stats, 'clincher'),
-      playoffStatus: this.resolvePlayoffStatus(seed),
+      playoffStatus: 'out',
+      conference: readRecord(this.getStat(stats, 'vs. Conf.')),
+      division: readRecord(this.getStat(stats, 'vs. Div.')),
+      differential: readDifferential(findStat(stats, 'differential')),
     };
+  }
+
+  private readCount(stats: EspnStandingStat[], name: string): number {
+    const parsed = Number(this.getStat(stats, name) ?? 0);
+    return Number.isFinite(parsed) ? parsed : 0;
   }
 
   private getStat(stats: EspnStandingStat[], name: string): string | null {
@@ -132,4 +163,30 @@ export class StandingsService {
     if (seed >= 7 && seed <= 10) return 'play-in';
     return 'out';
   }
+}
+
+function findStat(
+  stats: EspnStandingStat[],
+  name: string,
+): EspnStandingStat | undefined {
+  return stats.find((item) => item.name === name);
+}
+
+function readRecord(display: string | null): StandingSplit {
+  if (!display) return { wins: 0, losses: 0 };
+  const match = /^(\d+)\s*-\s*(\d+)/.exec(display.trim());
+  if (!match) return { wins: 0, losses: 0 };
+  return { wins: Number(match[1]), losses: Number(match[2]) };
+}
+
+function readDifferential(stat: EspnStandingStat | undefined): number {
+  if (!stat) return 0;
+  if (typeof stat.value === 'number' && Number.isFinite(stat.value)) {
+    return stat.value;
+  }
+  if (typeof stat.displayValue === 'string') {
+    const parsed = Number(stat.displayValue);
+    if (Number.isFinite(parsed)) return parsed;
+  }
+  return 0;
 }
