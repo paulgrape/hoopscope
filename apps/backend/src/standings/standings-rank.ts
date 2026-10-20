@@ -12,6 +12,22 @@ export type RankableTeam = {
   differential: number;
 };
 
+export type NbaDivision = {
+  id: string;
+  name: string;
+  conference: 'east' | 'west';
+};
+
+/** Display order: East divisions, then West. */
+const DIVISION_CATALOG: readonly NbaDivision[] = [
+  { id: 'atlantic', name: 'Atlantic', conference: 'east' },
+  { id: 'central', name: 'Central', conference: 'east' },
+  { id: 'southeast', name: 'Southeast', conference: 'east' },
+  { id: 'northwest', name: 'Northwest', conference: 'west' },
+  { id: 'pacific', name: 'Pacific', conference: 'west' },
+  { id: 'southwest', name: 'Southwest', conference: 'west' },
+];
+
 /** ESPN team ids grouped by division. Ids are stable for the current 30 clubs. */
 const DIVISION_BY_TEAM_ID: Readonly<Record<string, string>> = {
   '2': 'atlantic',
@@ -45,6 +61,18 @@ const DIVISION_BY_TEAM_ID: Readonly<Record<string, string>> = {
   '24': 'southwest',
   '29': 'southwest',
 };
+
+export function divisionsForConference(
+  conference: 'east' | 'west',
+): NbaDivision[] {
+  return DIVISION_CATALOG.filter(
+    (division) => division.conference === conference,
+  );
+}
+
+export function divisionIdForTeam(teamId: string): string | null {
+  return DIVISION_BY_TEAM_ID[teamId] ?? null;
+}
 
 /**
  * Places for one conference.

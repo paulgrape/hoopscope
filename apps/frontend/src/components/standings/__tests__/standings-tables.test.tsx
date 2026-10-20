@@ -32,13 +32,15 @@ const conferences: ConferenceStandings[] = [
     id: 'east',
     name: 'Eastern Conference',
     abbreviation: 'East',
-    teams: [makeTeam(1, 'Celtics'), makeTeam(8, 'Heat')]
+    teams: [makeTeam(1, 'Celtics'), makeTeam(8, 'Heat')],
+    divisions: []
   },
   {
     id: 'west',
     name: 'Western Conference',
     abbreviation: 'West',
-    teams: [makeTeam(2, 'Thunder')]
+    teams: [makeTeam(2, 'Thunder')],
+    divisions: []
   }
 ]
 
