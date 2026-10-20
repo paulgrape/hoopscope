@@ -24,11 +24,18 @@ export type StandingTeam = {
   playoffStatus: PlayoffStatus
 }
 
+export type DivisionStandings = {
+  id: string
+  name: string
+  teams: StandingTeam[]
+}
+
 export type ConferenceStandings = {
   id: string
   name: string
   abbreviation: string
   teams: StandingTeam[]
+  divisions: DivisionStandings[]
 }
 
 export type StandingsResponse = {

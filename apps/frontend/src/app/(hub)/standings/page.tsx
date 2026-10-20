@@ -1,5 +1,5 @@
 import {JsonLd} from '@/components/seo/json-ld'
-import {StandingsTables} from '@/components/standings/standings-tables'
+import {StandingsBoard} from '@/components/standings/standings-board'
 import {collectionPageSchema} from '@/lib/seo-schema'
 import {createPageMetadata} from '@/lib/site'
 import {getStandings} from '@/lib/standings-api'
@@ -8,7 +8,7 @@ import {connection} from 'next/server'
 export const metadata = createPageMetadata({
   title: 'NBA Standings - Conference & Playoff Race',
   description:
-    'Live pro basketball conference standings on Hoopscope, with playoff seeding and play-in tournament positions clearly highlighted for both conferences.',
+    'Live pro basketball conference and division standings on Hoopscope, with playoff seeding and play-in tournament positions clearly highlighted.',
   path: '/standings'
 })
 
@@ -26,7 +26,7 @@ export default async function StandingsPage() {
         data={collectionPageSchema({
           path: '/standings',
           title: 'NBA Standings',
-          description: 'Conference standings with playoff and play-in positions highlighted.',
+          description: 'Conference and division standings with playoff and play-in positions highlighted.',
           items: standings.conferences.flatMap(conference =>
             conference.teams.map(team => ({
               name: team.displayName,
@@ -39,11 +39,11 @@ export default async function StandingsPage() {
         <p className='text-muted-foreground text-sm tracking-wider uppercase'>{standings.season}</p>
         <h1 className='text-2xl font-semibold sm:text-3xl'>NBA Standings</h1>
         <p className='text-muted-foreground max-w-2xl text-sm sm:text-base'>
-          Conference tables with playoff and play-in positions highlighted.
+          Conference and division tables, with playoff and play-in positions highlighted.
         </p>
       </header>
 
-      <StandingsTables conferences={standings.conferences} />
+      <StandingsBoard conferences={standings.conferences} />
     </main>
   )
 }

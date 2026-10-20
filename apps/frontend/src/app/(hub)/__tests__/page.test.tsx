@@ -63,6 +63,7 @@ function makeConference(overrides: Partial<ConferenceStandings> = {}): Conferenc
     name: 'Eastern Conference',
     abbreviation: 'EAST',
     teams: [makeTeam()],
+    divisions: [],
     ...overrides
   }
 }

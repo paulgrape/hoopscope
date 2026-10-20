@@ -42,7 +42,8 @@ const conference = {
   id: 'west',
   name: 'Western Conference',
   abbreviation: 'WEST',
-  teams: Array.from({length: 12}, (_, index) => makeTeam(index + 1))
+  teams: Array.from({length: 12}, (_, index) => makeTeam(index + 1)),
+  divisions: []
 }
 
 describe('StandingsSnapshot', () => {

@@ -7,6 +7,7 @@ function recordEntry(options: {
   wins: number;
   losses: number;
   conference?: string;
+  gamesBehind?: string;
 }) {
   const stats: Array<{ name: string; value?: number; displayValue?: string }> =
     [
@@ -16,6 +17,9 @@ function recordEntry(options: {
     ];
   if (options.conference) {
     stats.push({ name: 'vs. Conf.', displayValue: options.conference });
+  }
+  if (options.gamesBehind) {
+    stats.push({ name: 'gamesBehind', displayValue: options.gamesBehind });
   }
 
   return {
@@ -248,6 +252,118 @@ describe('StandingsService', () => {
     expect(teams[6].playoffStatus).toBe('play-in');
     expect(teams[9].playoffStatus).toBe('play-in');
     expect(teams[10].playoffStatus).toBe('out');
+  });
+
+  it('ranks each division 1-5 and keeps the conference playoff status', async () => {
+    const eastIds = [
+      '1',
+      '2',
+      '4',
+      '5',
+      '8',
+      '11',
+      '14',
+      '15',
+      '17',
+      '18',
+      '19',
+      '20',
+      '27',
+      '28',
+      '30',
+    ];
+    const atlantic = new Set(['2', '17', '18', '20', '28']);
+    const otherWins = new Map(
+      eastIds
+        .filter((id) => !atlantic.has(id))
+        .map((id, index) => [id, 40 - index]),
+    );
+
+    espn.getStandings.mockResolvedValue({
+      children: [
+        {
+          id: '5',
+          name: 'Eastern Conference',
+          abbreviation: 'East',
+          standings: {
+            entries: eastIds.map((id) => {
+              const wins = otherWins.get(id);
+              if (wins != null) {
+                return recordEntry({
+                  id,
+                  name: `Team ${id}`,
+                  wins,
+                  losses: 10,
+                  gamesBehind: '4.0',
+                });
+              }
+              const atlanticRecord: Record<string, [number, number]> = {
+                '2': [15, 20],
+                '17': [10, 25],
+                '18': [8, 27],
+                '20': [6, 29],
+                '28': [4, 31],
+              };
+              const [atlanticWins, atlanticLosses] = atlanticRecord[id];
+              return recordEntry({
+                id,
+                name: id === '2' ? 'Celtics' : `Team ${id}`,
+                wins: atlanticWins,
+                losses: atlanticLosses,
+                gamesBehind: '9.0',
+              });
+            }),
+          },
+        },
+        {
+          id: '6',
+          name: 'Western Conference',
+          abbreviation: 'West',
+          standings: {
+            entries: [
+              recordEntry({ id: '7', name: 'Nuggets', wins: 12, losses: 4 }),
+            ],
+          },
+        },
+      ],
+    });
+
+    const [east, west] = (await service.findAll()).conferences;
+    const celtics = east.teams.find((team) => team.id === '2');
+    const atlanticDivision = east.divisions.find(
+      (division) => division.id === 'atlantic',
+    );
+
+    expect(east.divisions.map((division) => division.name)).toEqual([
+      'Atlantic',
+      'Central',
+      'Southeast',
+    ]);
+    expect(atlanticDivision?.teams.map((team) => team.id)).toEqual([
+      '2',
+      '17',
+      '18',
+      '20',
+      '28',
+    ]);
+    expect(atlanticDivision?.teams.map((team) => team.seed)).toEqual([
+      1, 2, 3, 4, 5,
+    ]);
+    expect(atlanticDivision?.teams.map((team) => team.gamesBehind)).toEqual([
+      '-',
+      '5.0',
+      '7.0',
+      '9.0',
+      '11.0',
+    ]);
+    expect(celtics?.seed).toBe(11);
+    expect(celtics?.playoffStatus).toBe('out');
+    expect(celtics?.gamesBehind).toBe('9.0');
+    expect(atlanticDivision?.teams[0].playoffStatus).toBe('out');
+    expect(atlanticDivision?.teams[0].gamesBehind).toBe('-');
+    expect(west.divisions.map((division) => division.name)).toEqual([
+      'Northwest',
+    ]);
   });
 
   it('extracts stats with displayValue over raw value', async () => {

@@ -45,7 +45,7 @@ export const STATIC_PUBLIC_ROUTES: PublicRoute[] = [
   {
     path: '/standings',
     title: 'Standings',
-    description: 'Conference standings with playoff and play-in positions highlighted.',
+    description: 'Conference and division standings with playoff and play-in positions highlighted.',
     entityType: 'standings'
   },
   {

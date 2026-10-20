@@ -15,9 +15,14 @@ const legendItems: Array<{status: PlayoffStatus; label: string; className: strin
   {status: 'out', label: 'Out of postseason', className: 'bg-muted-foreground/30'}
 ]
 
-function StandingRow({team}: {team: StandingTeam}) {
+function StandingRow({team, highlightPlayoff}: {team: StandingTeam; highlightPlayoff: boolean}) {
   return (
-    <tr className={cn('border-border border-b border-l-4 transition-colors', playoffRowClass[team.playoffStatus])}>
+    <tr
+      className={cn(
+        'border-border border-b border-l-4 transition-colors',
+        highlightPlayoff ? playoffRowClass[team.playoffStatus] : 'border-l-transparent'
+      )}
+    >
       <td className='text-muted-foreground px-2 py-2.5 text-center text-sm font-medium whitespace-nowrap tabular-nums sm:px-3'>
         {team.seed}
       </td>
@@ -65,21 +70,35 @@ function StandingRow({team}: {team: StandingTeam}) {
   )
 }
 
-function ConferenceTable({conference}: {conference: ConferenceStandings}) {
+type StandingsGroup = {
+  id: string
+  name: string
+  teams: StandingTeam[]
+}
+
+function StandingsTable({
+  group,
+  heading: Heading = 'h2',
+  highlightPlayoff = false
+}: {
+  group: StandingsGroup
+  heading?: 'h2' | 'h3'
+  highlightPlayoff?: boolean
+}) {
   return (
     <section className='bg-card border-border min-w-0 overflow-hidden rounded-xl border'>
       <header className='border-border border-b px-4 py-3 sm:px-5'>
-        <h2
-          id={`standings-${conference.id}`}
+        <Heading
+          id={`standings-${group.id}`}
           className='text-lg font-semibold sm:text-xl'
         >
-          {conference.name}
-        </h2>
+          {group.name}
+        </Heading>
       </header>
 
       <div className='min-w-0'>
         <table
-          aria-labelledby={`standings-${conference.id}`}
+          aria-labelledby={`standings-${group.id}`}
           className='w-full text-left'
         >
           <thead>
@@ -148,10 +167,11 @@ function ConferenceTable({conference}: {conference: ConferenceStandings}) {
             </tr>
           </thead>
           <tbody>
-            {conference.teams.map(team => (
+            {group.teams.map(team => (
               <StandingRow
                 key={team.id}
                 team={team}
+                highlightPlayoff={highlightPlayoff}
               />
             ))}
           </tbody>
@@ -161,30 +181,67 @@ function ConferenceTable({conference}: {conference: ConferenceStandings}) {
   )
 }
 
+function PlayoffLegend() {
+  return (
+    <div className='flex flex-wrap items-center gap-4 text-sm'>
+      {legendItems.map(item => (
+        <div
+          key={item.status}
+          className='flex items-center gap-2'
+        >
+          <span
+            className={cn('size-3 rounded-sm', item.className)}
+            aria-hidden='true'
+          />
+          <span className='text-muted-foreground'>{item.label}</span>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 export function StandingsTables({conferences}: {conferences: ConferenceStandings[]}) {
   return (
     <div className='flex flex-col gap-5 sm:gap-6'>
-      <div className='flex flex-wrap items-center gap-4 text-sm'>
-        {legendItems.map(item => (
-          <div
-            key={item.status}
-            className='flex items-center gap-2'
-          >
-            <span
-              className={cn('size-3 rounded-sm', item.className)}
-              aria-hidden='true'
-            />
-            <span className='text-muted-foreground'>{item.label}</span>
-          </div>
-        ))}
-      </div>
+      <PlayoffLegend />
 
       <div className='grid min-w-0 gap-5 lg:grid-cols-2 lg:gap-6'>
         {conferences.map(conference => (
-          <ConferenceTable
+          <StandingsTable
             key={conference.id}
-            conference={conference}
+            group={conference}
+            highlightPlayoff
           />
+        ))}
+      </div>
+    </div>
+  )
+}
+
+export function DivisionStandingsTables({conferences}: {conferences: ConferenceStandings[]}) {
+  return (
+    <div className='flex flex-col gap-5 sm:gap-6'>
+      <div className='grid min-w-0 gap-5 lg:grid-cols-2 lg:gap-6'>
+        {conferences.map(conference => (
+          <section
+            key={conference.id}
+            aria-labelledby={`division-conference-${conference.id}`}
+            className='flex min-w-0 flex-col gap-5'
+          >
+            <h2
+              id={`division-conference-${conference.id}`}
+              className='text-lg font-semibold sm:text-xl'
+            >
+              {conference.name}
+            </h2>
+            {(conference.divisions ?? []).map(division => (
+              <StandingsTable
+                key={division.id}
+                group={division}
+                heading='h3'
+              />
+            ))}
+          </section>
         ))}
       </div>
     </div>
