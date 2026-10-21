@@ -36,7 +36,16 @@ export function TeamScheduleStrip({schedule}: TeamScheduleStripProps) {
   )
   const formGameIds = useMemo(() => new Set(formGames.map(game => game.id)), [formGames])
 
-  const [fallbackIndex, setFallbackIndex] = useState(() => (anchorIndex >= 0 ? anchorIndex : 0))
+  const anchorKey = `${schedule?.season ?? 'none'}:${anchorIndex}`
+  const [fallback, setFallback] = useState(() => ({
+    key: anchorKey,
+    index: anchorIndex >= 0 ? anchorIndex : 0
+  }))
+  if (fallback.key !== anchorKey) {
+    setFallback({key: anchorKey, index: anchorIndex >= 0 ? anchorIndex : 0})
+  }
+  const fallbackIndex = fallback.key === anchorKey ? fallback.index : anchorIndex >= 0 ? anchorIndex : 0
+
   const [scrollBounds, setScrollBounds] = useState<{canPrev: boolean; canNext: boolean} | null>(null)
   const scrollerRef = useRef<HTMLUListElement | null>(null)
   const cardRefs = useRef<Array<HTMLLIElement | null>>([])
@@ -59,7 +68,6 @@ export function TeamScheduleStrip({schedule}: TeamScheduleStripProps) {
 
   useEffect(() => {
     if (anchorIndex < 0) return
-    setFallbackIndex(anchorIndex)
     const anchorCard = cardRefs.current[anchorIndex]
     if (typeof anchorCard?.scrollIntoView === 'function') {
       anchorCard.scrollIntoView({block: 'nearest', inline: 'center'})
@@ -99,7 +107,7 @@ export function TeamScheduleStrip({schedule}: TeamScheduleStripProps) {
       visibleGames.length - 1,
       Math.max(0, fallbackIndex + delta * FALLBACK_PAGE_CARDS)
     )
-    setFallbackIndex(nextIndex)
+    setFallback({key: anchorKey, index: nextIndex})
     if (typeof scroller.scrollBy === 'function') {
       scroller.scrollBy({left: delta * FALLBACK_PAGE_SCROLL_PX, behavior: 'smooth'})
     }

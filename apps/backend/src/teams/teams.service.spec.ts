@@ -721,61 +721,60 @@ describe('TeamsService.findSchedule', () => {
     expect(schedule.season).toBe(2026);
     expect(schedule.seasonLabel).toBe('2025–26');
     expect(schedule.currentSeason).toBe(2026);
-    expect(schedule.games).toEqual([
-      expect.objectContaining({
-        id: '401812482',
-        seasonType: 'preseason',
-        status: 'final',
-        statusDetail: 'Final',
-        homeScore: 104,
-        awayScore: 118,
-        venue: 'Acrisure Arena',
-        isHome: true,
-        result: 'L',
-        homeTeam: expect.objectContaining({
-          id: '13',
-          name: 'Lakers',
-          abbreviation: 'LAL',
-        }),
-        awayTeam: expect.objectContaining({
-          id: '21',
-          name: 'Suns',
-          abbreviation: 'PHX',
-        }),
-      }),
-      expect.objectContaining({
-        id: '401809244',
-        seasonType: 'regular',
-        status: 'final',
-        homeScore: 109,
-        awayScore: 119,
-        venue: 'Chase Center',
-        isHome: false,
-        result: 'W',
-      }),
-      expect.objectContaining({
-        id: '401809300',
-        seasonType: 'regular',
-        status: 'live',
-        statusDetail: '4:12 - 3rd',
-        period: 3,
-        clock: '4:12',
-        homeScore: 82,
-        awayScore: 79,
-        isHome: true,
-        result: null,
-      }),
-      expect.objectContaining({
-        id: '401909092',
-        seasonType: 'regular',
-        status: 'scheduled',
-        statusDetail: '10/27 - 10:00 PM EDT',
-        homeScore: null,
-        awayScore: null,
-        isHome: true,
-        result: null,
-      }),
-    ]);
+    const [preseason, regularFinal, live, scheduled] = schedule.games;
+    expect(preseason).toMatchObject({
+      id: '401812482',
+      seasonType: 'preseason',
+      status: 'final',
+      statusDetail: 'Final',
+      homeScore: 104,
+      awayScore: 118,
+      venue: 'Acrisure Arena',
+      isHome: true,
+      result: 'L',
+    });
+    expect(preseason?.homeTeam).toMatchObject({
+      id: '13',
+      name: 'Lakers',
+      abbreviation: 'LAL',
+    });
+    expect(preseason?.awayTeam).toMatchObject({
+      id: '21',
+      name: 'Suns',
+      abbreviation: 'PHX',
+    });
+    expect(regularFinal).toMatchObject({
+      id: '401809244',
+      seasonType: 'regular',
+      status: 'final',
+      homeScore: 109,
+      awayScore: 119,
+      venue: 'Chase Center',
+      isHome: false,
+      result: 'W',
+    });
+    expect(live).toMatchObject({
+      id: '401809300',
+      seasonType: 'regular',
+      status: 'live',
+      statusDetail: '4:12 - 3rd',
+      period: 3,
+      clock: '4:12',
+      homeScore: 82,
+      awayScore: 79,
+      isHome: true,
+      result: null,
+    });
+    expect(scheduled).toMatchObject({
+      id: '401909092',
+      seasonType: 'regular',
+      status: 'scheduled',
+      statusDetail: '10/27 - 10:00 PM EDT',
+      homeScore: null,
+      awayScore: null,
+      isHome: true,
+      result: null,
+    });
   });
 
   it('forwards an explicit season to ESPN and turns 404 into NotFoundException', async () => {
