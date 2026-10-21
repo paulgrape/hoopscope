@@ -196,6 +196,7 @@ describe('EspnService request targets', () => {
     await service.getScoreboard('20260131');
     await service.getGameSummary('401585601');
     await service.getRoster('16', 2025);
+    await service.getTeamSchedule('13', 2026);
 
     expect(httpGet).toHaveBeenCalledWith('/teams/16');
     expect(httpGet).toHaveBeenCalledWith(
@@ -219,6 +220,14 @@ describe('EspnService request targets', () => {
     expect(httpGet).toHaveBeenCalledWith('/scoreboard?dates=20260131');
     expect(httpGet).toHaveBeenCalledWith('/summary?event=401585601');
     expect(httpGet).toHaveBeenCalledWith('/teams/16/roster?season=2025');
+    expect(httpGet).toHaveBeenCalledWith('/teams/13/schedule?season=2026');
+  });
+
+  it('uses a 60s TTL for the current season schedule and a historic TTL for past seasons', () => {
+    expect(service.teamScheduleTtl(2027, 2027)).toBe(60 * 1000);
+    expect(service.teamScheduleTtl(2025, 2027)).toBe(
+      service.seasonStatsTtl(2025, 2027),
+    );
   });
 
   it('loads the regular-season record, group, and coach from the core API', async () => {
@@ -329,6 +338,12 @@ describe('EspnService request targets', () => {
       BadRequestException,
     );
     expect(() => service.getRoster('16', 1800)).toThrow(BadRequestException);
+    expect(() => service.getTeamSchedule('../evil', 2026)).toThrow(
+      BadRequestException,
+    );
+    expect(() => service.getTeamSchedule('13', 1800)).toThrow(
+      BadRequestException,
+    );
     expect(() => service.getTeamSeasonRecord('16', 1800, 2026)).toThrow(
       BadRequestException,
     );

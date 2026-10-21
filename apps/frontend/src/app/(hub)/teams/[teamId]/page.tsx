@@ -1,10 +1,11 @@
 import {PageBreadcrumb} from '@/components/layout/page-breadcrumb'
 import {JsonLd} from '@/components/seo/json-ld'
 import {TeamFacts, TeamPageHeader} from '@/components/teams/team-page-header'
+import {TeamScheduleStrip} from '@/components/teams/team-schedule-strip'
 import {TeamSeasonStats} from '@/components/teams/team-season-stats'
 import {breadcrumbSchema, sportsTeamSchema} from '@/lib/seo-schema'
 import {SITE_NAME, createPageMetadata} from '@/lib/site'
-import {getTeam, getTeamSeasonStats, parseSeasonQuery} from '@/lib/teams-api'
+import {getTeam, getTeamSchedule, getTeamSeasonStats, parseSeasonQuery} from '@/lib/teams-api'
 import type {Metadata} from 'next'
 import {notFound} from 'next/navigation'
 
@@ -47,9 +48,10 @@ export default async function TeamDetailsPage({params, searchParams}: TeamDetail
   }
 
   const season = parseSeasonQuery(seasonQuery)
-  const [regularStats, playoffStats] = await Promise.all([
+  const [regularStats, playoffStats, schedule] = await Promise.all([
     getTeamSeasonStats(teamId, {season, seasonType: 'regular'}),
-    getTeamSeasonStats(teamId, {season, seasonType: 'playoffs'})
+    getTeamSeasonStats(teamId, {season, seasonType: 'playoffs'}),
+    getTeamSchedule(teamId, {season})
   ])
 
   return (
@@ -77,6 +79,7 @@ export default async function TeamDetailsPage({params, searchParams}: TeamDetail
 
       <TeamPageHeader team={team} />
       <TeamFacts team={team} />
+      <TeamScheduleStrip schedule={schedule} />
 
       <TeamSeasonStats
         regularStats={regularStats}

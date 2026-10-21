@@ -9,6 +9,7 @@ import {
   EspnGameSummaryResponse,
   EspnScoreboardResponse,
   EspnTeamResponse,
+  EspnTeamScheduleResponse,
   EspnTeamsResponse,
 } from './espn.types';
 import { EspnSeasonMeta, isUnstartedEspnSeason } from './season-year';
@@ -509,8 +510,28 @@ export class EspnService {
     return this.get<EspnRosterResponse>(path, this.TTL_PLAYERS);
   }
 
+  getTeamSchedule(
+    teamId: string,
+    season: number,
+    currentSeason = season,
+  ): Promise<EspnTeamScheduleResponse> {
+    const id = espnId(teamId);
+    const year = espnSeason(season);
+    const path = `/teams/${id}/schedule?season=${year}`;
+    return this.get<EspnTeamScheduleResponse>(
+      path,
+      this.teamScheduleTtl(season, currentSeason),
+    );
+  }
+
   toEspnSeasonType(seasonType: EspnSeasonType): number {
     return seasonType === 'playoffs' ? 3 : 2;
+  }
+
+  teamScheduleTtl(season: number, currentSeason: number): number {
+    return season >= currentSeason
+      ? this.TTL_SCORES
+      : this.TTL_SEASON_STATS_HISTORIC;
   }
 
   seasonStatsTtl(season: number, currentSeason: number): number {

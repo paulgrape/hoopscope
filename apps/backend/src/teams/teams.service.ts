@@ -10,14 +10,36 @@ import {
   EspnService,
   EspnTeamSeasonRecord,
 } from '../espn/espn.service';
-import { EspnByAthleteEntry, espnHeadshotHref } from '../espn/espn.types';
+import {
+  EspnByAthleteEntry,
+  EspnScoreboardEvent,
+  espnHeadshotHref,
+} from '../espn/espn.types';
 import { flattenRosterAthletes } from '../espn/roster.parser';
 import {
   isUnstartedCurrentSeason,
   isUnstartedEspnSeason,
 } from '../espn/season-year';
+import {
+  type ScoreboardGame,
+  normalizeScoreboardEvent,
+} from '../games/games.service';
 
 export type TeamSeasonType = EspnSeasonType;
+
+export type TeamGameResult = 'W' | 'L';
+
+export type TeamScheduleGame = ScoreboardGame & {
+  isHome: boolean;
+  result: TeamGameResult | null;
+};
+
+export type TeamScheduleResponse = {
+  season: number;
+  seasonLabel: string;
+  currentSeason: number;
+  games: TeamScheduleGame[];
+};
 
 export type TeamRecord = {
   season: number;
@@ -180,6 +202,36 @@ export class TeamsService {
       age: p.age,
       experience: p.experience?.years ?? 0,
     }));
+  }
+
+  async findSchedule(
+    teamId: string,
+    season?: number,
+  ): Promise<TeamScheduleResponse> {
+    const current = await this.espn.resolveCurrentSeason();
+    const currentSeason = current.year;
+    const resolvedSeason = season ?? currentSeason;
+    const data = await this.espn
+      .getTeamSchedule(teamId, resolvedSeason, currentSeason)
+      .catch(rethrowAsNotFound(`Team ${teamId} not found`));
+
+    const games = (data?.events ?? [])
+      .map((event) => mapTeamScheduleEvent(event, teamId))
+      .sort((first, second) => {
+        const firstTime = Date.parse(first.date);
+        const secondTime = Date.parse(second.date);
+        if (!Number.isFinite(firstTime) || !Number.isFinite(secondTime)) {
+          return 0;
+        }
+        return firstTime - secondTime;
+      });
+
+    return {
+      season: resolvedSeason,
+      seasonLabel: formatSeasonLabel(resolvedSeason),
+      currentSeason,
+      games,
+    };
   }
 
   async findSeasonStats(
@@ -437,4 +489,33 @@ function venueLocation(address?: {
 function text(value?: string | null): string | null {
   const trimmed = value?.trim();
   return trimmed ? trimmed : null;
+}
+
+export function mapTeamScheduleEvent(
+  event: EspnScoreboardEvent,
+  teamId: string,
+): TeamScheduleGame {
+  const base = normalizeScoreboardEvent(event);
+  const requestedId = String(teamId);
+  const isHome = base.homeTeam?.id === requestedId;
+  const isAway = base.awayTeam?.id === requestedId;
+
+  let result: TeamGameResult | null = null;
+  if (
+    base.status === 'final' &&
+    base.homeScore !== null &&
+    base.awayScore !== null &&
+    base.homeScore !== base.awayScore &&
+    (isHome || isAway)
+  ) {
+    const teamScore = isHome ? base.homeScore : base.awayScore;
+    const opponentScore = isHome ? base.awayScore : base.homeScore;
+    result = teamScore > opponentScore ? 'W' : 'L';
+  }
+
+  return {
+    ...base,
+    isHome,
+    result,
+  };
 }

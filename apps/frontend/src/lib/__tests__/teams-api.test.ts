@@ -3,6 +3,7 @@ import {
   TEAM_SEASON_OPTION_COUNT,
   formatSeasonLabel,
   getTeam,
+  getTeamSchedule,
   getTeamSeasonStats,
   listTeamSeasonYears,
   parseSeasonQuery
@@ -87,5 +88,38 @@ describe('getTeamSeasonStats', () => {
     await getTeamSeasonStats('16', {seasonType: 'playoffs'})
 
     expect(String(fetchMock.mock.calls[0][0])).toBe('http://localhost:3000/teams/16/stats?seasonType=playoffs')
+  })
+})
+
+describe('getTeamSchedule', () => {
+  const fetchMock = vi.fn()
+
+  beforeEach(() => {
+    vi.stubGlobal('fetch', fetchMock)
+  })
+
+  afterEach(() => {
+    vi.unstubAllGlobals()
+    fetchMock.mockReset()
+  })
+
+  it('forwards an explicit season on the schedule request', async () => {
+    fetchMock.mockResolvedValue(
+      new Response(JSON.stringify({season: 2026, seasonLabel: '2025–26', currentSeason: 2027, games: []}), {
+        status: 200
+      })
+    )
+
+    await expect(getTeamSchedule('13', {season: 2026})).resolves.toMatchObject({
+      season: 2026,
+      games: []
+    })
+    expect(String(fetchMock.mock.calls[0][0])).toBe('http://localhost:3000/teams/13/schedule?season=2026')
+  })
+
+  it('resolves null when the schedule request fails so the team page stays up', async () => {
+    fetchMock.mockResolvedValue(new Response('{}', {status: 500}))
+
+    await expect(getTeamSchedule('13')).resolves.toBeNull()
   })
 })

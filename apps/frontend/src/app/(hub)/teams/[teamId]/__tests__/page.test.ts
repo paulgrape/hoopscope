@@ -1,4 +1,4 @@
-import {getTeam, getTeamSeasonStats} from '@/lib/teams-api'
+import {getTeam, getTeamSchedule, getTeamSeasonStats} from '@/lib/teams-api'
 import {beforeEach, describe, expect, it, vi} from 'vitest'
 
 import TeamDetailsPage from '../page'
@@ -16,9 +16,14 @@ vi.mock('@/lib/teams-api', async importOriginal => {
   return {
     ...actual,
     getTeam: vi.fn(),
+    getTeamSchedule: vi.fn(),
     getTeamSeasonStats: vi.fn()
   }
 })
+
+vi.mock('@/components/teams/team-schedule-strip', () => ({
+  TeamScheduleStrip: () => null
+}))
 
 vi.mock('@/components/teams/team-season-stats', () => ({
   TeamSeasonStats: () => null
@@ -72,7 +77,14 @@ describe('TeamDetailsPage', () => {
   beforeEach(() => {
     notFound.mockClear()
     vi.mocked(getTeam).mockReset()
+    vi.mocked(getTeamSchedule).mockReset()
     vi.mocked(getTeamSeasonStats).mockReset()
+    vi.mocked(getTeamSchedule).mockResolvedValue({
+      season: 2027,
+      seasonLabel: '2026–27',
+      currentSeason: 2027,
+      games: []
+    })
     vi.mocked(getTeamSeasonStats).mockResolvedValue(emptyStats(2027))
   })
 
@@ -100,6 +112,7 @@ describe('TeamDetailsPage', () => {
 
     expect(getTeamSeasonStats).toHaveBeenCalledWith('16', {season: undefined, seasonType: 'regular'})
     expect(getTeamSeasonStats).toHaveBeenCalledWith('16', {season: undefined, seasonType: 'playoffs'})
+    expect(getTeamSchedule).toHaveBeenCalledWith('16', {season: undefined})
   })
 
   it('forwards the URL season to both stats fetches', async () => {
@@ -112,5 +125,6 @@ describe('TeamDetailsPage', () => {
 
     expect(getTeamSeasonStats).toHaveBeenCalledWith('16', {season: 2026, seasonType: 'regular'})
     expect(getTeamSeasonStats).toHaveBeenCalledWith('16', {season: 2026, seasonType: 'playoffs'})
+    expect(getTeamSchedule).toHaveBeenCalledWith('16', {season: 2026})
   })
 })

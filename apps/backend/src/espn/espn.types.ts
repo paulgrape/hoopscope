@@ -56,10 +56,16 @@ export interface EspnLinescore {
   displayValue?: string;
 }
 
+export interface EspnScoreValue {
+  value?: number | string;
+  displayValue?: string;
+}
+
 export interface EspnCompetitor {
   id?: string;
   homeAway?: string;
-  score?: string | number;
+  winner?: boolean;
+  score?: string | number | EspnScoreValue;
   team?: EspnTeamCore;
   linescores?: EspnLinescore[];
 }
@@ -73,8 +79,12 @@ export interface EspnCompetition {
 }
 
 export interface EspnEventSeason {
+  year?: number;
+  displayName?: string;
   type?: number;
   slug?: string;
+  name?: string;
+  abbreviation?: string;
 }
 
 export interface EspnScoreboardEvent {
@@ -83,11 +93,16 @@ export interface EspnScoreboardEvent {
   shortName?: string;
   date?: string;
   season?: EspnEventSeason;
+  seasonType?: EspnEventSeason;
   status?: EspnStatus;
   competitions?: EspnCompetition[];
 }
 
 export interface EspnScoreboardResponse {
+  events?: EspnScoreboardEvent[];
+}
+
+export interface EspnTeamScheduleResponse {
   events?: EspnScoreboardEvent[];
 }
 
