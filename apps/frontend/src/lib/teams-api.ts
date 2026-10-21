@@ -1,4 +1,5 @@
 import {apiFetch, apiFetchOrNull} from '@/lib/api-client'
+import type {ScoreboardGame} from '@/lib/games-api'
 
 export type TeamSummary = {
   id: string
@@ -64,6 +65,20 @@ export type TeamSeasonStatsResponse = {
   players: TeamSeasonStatPlayer[]
 }
 
+export type TeamGameResult = 'W' | 'L'
+
+export type TeamScheduleGame = ScoreboardGame & {
+  isHome: boolean
+  result: TeamGameResult | null
+}
+
+export type TeamScheduleResponse = {
+  season: number
+  seasonLabel: string
+  currentSeason: number
+  games: TeamScheduleGame[]
+}
+
 /** Number of seasons offered in the team stats year control. */
 export const TEAM_SEASON_OPTION_COUNT = 25
 
@@ -106,4 +121,20 @@ export async function getTeamSeasonStats(
   const query = params.toString()
   const path = query ? `/teams/${teamId}/stats?${query}` : `/teams/${teamId}/stats`
   return apiFetch<TeamSeasonStatsResponse>(path, {timeoutMs: 30_000})
+}
+
+export async function getTeamSchedule(
+  teamId: string,
+  options: {season?: number} = {}
+): Promise<TeamScheduleResponse | null> {
+  const params = new URLSearchParams()
+  if (options.season != null) params.set('season', String(options.season))
+
+  const query = params.toString()
+  const path = query ? `/teams/${teamId}/schedule?${query}` : `/teams/${teamId}/schedule`
+  try {
+    return await apiFetchOrNull<TeamScheduleResponse>(path)
+  } catch {
+    return null
+  }
 }

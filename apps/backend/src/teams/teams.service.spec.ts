@@ -466,3 +466,325 @@ describe('TeamsService.findSeasonStats', () => {
     expect((await service.findSeasonStats('16', 2026)).players).toHaveLength(2);
   });
 });
+
+describe('TeamsService.findSchedule', () => {
+  let service: TeamsService;
+  let espn: {
+    resolveCurrentSeason: jest.Mock;
+    getTeamSchedule: jest.Mock;
+  };
+
+  const espnScheduleFixture = {
+    events: [
+      {
+        id: '401812482',
+        date: '2025-10-04T02:00Z',
+        name: 'Phoenix Suns at Los Angeles Lakers',
+        shortName: 'PHX VS LAL',
+        season: { year: 2026, displayName: '2025-26' },
+        seasonType: {
+          id: '1',
+          type: 1,
+          name: 'Preseason',
+          abbreviation: 'pre',
+        },
+        competitions: [
+          {
+            id: '401812482',
+            date: '2025-10-04T02:00Z',
+            venue: { fullName: 'Acrisure Arena' },
+            status: {
+              period: 4,
+              displayClock: '0.0',
+              type: {
+                state: 'post',
+                description: 'Final',
+                detail: 'Final',
+                shortDetail: 'Final',
+              },
+            },
+            competitors: [
+              {
+                id: '13',
+                homeAway: 'home',
+                winner: false,
+                score: { value: 104, displayValue: '104' },
+                team: {
+                  id: '13',
+                  abbreviation: 'LAL',
+                  displayName: 'Los Angeles Lakers',
+                  shortDisplayName: 'Lakers',
+                  logos: [{ href: 'https://logo/lal.png' }],
+                },
+              },
+              {
+                id: '21',
+                homeAway: 'away',
+                winner: true,
+                score: { value: 118, displayValue: '118' },
+                team: {
+                  id: '21',
+                  abbreviation: 'PHX',
+                  displayName: 'Phoenix Suns',
+                  shortDisplayName: 'Suns',
+                  logos: [{ href: 'https://logo/phx.png' }],
+                },
+              },
+            ],
+          },
+        ],
+      },
+      {
+        id: '401809244',
+        date: '2025-10-22T02:00Z',
+        name: 'Los Angeles Lakers at Golden State Warriors',
+        shortName: 'LAL @ GS',
+        season: { year: 2026, displayName: '2025-26' },
+        seasonType: {
+          id: '2',
+          type: 2,
+          name: 'Regular Season',
+          abbreviation: 'reg',
+        },
+        competitions: [
+          {
+            id: '401809244',
+            date: '2025-10-22T02:00Z',
+            venue: { fullName: 'Chase Center' },
+            status: {
+              period: 4,
+              displayClock: '0.0',
+              type: {
+                state: 'post',
+                description: 'Final',
+                detail: 'Final',
+                shortDetail: 'Final',
+              },
+            },
+            competitors: [
+              {
+                id: '9',
+                homeAway: 'home',
+                winner: false,
+                score: { value: 109, displayValue: '109' },
+                team: {
+                  id: '9',
+                  abbreviation: 'GSW',
+                  displayName: 'Golden State Warriors',
+                  shortDisplayName: 'Warriors',
+                  logos: [{ href: 'https://logo/gsw.png' }],
+                },
+              },
+              {
+                id: '13',
+                homeAway: 'away',
+                winner: true,
+                score: { value: 119, displayValue: '119' },
+                team: {
+                  id: '13',
+                  abbreviation: 'LAL',
+                  displayName: 'Los Angeles Lakers',
+                  shortDisplayName: 'Lakers',
+                  logos: [{ href: 'https://logo/lal.png' }],
+                },
+              },
+            ],
+          },
+        ],
+      },
+      {
+        id: '401809300',
+        date: '2025-10-25T02:30Z',
+        name: 'Sacramento Kings at Los Angeles Lakers',
+        shortName: 'SAC @ LAL',
+        season: { year: 2026, displayName: '2025-26' },
+        seasonType: {
+          id: '2',
+          type: 2,
+          name: 'Regular Season',
+          abbreviation: 'reg',
+        },
+        competitions: [
+          {
+            id: '401809300',
+            date: '2025-10-25T02:30Z',
+            venue: { fullName: 'crypto.com Arena' },
+            status: {
+              period: 3,
+              displayClock: '4:12',
+              type: {
+                state: 'in',
+                description: 'In Progress',
+                shortDetail: '4:12 - 3rd',
+              },
+            },
+            competitors: [
+              {
+                id: '13',
+                homeAway: 'home',
+                score: { value: 82, displayValue: '82' },
+                team: {
+                  id: '13',
+                  abbreviation: 'LAL',
+                  displayName: 'Los Angeles Lakers',
+                  shortDisplayName: 'Lakers',
+                },
+              },
+              {
+                id: '23',
+                homeAway: 'away',
+                score: { value: 79, displayValue: '79' },
+                team: {
+                  id: '23',
+                  abbreviation: 'SAC',
+                  displayName: 'Sacramento Kings',
+                  shortDisplayName: 'Kings',
+                },
+              },
+            ],
+          },
+        ],
+      },
+      {
+        id: '401909092',
+        date: '2025-10-28T02:00Z',
+        name: 'Denver Nuggets at Los Angeles Lakers',
+        shortName: 'DEN @ LAL',
+        season: { year: 2026, displayName: '2025-26' },
+        seasonType: {
+          id: '2',
+          type: 2,
+          name: 'Regular Season',
+          abbreviation: 'reg',
+        },
+        competitions: [
+          {
+            id: '401909092',
+            date: '2025-10-28T02:00Z',
+            venue: { fullName: 'crypto.com Arena' },
+            status: {
+              period: 0,
+              displayClock: '0.0',
+              type: {
+                state: 'pre',
+                description: 'Scheduled',
+                shortDetail: '10/27 - 10:00 PM EDT',
+              },
+            },
+            competitors: [
+              {
+                id: '13',
+                homeAway: 'home',
+                team: {
+                  id: '13',
+                  abbreviation: 'LAL',
+                  displayName: 'Los Angeles Lakers',
+                  shortDisplayName: 'Lakers',
+                },
+              },
+              {
+                id: '7',
+                homeAway: 'away',
+                team: {
+                  id: '7',
+                  abbreviation: 'DEN',
+                  displayName: 'Denver Nuggets',
+                  shortDisplayName: 'Nuggets',
+                },
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  };
+
+  beforeEach(() => {
+    espn = {
+      resolveCurrentSeason: jest.fn().mockResolvedValue({
+        year: 2026,
+        type: 2,
+        name: 'Regular Season',
+      }),
+      getTeamSchedule: jest.fn().mockResolvedValue(espnScheduleFixture),
+    };
+    service = new TeamsService(
+      espn as unknown as EspnService,
+      new CacheService(),
+    );
+  });
+
+  it('normalizes final, live, and scheduled team schedule events including competition-level status', async () => {
+    const schedule = await service.findSchedule('13');
+
+    expect(espn.getTeamSchedule).toHaveBeenCalledWith('13', 2026, 2026);
+    expect(schedule.season).toBe(2026);
+    expect(schedule.seasonLabel).toBe('2025–26');
+    expect(schedule.currentSeason).toBe(2026);
+    expect(schedule.games).toEqual([
+      expect.objectContaining({
+        id: '401812482',
+        seasonType: 'preseason',
+        status: 'final',
+        statusDetail: 'Final',
+        homeScore: 104,
+        awayScore: 118,
+        venue: 'Acrisure Arena',
+        isHome: true,
+        result: 'L',
+        homeTeam: expect.objectContaining({
+          id: '13',
+          name: 'Lakers',
+          abbreviation: 'LAL',
+        }),
+        awayTeam: expect.objectContaining({
+          id: '21',
+          name: 'Suns',
+          abbreviation: 'PHX',
+        }),
+      }),
+      expect.objectContaining({
+        id: '401809244',
+        seasonType: 'regular',
+        status: 'final',
+        homeScore: 109,
+        awayScore: 119,
+        venue: 'Chase Center',
+        isHome: false,
+        result: 'W',
+      }),
+      expect.objectContaining({
+        id: '401809300',
+        seasonType: 'regular',
+        status: 'live',
+        statusDetail: '4:12 - 3rd',
+        period: 3,
+        clock: '4:12',
+        homeScore: 82,
+        awayScore: 79,
+        isHome: true,
+        result: null,
+      }),
+      expect.objectContaining({
+        id: '401909092',
+        seasonType: 'regular',
+        status: 'scheduled',
+        statusDetail: '10/27 - 10:00 PM EDT',
+        homeScore: null,
+        awayScore: null,
+        isHome: true,
+        result: null,
+      }),
+    ]);
+  });
+
+  it('forwards an explicit season to ESPN and turns 404 into NotFoundException', async () => {
+    await service.findSchedule('13', 2025);
+    expect(espn.getTeamSchedule).toHaveBeenCalledWith('13', 2025, 2026);
+
+    espn.getTeamSchedule.mockRejectedValue(upstreamNotFound());
+    await expect(service.findSchedule('999')).rejects.toBeInstanceOf(
+      NotFoundException,
+    );
+  });
+});

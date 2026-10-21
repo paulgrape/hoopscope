@@ -1,6 +1,9 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { SeasonStatsQueryDto } from '../common/dto/season-stats-query.dto';
+import {
+  SeasonQueryDto,
+  SeasonStatsQueryDto,
+} from '../common/dto/season-stats-query.dto';
 import { TeamsService } from './teams.service';
 
 @ApiTags('teams')
@@ -24,6 +27,12 @@ export class TeamsController {
   @ApiOperation({ summary: 'Get team roster' })
   findRoster(@Param('id') id: string) {
     return this.teamsService.findRoster(id);
+  }
+
+  @Get(':id/schedule')
+  @ApiOperation({ summary: 'Team season schedule and results' })
+  findSchedule(@Param('id') id: string, @Query() query: SeasonQueryDto) {
+    return this.teamsService.findSchedule(id, query.season);
   }
 
   @Get(':id/stats')

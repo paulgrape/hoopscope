@@ -18,9 +18,9 @@ import {
 import { type GameSeasonType, mapEspnSeasonType } from '../espn/season-year';
 import { SimulationService } from './simulation.service';
 
-type ScoreboardStatus = 'scheduled' | 'live' | 'final';
+export type ScoreboardStatus = 'scheduled' | 'live' | 'final';
 
-type ScoreboardTeam = {
+export type ScoreboardTeam = {
   id: string;
   name: string;
   displayName: string;
@@ -29,7 +29,7 @@ type ScoreboardTeam = {
   color: string | null;
 };
 
-type ScoreboardGame = {
+export type ScoreboardGame = {
   id: string;
   name: string;
   shortName: string | null;
@@ -366,18 +366,22 @@ function findCompetitor(
   return competitors?.find((competitor) => competitor.homeAway === homeAway);
 }
 
-function normalizeScoreboardEvent(event: EspnScoreboardEvent): ScoreboardGame {
+export function normalizeScoreboardEvent(
+  event: EspnScoreboardEvent,
+): ScoreboardGame {
   const competition = event.competitions?.[0];
   const home = findCompetitor(competition?.competitors, 'home');
   const away = findCompetitor(competition?.competitors, 'away');
-  const statusType = event.status?.type;
+  const status = event.status ?? competition?.status;
+  const statusType = status?.type;
 
   return {
     id: event.id,
     name: event.name ?? buildGameName(away, home),
-    shortName: event.shortName ?? null,
-    date: event.date ?? '',
-    seasonType: mapEspnSeasonType(event.season),
+    shortName: event.shortName ?? buildShortName(away, home),
+    date: event.date ?? competition?.date ?? '',
+    seasonType:
+      mapEspnSeasonType(event.seasonType) ?? mapEspnSeasonType(event.season),
     status: normalizeStatus(statusType?.state),
     statusDetail:
       statusType?.shortDetail ??
@@ -388,8 +392,8 @@ function normalizeScoreboardEvent(event: EspnScoreboardEvent): ScoreboardGame {
     awayTeam: normalizeTeam(away),
     homeScore: parseScore(home?.score),
     awayScore: parseScore(away?.score),
-    period: event.status?.period ?? null,
-    clock: event.status?.displayClock ?? null,
+    period: status?.period ?? null,
+    clock: status?.displayClock ?? null,
     venue: competition?.venue?.fullName ?? null,
   };
 }
@@ -400,7 +404,7 @@ function normalizeTeam(
   const team = competitor?.team;
   if (!team) return null;
 
-  const name = team.name ?? team.displayName ?? '';
+  const name = team.name ?? team.shortDisplayName ?? team.displayName ?? '';
   return {
     id: String(team.id),
     name,
@@ -643,7 +647,12 @@ function normalizeStatus(state?: string): ScoreboardStatus {
   return 'scheduled';
 }
 
-function parseScore(score: unknown) {
+function parseScore(score: unknown): number | null {
+  if (score == null || score === '') return null;
+  if (typeof score === 'object') {
+    const record = score as { value?: unknown; displayValue?: unknown };
+    return parseScore(record.value ?? record.displayValue);
+  }
   const parsedScore = Number(score);
   return Number.isFinite(parsedScore) ? parsedScore : null;
 }

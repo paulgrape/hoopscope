@@ -7,6 +7,7 @@ describe('TeamsController', () => {
     findAll: jest.Mock;
     findOne: jest.Mock;
     findRoster: jest.Mock;
+    findSchedule: jest.Mock;
     findSeasonStats: jest.Mock;
   };
 
@@ -15,6 +16,7 @@ describe('TeamsController', () => {
       findAll: jest.fn(),
       findOne: jest.fn(),
       findRoster: jest.fn(),
+      findSchedule: jest.fn(),
       findSeasonStats: jest.fn(),
     };
     controller = new TeamsController(teams as unknown as TeamsService);
@@ -41,6 +43,14 @@ describe('TeamsController', () => {
 
     expect(controller.findRoster('2')).toBe(payload);
     expect(teams.findRoster).toHaveBeenCalledWith('2');
+  });
+
+  it('loads a team schedule with an optional season', () => {
+    const payload = { season: 2026, seasonLabel: '2025–26', games: [] };
+    teams.findSchedule.mockReturnValue(payload);
+
+    expect(controller.findSchedule('13', { season: 2026 })).toBe(payload);
+    expect(teams.findSchedule).toHaveBeenCalledWith('13', 2026);
   });
 
   it('defaults season type to regular when omitted', () => {

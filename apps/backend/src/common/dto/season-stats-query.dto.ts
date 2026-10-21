@@ -7,8 +7,8 @@ import type { EspnSeasonType } from '../../espn/espn.service';
 const FIRST_SEASON = 1947;
 const LAST_SEASON = 2100;
 
-/** Shared by the player and team season-average endpoints. */
-export class SeasonStatsQueryDto {
+/** Shared season-year query validation across team and player endpoints. */
+export class SeasonQueryDto {
   @ApiPropertyOptional({ example: 2026 })
   @IsOptional()
   @Type(() => Number)
@@ -16,7 +16,10 @@ export class SeasonStatsQueryDto {
   @Min(FIRST_SEASON)
   @Max(LAST_SEASON)
   season?: number;
+}
 
+/** Shared by the player and team season-average endpoints. */
+export class SeasonStatsQueryDto extends SeasonQueryDto {
   @ApiPropertyOptional({ enum: ['regular', 'playoffs'], default: 'regular' })
   @IsOptional()
   @IsIn(['regular', 'playoffs'], {

@@ -37,6 +37,25 @@ export default function TeamDetailsLoading() {
         </div>
       </section>
 
+      {/* Schedule strip */}
+      <section className='bg-card border-border min-w-0 rounded-xl border p-3 sm:p-5'>
+        <div className='flex items-center justify-between gap-4'>
+          <Skeleton className='h-6 w-28 sm:h-7' />
+          <div className='flex items-center gap-1.5'>
+            <Skeleton className='size-8 rounded-lg' />
+            <Skeleton className='size-8 rounded-lg' />
+          </div>
+        </div>
+        <div className='mt-4 flex gap-3 overflow-hidden'>
+          {Array.from({length: 4}).map((_, index) => (
+            <Skeleton
+              key={index}
+              className='h-28 w-64 shrink-0 rounded-xl sm:w-72'
+            />
+          ))}
+        </div>
+      </section>
+
       {/* Season stats card */}
       <section className='bg-card border-border min-w-0 rounded-xl border p-3 sm:p-5'>
         <div className='flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4'>
