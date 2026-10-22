@@ -20,6 +20,37 @@ const FALLBACK_PAGE_SCROLL_PX = 864
 const FALLBACK_PAGE_CARDS = 3
 const SCROLL_EDGE_TOLERANCE_PX = 4
 
+type SchedulePage = {
+  index: number
+  pageSize: number
+}
+
+function listGap(scroller: HTMLElement): number {
+  const styles = getComputedStyle(scroller)
+  const parsed = Number.parseFloat(styles.columnGap || styles.gap)
+  return Number.isFinite(parsed) ? parsed : 0
+}
+
+/** How many whole cards fit in the strip. Null when layout has not been measured. */
+function cardsPerView(scroller: HTMLElement, card: HTMLElement): number | null {
+  if (scroller.clientWidth <= 0 || card.offsetWidth <= 0) return null
+  const gap = listGap(scroller)
+  const stride = card.offsetWidth + gap
+  if (stride <= 0) return null
+  return Math.max(1, Math.floor((scroller.clientWidth + gap) / stride))
+}
+
+/** First card whose left edge is at or just after the current scroll position. */
+function alignedCardIndex(scroller: HTMLElement, cards: HTMLElement[]): number {
+  const origin = scroller.scrollLeft - SCROLL_EDGE_TOLERANCE_PX
+  const index = cards.findIndex(card => card.offsetLeft >= origin)
+  return index === -1 ? cards.length - 1 : index
+}
+
+function clampIndex(index: number, length: number): number {
+  return Math.min(length - 1, Math.max(0, index))
+}
+
 type TeamScheduleStripProps = {
   schedule: TeamScheduleResponse | null
 }
@@ -46,77 +77,69 @@ export function TeamScheduleStrip({schedule}: TeamScheduleStripProps) {
   }
   const fallbackIndex = fallback.key === anchorKey ? fallback.index : anchorIndex >= 0 ? anchorIndex : 0
 
-  const [scrollBounds, setScrollBounds] = useState<{canPrev: boolean; canNext: boolean} | null>(null)
+  const [paging, setPaging] = useState<SchedulePage | null>(null)
+  if (fallback.key !== anchorKey && paging !== null) {
+    setPaging(null)
+  }
   const scrollerRef = useRef<HTMLUListElement | null>(null)
   const cardRefs = useRef<Array<HTMLLIElement | null>>([])
 
-  const syncScrollBounds = useCallback(() => {
+  const syncPaging = useCallback(() => {
     const scroller = scrollerRef.current
-    if (!scroller) return
+    const cards = cardRefs.current.filter((card): card is HTMLLIElement => card != null)
+    if (!scroller || cards.length === 0) return
 
-    const maxScrollLeft = scroller.scrollWidth - scroller.clientWidth
-    if (maxScrollLeft <= 0) {
-      setScrollBounds(null)
+    const pageSize = cardsPerView(scroller, cards[0])
+    if (pageSize == null) {
+      setPaging(null)
       return
     }
 
-    setScrollBounds({
-      canPrev: scroller.scrollLeft > SCROLL_EDGE_TOLERANCE_PX,
-      canNext: scroller.scrollLeft < maxScrollLeft - SCROLL_EDGE_TOLERANCE_PX
-    })
+    setPaging({index: alignedCardIndex(scroller, cards), pageSize})
   }, [])
 
   useEffect(() => {
     if (anchorIndex < 0) return
+    const scroller = scrollerRef.current
     const anchorCard = cardRefs.current[anchorIndex]
-    if (typeof anchorCard?.scrollIntoView === 'function') {
-      anchorCard.scrollIntoView({block: 'nearest', inline: 'center'})
+    if (scroller && anchorCard && typeof scroller.scrollTo === 'function') {
+      scroller.scrollTo({left: anchorCard.offsetLeft})
     }
-    syncScrollBounds()
-  }, [anchorIndex, schedule?.season, syncScrollBounds])
+    queueMicrotask(syncPaging)
+  }, [anchorIndex, schedule?.season, syncPaging])
 
   useEffect(() => {
-    window.addEventListener('resize', syncScrollBounds)
-    return () => window.removeEventListener('resize', syncScrollBounds)
-  }, [syncScrollBounds])
+    window.addEventListener('resize', syncPaging)
+    return () => window.removeEventListener('resize', syncPaging)
+  }, [syncPaging])
 
   function scrollPage(delta: -1 | 1) {
     const scroller = scrollerRef.current
-    if (!scroller || visibleGames.length === 0) return
+    const cards = cardRefs.current.filter((card): card is HTMLLIElement => card != null)
+    if (!scroller || cards.length === 0) return
 
-    const maxScrollLeft = scroller.scrollWidth - scroller.clientWidth
-    if (scroller.clientWidth > 0 && maxScrollLeft > 0) {
-      const step = scroller.clientWidth
-      const nextScrollLeft = Math.min(
-        maxScrollLeft,
-        Math.max(0, scroller.scrollLeft + delta * step)
-      )
+    const pageSize = cardsPerView(scroller, cards[0])
+    if (pageSize == null) {
+      const nextIndex = clampIndex(fallbackIndex + delta * FALLBACK_PAGE_CARDS, cards.length)
+      setFallback({key: anchorKey, index: nextIndex})
       if (typeof scroller.scrollBy === 'function') {
-        scroller.scrollBy({left: delta * step, behavior: 'smooth'})
-      } else {
-        scroller.scrollLeft = nextScrollLeft
+        scroller.scrollBy({left: delta * FALLBACK_PAGE_SCROLL_PX, behavior: 'smooth'})
       }
-      setScrollBounds({
-        canPrev: nextScrollLeft > SCROLL_EDGE_TOLERANCE_PX,
-        canNext: nextScrollLeft < maxScrollLeft - SCROLL_EDGE_TOLERANCE_PX
-      })
       return
     }
 
-    const nextIndex = Math.min(
-      visibleGames.length - 1,
-      Math.max(0, fallbackIndex + delta * FALLBACK_PAGE_CARDS)
-    )
-    setFallback({key: anchorKey, index: nextIndex})
-    if (typeof scroller.scrollBy === 'function') {
-      scroller.scrollBy({left: delta * FALLBACK_PAGE_SCROLL_PX, behavior: 'smooth'})
-    }
+    const start = alignedCardIndex(scroller, cards)
+    const nextIndex = clampIndex(start + delta * pageSize, cards.length)
+    if (nextIndex === start) return
+
+    const target = cards[nextIndex]
+    scroller.scrollTo({left: target.offsetLeft, behavior: 'smooth'})
+    setPaging({index: nextIndex, pageSize})
   }
 
-  const canScrollPrev = scrollBounds ? scrollBounds.canPrev : fallbackIndex > 0
-  const canScrollNext = scrollBounds
-    ? scrollBounds.canNext
-    : fallbackIndex < visibleGames.length - 1
+  const page = paging ?? {index: fallbackIndex, pageSize: FALLBACK_PAGE_CARDS}
+  const canScrollPrev = clampIndex(page.index - page.pageSize, visibleGames.length) !== page.index
+  const canScrollNext = clampIndex(page.index + page.pageSize, visibleGames.length) !== page.index
 
   return (
     <section
@@ -194,7 +217,7 @@ export function TeamScheduleStrip({schedule}: TeamScheduleStripProps) {
       ) : (
         <ul
           ref={scrollerRef}
-          onScroll={syncScrollBounds}
+          onScroll={syncPaging}
           className='scrollbar-thin relative mt-4 flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 scroll-smooth'
         >
           {visibleGames.map((game, index) => {
@@ -209,7 +232,7 @@ export function TeamScheduleStrip({schedule}: TeamScheduleStripProps) {
                 }}
                 data-anchor={isAnchor ? 'true' : undefined}
                 data-form={isFormGame ? 'true' : undefined}
-                className='w-64 shrink-0 snap-center sm:w-72'
+                className='w-64 shrink-0 snap-start sm:w-72'
               >
                 <ScheduleGameCard
                   game={game}
