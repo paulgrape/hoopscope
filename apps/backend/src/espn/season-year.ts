@@ -66,3 +66,23 @@ export function isUnstartedCurrentSeason(
 ): boolean {
   return resolvedSeason === current.year && isUnstartedEspnSeason(current);
 }
+
+/** Past years are finished. The live year is finished once ESPN reports the offseason. */
+export function isSeasonComplete(
+  season: number,
+  current: EspnSeasonMeta,
+): boolean {
+  if (season < current.year) return true;
+  if (season > current.year) return false;
+  return Number(current.type) === 4;
+}
+
+/**
+ * Regular season, play-in, postseason, and a missing type change as games are played.
+ * Preseason and offseason lines stay on the long cache.
+ */
+export function usesLiveStatsTtl(current: EspnSeasonMeta): boolean {
+  const type = current.type == null ? null : Number(current.type);
+  if (type === 1 || type === 4) return false;
+  return true;
+}

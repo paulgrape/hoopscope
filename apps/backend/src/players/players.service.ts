@@ -13,7 +13,11 @@ import {
   formatSeasonLabel,
   parseOverviewAverages,
 } from '../espn/athlete-stats.parser';
-import { isUnstartedCurrentSeason } from '../espn/season-year';
+import {
+  isSeasonComplete,
+  isUnstartedCurrentSeason,
+  usesLiveStatsTtl,
+} from '../espn/season-year';
 import {
   EspnCoreAthlete,
   EspnSeasonType,
@@ -76,6 +80,7 @@ export type PlayerSeasonStatsResponse = {
   season: number;
   seasonLabel: string;
   seasonType: EspnSeasonType;
+  seasonComplete: boolean;
   participated: boolean;
   averages: PlayerSeasonAverages | null;
 };
@@ -212,12 +217,14 @@ export class PlayersService {
 
     const ttl = this.espn.seasonStatsTtl(resolvedSeason, currentSeason);
     const unstarted = isUnstartedCurrentSeason(resolvedSeason, current);
+    const seasonComplete = isSeasonComplete(resolvedSeason, current);
 
     if (unstarted && seasonType === 'playoffs') {
       const empty: PlayerSeasonStatsResponse = {
         season: resolvedSeason,
         seasonLabel: formatSeasonLabel(resolvedSeason),
         seasonType,
+        seasonComplete,
         participated: false,
         averages: null,
       };
@@ -241,6 +248,7 @@ export class PlayersService {
       season: resolvedSeason,
       seasonLabel: formatSeasonLabel(resolvedSeason),
       seasonType,
+      seasonComplete,
       participated: averages.gp > 0,
       averages: seasonType === 'playoffs' && averages.gp <= 0 ? null : averages,
     };
@@ -254,7 +262,8 @@ export class PlayersService {
     const cached = this.cache.get<PlayerCareerStatsResponse>(cacheKey);
     if (cached) return cached;
 
-    const [regularData, playoffData] = await Promise.all([
+    const [current, regularData, playoffData] = await Promise.all([
+      this.espn.resolveCurrentSeason(),
       this.espn.getAthleteStats(id, 'regular'),
       this.espn.getAthleteStats(id, 'playoffs'),
     ]);
@@ -265,7 +274,10 @@ export class PlayersService {
     ].map(({ teamDisplayName: _teamDisplayName, ...season }) => season);
 
     const result: PlayerCareerStatsResponse = { seasons };
-    this.cache.set(cacheKey, result, 24 * 60 * 60 * 1000);
+    const ttl = usesLiveStatsTtl(current)
+      ? this.espn.TTL_SEASON_STATS_CURRENT
+      : 24 * 60 * 60 * 1000;
+    this.cache.set(cacheKey, result, ttl);
     return result;
   }
 

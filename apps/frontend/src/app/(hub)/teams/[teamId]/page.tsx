@@ -79,7 +79,11 @@ export default async function TeamDetailsPage({params, searchParams}: TeamDetail
 
       <TeamPageHeader team={team} />
       <TeamFacts team={team} />
-      <TeamScheduleStrip schedule={schedule} />
+      <TeamScheduleStrip
+        schedule={schedule}
+        season={regularStats.season}
+        currentSeason={regularStats.currentSeason}
+      />
 
       <TeamSeasonStats
         regularStats={regularStats}

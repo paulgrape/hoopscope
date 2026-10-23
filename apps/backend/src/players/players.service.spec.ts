@@ -287,9 +287,117 @@ describe('PlayersService.findSeasonStats', () => {
     });
 
     await expect(service.findSeasonStats('4432816')).resolves.toMatchObject({
+      seasonComplete: false,
       participated: true,
       averages: { gp: 4, pts: 28.1 },
     });
     expect(espn.getAthleteOverview).toHaveBeenCalled();
+  });
+
+  it('marks a past season complete and leaves the live regular season open', async () => {
+    espn.resolveCurrentSeason.mockResolvedValue({
+      year: 2027,
+      type: 2,
+      name: 'Regular Season',
+    });
+    espn.getAthleteOverview.mockResolvedValue({
+      statistics: {
+        names: ['gamesPlayed'],
+        splits: [{ displayName: 'Regular Season', stats: ['60'] }],
+      },
+    });
+
+    await expect(
+      service.findSeasonStats('4432816', 2026),
+    ).resolves.toMatchObject({
+      season: 2026,
+      seasonComplete: true,
+    });
+    await expect(service.findSeasonStats('4432816')).resolves.toMatchObject({
+      season: 2027,
+      seasonComplete: false,
+    });
+  });
+
+  it('marks the live year complete in the offseason', async () => {
+    espn.resolveCurrentSeason.mockResolvedValue({
+      year: 2027,
+      type: 4,
+      name: 'Off Season',
+    });
+
+    await expect(service.findSeasonStats('4432816')).resolves.toMatchObject({
+      season: 2027,
+      seasonComplete: true,
+      participated: false,
+    });
+    expect(espn.getAthleteOverview).not.toHaveBeenCalled();
+  });
+
+  it('returns no playoff participation while the regular season is underway', async () => {
+    espn.resolveCurrentSeason.mockResolvedValue({
+      year: 2027,
+      type: 2,
+      name: 'Regular Season',
+    });
+    espn.getAthleteOverview.mockResolvedValue({
+      statistics: {
+        names: ['gamesPlayed'],
+        splits: [{ displayName: 'Regular Season', stats: ['2'] }],
+      },
+    });
+
+    await expect(
+      service.findSeasonStats('4432816', undefined, 'playoffs'),
+    ).resolves.toMatchObject({
+      participated: false,
+      seasonComplete: false,
+      averages: null,
+    });
+  });
+});
+
+describe('PlayersService.findCareerStats', () => {
+  function create(type: number) {
+    const cache = new CacheService();
+    const espn = {
+      resolveCurrentSeason: jest.fn().mockResolvedValue({
+        year: 2027,
+        type,
+        name: 'Season',
+      }),
+      getAthleteStats: jest.fn().mockResolvedValue({ categories: [] }),
+      TTL_SEASON_STATS_CURRENT: 30 * 60 * 1000,
+    };
+    return {
+      cache,
+      service: new PlayersService(espn as unknown as EspnService, cache),
+    };
+  }
+
+  it('caches the mapped career for 30 minutes during the regular season', async () => {
+    const { cache, service } = create(2);
+    const set = jest.spyOn(cache, 'set');
+
+    await service.findCareerStats('1966');
+
+    expect(set).toHaveBeenCalledWith(
+      'player-career-stats:1966',
+      { seasons: [] },
+      30 * 60 * 1000,
+    );
+  });
+
+  it('caches the mapped career for 24 hours in the offseason', async () => {
+    const { cache, service } = create(4);
+    const set = jest.spyOn(cache, 'set');
+
+    await service.findCareerStats('1966');
+
+    expect(set).toHaveBeenCalledWith(
+      'player-career-stats:1966',
+      { seasons: [] },
+      24 * 60 * 60 * 1000,
+    );
   });
 });

@@ -1,5 +1,5 @@
 import {ApiError} from '@/lib/api-client'
-import {getPlayer} from '@/lib/players-api'
+import {getPlayer, getPlayerCareerStats} from '@/lib/players-api'
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
 
 describe('getPlayer', () => {
@@ -30,6 +30,28 @@ describe('getPlayer', () => {
     fetchMock.mockResolvedValue(new Response(JSON.stringify({id: '1966', fullName: 'LeBron James'}), {status: 200}))
 
     await expect(getPlayer('1966')).resolves.toMatchObject({fullName: 'LeBron James'})
+
+    const [, init] = fetchMock.mock.calls[0]
+    expect(init.next).toEqual({revalidate: 1800})
+  })
+})
+
+describe('getPlayerCareerStats', () => {
+  const fetchMock = vi.fn()
+
+  beforeEach(() => {
+    vi.stubGlobal('fetch', fetchMock)
+  })
+
+  afterEach(() => {
+    vi.unstubAllGlobals()
+    fetchMock.mockReset()
+  })
+
+  it('revalidates on the same interval as the current season card', async () => {
+    fetchMock.mockResolvedValue(new Response(JSON.stringify({seasons: []}), {status: 200}))
+
+    await getPlayerCareerStats('1966')
 
     const [, init] = fetchMock.mock.calls[0]
     expect(init.next).toEqual({revalidate: 1800})

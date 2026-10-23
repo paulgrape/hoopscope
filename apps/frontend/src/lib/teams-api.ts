@@ -61,6 +61,7 @@ export type TeamSeasonStatsResponse = {
   seasonLabel: string
   seasonType: SeasonType
   currentSeason: number
+  seasonComplete: boolean
   participated: boolean
   players: TeamSeasonStatPlayer[]
 }

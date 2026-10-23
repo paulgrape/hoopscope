@@ -2,18 +2,11 @@
 
 import {Button} from '@/components/ui/button'
 import {getPlayerHref} from '@/lib/players-api'
-import {
-  formatSeasonLabel,
-  listTeamSeasonYears,
-  type SeasonType,
-  type TeamSeasonStatPlayer,
-  type TeamSeasonStatsResponse
-} from '@/lib/teams-api'
+import {type SeasonType, type TeamSeasonStatPlayer, type TeamSeasonStatsResponse} from '@/lib/teams-api'
 import {cn} from '@/lib/utils'
 import Image from 'next/image'
 import Link from 'next/link'
-import {usePathname, useRouter, useSearchParams} from 'next/navigation'
-import {useMemo, useState, useTransition} from 'react'
+import {useMemo, useState} from 'react'
 
 type SortColumn = keyof Pick<
   TeamSeasonStatPlayer,
@@ -44,17 +37,12 @@ type TeamSeasonStatsProps = {
 }
 
 export function TeamSeasonStats({regularStats, playoffStats, teamId}: TeamSeasonStatsProps) {
-  const router = useRouter()
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
-  const [isPending, startTransition] = useTransition()
   const [seasonType, setSeasonType] = useState<SeasonType>('regular')
   const [sortColumn, setSortColumn] = useState<SortColumn>('pts')
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc')
 
-  const currentSeason = regularStats.currentSeason ?? regularStats.season
-  const seasonYears = listTeamSeasonYears(currentSeason)
-  const stats = seasonType === 'regular' ? regularStats : playoffStats
+  const showPlayoffs = playoffStats.participated || regularStats.seasonComplete
+  const stats = seasonType === 'regular' || !showPlayoffs ? regularStats : playoffStats
 
   const sortedPlayers = useMemo(() => {
     const players = [...stats.players]
@@ -86,23 +74,7 @@ export function TeamSeasonStats({regularStats, playoffStats, teamId}: TeamSeason
     setSortDirection(column === 'fullName' ? 'asc' : 'desc')
   }
 
-  function selectSeason(nextSeason: string) {
-    const year = Number(nextSeason)
-    const params = new URLSearchParams(searchParams.toString())
-
-    if (year === currentSeason) {
-      params.delete('season')
-    } else {
-      params.set('season', String(year))
-    }
-
-    const query = params.toString()
-    startTransition(() => {
-      router.replace(query ? `${pathname}?${query}` : pathname, {scroll: false})
-    })
-  }
-
-  const showEmptyPlayoffs = seasonType === 'playoffs' && !playoffStats.participated
+  const showEmptyPlayoffs = showPlayoffs && seasonType === 'playoffs' && !playoffStats.participated
   const showStats = !showEmptyPlayoffs
 
   return (
@@ -112,31 +84,7 @@ export function TeamSeasonStats({regularStats, playoffStats, teamId}: TeamSeason
           {regularStats.seasonLabel} Season Stats
         </h2>
 
-        <div className='flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-end'>
-          <div className='flex min-w-0 flex-col gap-1.5 sm:w-44'>
-            <label
-              htmlFor='team-season'
-              className='text-muted-foreground text-sm'
-            >
-              Season
-            </label>
-            <select
-              id='team-season'
-              value={String(regularStats.season)}
-              onChange={event => selectSeason(event.target.value)}
-              className='bg-background border-border text-foreground focus-visible:ring-ring/50 rounded-lg border px-3 py-2 text-sm focus-visible:ring-3 focus-visible:outline-none'
-            >
-              {seasonYears.map(year => (
-                <option
-                  key={year}
-                  value={year}
-                >
-                  {formatSeasonLabel(year)}
-                </option>
-              ))}
-            </select>
-          </div>
-
+        {showPlayoffs ? (
           <div className='bg-background border-border flex w-full rounded-lg border p-0.5 sm:w-auto'>
             <Button
               type='button'
@@ -157,15 +105,8 @@ export function TeamSeasonStats({regularStats, playoffStats, teamId}: TeamSeason
               Playoffs
             </Button>
           </div>
-        </div>
+        ) : null}
       </div>
-
-      <p
-        aria-live='polite'
-        className='sr-only'
-      >
-        {isPending ? 'Updating season stats.' : ''}
-      </p>
 
       {showEmptyPlayoffs ? (
         <p className='text-muted-foreground mt-4 rounded-lg border border-dashed px-4 py-6 text-sm'>

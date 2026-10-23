@@ -1,7 +1,9 @@
 import {
+  isSeasonComplete,
   isUnstartedCurrentSeason,
   isUnstartedEspnSeason,
   mapEspnSeasonType,
+  usesLiveStatsTtl,
 } from './season-year';
 
 describe('mapEspnSeasonType', () => {
@@ -66,5 +68,36 @@ describe('isUnstartedCurrentSeason', () => {
         name: 'Regular Season',
       }),
     ).toBe(false);
+  });
+});
+
+describe('isSeasonComplete', () => {
+  const regular = { year: 2027, type: 2, name: 'Regular Season' };
+
+  it('treats an older year as complete during the regular season', () => {
+    expect(isSeasonComplete(2026, regular)).toBe(true);
+    expect(isSeasonComplete(2027, regular)).toBe(false);
+    expect(isSeasonComplete(2028, regular)).toBe(false);
+  });
+
+  it('treats the live year as complete in the offseason', () => {
+    const offseason = { year: 2027, type: 4, name: 'Off Season' };
+
+    expect(isSeasonComplete(2027, offseason)).toBe(true);
+    expect(isSeasonComplete(2026, offseason)).toBe(true);
+  });
+});
+
+describe('usesLiveStatsTtl', () => {
+  it('refreshes regular season, play-in, postseason, and a missing type', () => {
+    expect(usesLiveStatsTtl({ year: 2027, type: 2 })).toBe(true);
+    expect(usesLiveStatsTtl({ year: 2027, type: 3 })).toBe(true);
+    expect(usesLiveStatsTtl({ year: 2027, type: 5 })).toBe(true);
+    expect(usesLiveStatsTtl({ year: 2027 })).toBe(true);
+  });
+
+  it('keeps preseason and offseason on the long cache', () => {
+    expect(usesLiveStatsTtl({ year: 2027, type: 1 })).toBe(false);
+    expect(usesLiveStatsTtl({ year: 2027, type: 4 })).toBe(false);
   });
 });

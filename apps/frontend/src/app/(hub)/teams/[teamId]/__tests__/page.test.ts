@@ -68,6 +68,7 @@ function emptyStats(season: number) {
     seasonLabel: `${season - 1}–${String(season).slice(-2)}`,
     seasonType: 'regular' as const,
     currentSeason: 2027,
+    seasonComplete: false,
     participated: true,
     players: []
   }
