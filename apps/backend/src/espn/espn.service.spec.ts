@@ -364,3 +364,54 @@ describe('EspnService request targets', () => {
     expect(httpGet).not.toHaveBeenCalled();
   });
 });
+
+describe('EspnService.getAthleteStats cache', () => {
+  function createService(cache: CacheService) {
+    const httpGet = jest.fn();
+    (axios.create as jest.Mock).mockReturnValue({ get: httpGet });
+    const config = {
+      get: (key: string) => fastRetryConfig[key],
+    } as unknown as ConfigService;
+    return {
+      httpGet,
+      service: new EspnService(config, cache),
+    };
+  }
+
+  async function loadStats(type: number) {
+    const cache = new CacheService();
+    const set = jest.spyOn(cache, 'set');
+    const { httpGet, service } = createService(cache);
+    httpGet.mockImplementation((url: string) => {
+      if (url === '/teams/1/roster') {
+        return Promise.resolve({
+          data: { season: { year: 2027, type, name: 'Season' } },
+        });
+      }
+      return Promise.resolve({ data: { categories: [] } });
+    });
+
+    await service.getAthleteStats('1966', 'regular');
+    return set;
+  }
+
+  it('caches athlete stats for 30 minutes during the regular season', async () => {
+    const set = await loadStats(2);
+
+    expect(set).toHaveBeenCalledWith(
+      'athlete-stats:1966:2',
+      { categories: [] },
+      30 * 60 * 1000,
+    );
+  });
+
+  it('caches athlete stats for 24 hours in the offseason', async () => {
+    const set = await loadStats(4);
+
+    expect(set).toHaveBeenCalledWith(
+      'athlete-stats:1966:2',
+      { categories: [] },
+      24 * 60 * 60 * 1000,
+    );
+  });
+});

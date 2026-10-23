@@ -53,6 +53,7 @@ export type PlayerSeasonStatsResponse = {
   season: number
   seasonLabel: string
   seasonType: SeasonType
+  seasonComplete: boolean
   participated: boolean
   averages: PlayerSeasonAverages | null
 }
@@ -140,7 +141,7 @@ export async function getPlayerSeasonStats(
 
 export async function getPlayerCareerStats(playerId: string): Promise<PlayerCareerStatsResponse> {
   return apiFetch<PlayerCareerStatsResponse>(`/players/${playerId}/stats/career`, {
-    revalidate: 3600
+    revalidate: 1800
   })
 }
 

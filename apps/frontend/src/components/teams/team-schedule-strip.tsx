@@ -6,6 +6,7 @@ import {
   findScheduleAnchorIndex,
   selectVisibleScheduleGames
 } from '@/components/teams/team-schedule-utils'
+import {TeamSeasonSelect} from '@/components/teams/team-season-select'
 import {Button} from '@/components/ui/button'
 import type {ScoreboardTeam} from '@/lib/games-api'
 import type {TeamGameResult, TeamScheduleGame, TeamScheduleResponse} from '@/lib/teams-api'
@@ -53,18 +54,14 @@ function clampIndex(index: number, length: number): number {
 
 type TeamScheduleStripProps = {
   schedule: TeamScheduleResponse | null
+  season?: number
+  currentSeason?: number
 }
 
-export function TeamScheduleStrip({schedule}: TeamScheduleStripProps) {
-  const visibleGames = useMemo(
-    () => (schedule ? selectVisibleScheduleGames(schedule.games) : []),
-    [schedule]
-  )
+export function TeamScheduleStrip({schedule, season, currentSeason}: TeamScheduleStripProps) {
+  const visibleGames = useMemo(() => (schedule ? selectVisibleScheduleGames(schedule.games) : []), [schedule])
   const anchorIndex = useMemo(() => findScheduleAnchorIndex(visibleGames), [visibleGames])
-  const formGames = useMemo(
-    () => deriveTeamForm(visibleGames, anchorIndex),
-    [visibleGames, anchorIndex]
-  )
+  const formGames = useMemo(() => deriveTeamForm(visibleGames, anchorIndex), [visibleGames, anchorIndex])
   const formGameIds = useMemo(() => new Set(formGames.map(game => game.id)), [formGames])
 
   const anchorKey = `${schedule?.season ?? 'none'}:${anchorIndex}`
@@ -147,10 +144,15 @@ export function TeamScheduleStrip({schedule}: TeamScheduleStripProps) {
       className='bg-card border-border min-w-0 rounded-xl border p-3 sm:p-5'
     >
       <div className='flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between'>
-        <div>
+        <div className='min-w-0'>
           <h2 className='text-card-foreground text-lg font-semibold sm:text-xl'>Schedule</h2>
-          {schedule?.seasonLabel ? (
-            <p className='text-muted-foreground text-xs'>{schedule.seasonLabel} season</p>
+          {season != null && currentSeason != null ? (
+            <div className='mt-2'>
+              <TeamSeasonSelect
+                season={season}
+                currentSeason={currentSeason}
+              />
+            </div>
           ) : null}
         </div>
 
@@ -161,12 +163,13 @@ export function TeamScheduleStrip({schedule}: TeamScheduleStripProps) {
                 aria-label='Recent form'
                 className='border-border bg-background/50 flex items-center gap-2 rounded-lg border px-2.5 py-1.5'
               >
-                <span className='text-muted-foreground text-[11px] font-medium tracking-wide uppercase'>
-                  Form
-                </span>
-                <ol className='flex items-center gap-1'>
+                <span className='text-muted-foreground text-[11px] font-medium tracking-wide uppercase'>Form</span>
+                <ol className='m-0 flex list-none items-center gap-1 p-0'>
                   {formGames.map(game => (
-                    <li key={game.id}>
+                    <li
+                      key={game.id}
+                      className='flex items-center'
+                    >
                       <ResultPill
                         result={game.result}
                         label={`${game.result} — ${game.shortName ?? game.name}`}
@@ -218,7 +221,7 @@ export function TeamScheduleStrip({schedule}: TeamScheduleStripProps) {
         <ul
           ref={scrollerRef}
           onScroll={syncPaging}
-          className='scrollbar-thin relative mt-4 flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 scroll-smooth'
+          className='relative mt-4 flex snap-x snap-mandatory scrollbar-thin gap-3 overflow-x-auto scroll-smooth pb-2'
         >
           {visibleGames.map((game, index) => {
             const isAnchor = index === anchorIndex
@@ -275,9 +278,7 @@ function ScheduleGameCard({
       <div className='flex items-center justify-between gap-2 text-xs'>
         <span className='text-muted-foreground font-medium'>
           {formatCardDate(game.date)}
-          <span className='text-muted-foreground/70 ml-1.5 uppercase'>
-            {game.isHome ? 'vs' : '@'}
-          </span>
+          <span className='text-muted-foreground/70 ml-1.5 uppercase'>{game.isHome ? 'vs' : '@'}</span>
         </span>
 
         <div className='flex items-center gap-1.5'>
@@ -313,9 +314,7 @@ function ScheduleGameCard({
         <span
           className={cn(
             'truncate',
-            game.status === 'live'
-              ? 'font-medium text-red-600 dark:text-red-400'
-              : 'text-muted-foreground'
+            game.status === 'live' ? 'font-medium text-red-600 dark:text-red-400' : 'text-muted-foreground'
           )}
         >
           {cardStatusText(game)}
@@ -325,15 +324,7 @@ function ScheduleGameCard({
   )
 }
 
-function CardTeamRow({
-  team,
-  score,
-  leading
-}: {
-  team: ScoreboardTeam | null
-  score: number | null
-  leading: boolean
-}) {
+function CardTeamRow({team, score, leading}: {team: ScoreboardTeam | null; score: number | null; leading: boolean}) {
   return (
     <div className='flex min-w-0 items-center justify-between gap-2'>
       <div className='flex min-w-0 items-center gap-2'>
@@ -351,9 +342,7 @@ function CardTeamRow({
         <span className={cn('shrink-0 text-sm', leading ? 'font-semibold' : 'font-medium')}>
           {team?.abbreviation ?? 'TBD'}
         </span>
-        <span className='text-muted-foreground truncate text-xs'>
-          {team?.name ?? team?.displayName ?? 'TBD'}
-        </span>
+        <span className='text-muted-foreground truncate text-xs'>{team?.name ?? team?.displayName ?? 'TBD'}</span>
       </div>
 
       {score !== null ? (
@@ -370,21 +359,13 @@ function CardTeamRow({
   )
 }
 
-function ResultPill({
-  result,
-  label,
-  compact = false
-}: {
-  result: TeamGameResult
-  label?: string
-  compact?: boolean
-}) {
+function ResultPill({result, label, compact = false}: {result: TeamGameResult; label?: string; compact?: boolean}) {
   return (
     <span
       aria-label={label}
       title={label}
       className={cn(
-        'inline-flex items-center justify-center rounded font-semibold tabular-nums',
+        'flex items-center justify-center rounded leading-none font-semibold tabular-nums',
         compact ? 'px-1.5 py-0.5 text-[10px]' : 'size-5 text-[11px]',
         result === 'W'
           ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300'

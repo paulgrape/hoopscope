@@ -11,8 +11,9 @@ type PlayerSeasonStatsProps = {
 
 export function PlayerSeasonStats({regularStats, playoffStats}: PlayerSeasonStatsProps) {
   const [seasonType, setSeasonType] = useState<SeasonType>('regular')
-  const stats = seasonType === 'regular' ? regularStats : playoffStats
-  const showEmptyPlayoffs = seasonType === 'playoffs' && !playoffStats.participated
+  const showPlayoffs = playoffStats.participated || regularStats.seasonComplete
+  const stats = seasonType === 'regular' || !showPlayoffs ? regularStats : playoffStats
+  const showEmptyPlayoffs = showPlayoffs && seasonType === 'playoffs' && !playoffStats.participated
 
   return (
     <section className='bg-card border-border min-w-0 rounded-xl border p-3 sm:p-5'>
@@ -21,26 +22,28 @@ export function PlayerSeasonStats({regularStats, playoffStats}: PlayerSeasonStat
           {regularStats.seasonLabel} Season Stats
         </h2>
 
-        <div className='bg-background border-border flex w-full rounded-lg border p-0.5 sm:w-auto'>
-          <Button
-            type='button'
-            size='sm'
-            variant={seasonType === 'regular' ? 'default' : 'ghost'}
-            className='flex-1 rounded-md sm:flex-none'
-            onClick={() => setSeasonType('regular')}
-          >
-            Regular
-          </Button>
-          <Button
-            type='button'
-            size='sm'
-            variant={seasonType === 'playoffs' ? 'default' : 'ghost'}
-            className='flex-1 rounded-md sm:flex-none'
-            onClick={() => setSeasonType('playoffs')}
-          >
-            Playoffs
-          </Button>
-        </div>
+        {showPlayoffs ? (
+          <div className='bg-background border-border flex w-full rounded-lg border p-0.5 sm:w-auto'>
+            <Button
+              type='button'
+              size='sm'
+              variant={seasonType === 'regular' ? 'default' : 'ghost'}
+              className='flex-1 rounded-md sm:flex-none'
+              onClick={() => setSeasonType('regular')}
+            >
+              Regular
+            </Button>
+            <Button
+              type='button'
+              size='sm'
+              variant={seasonType === 'playoffs' ? 'default' : 'ghost'}
+              className='flex-1 rounded-md sm:flex-none'
+              onClick={() => setSeasonType('playoffs')}
+            >
+              Playoffs
+            </Button>
+          </div>
+        ) : null}
       </div>
 
       {showEmptyPlayoffs ? (

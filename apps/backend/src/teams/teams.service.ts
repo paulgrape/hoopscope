@@ -17,6 +17,8 @@ import {
 } from '../espn/espn.types';
 import { flattenRosterAthletes } from '../espn/roster.parser';
 import {
+  type EspnSeasonMeta,
+  isSeasonComplete,
   isUnstartedCurrentSeason,
   isUnstartedEspnSeason,
 } from '../espn/season-year';
@@ -96,6 +98,7 @@ export type TeamSeasonStatsResponse = {
   seasonLabel: string;
   seasonType: TeamSeasonType;
   currentSeason: number;
+  seasonComplete: boolean;
   participated: boolean;
   players: TeamSeasonStatPlayer[];
 };
@@ -251,7 +254,7 @@ export class TeamsService {
     const unstarted = isUnstartedCurrentSeason(resolvedSeason, current);
 
     if (unstarted && seasonType === 'playoffs') {
-      const result = this.emptyPlayoffStats(resolvedSeason, currentSeason);
+      const result = this.emptyPlayoffStats(resolvedSeason, current);
       this.cache.set(cacheKey, result, ttl);
       return result;
     }
@@ -305,6 +308,7 @@ export class TeamsService {
       seasonLabel: formatSeasonLabel(resolvedSeason),
       seasonType,
       currentSeason,
+      seasonComplete: isSeasonComplete(resolvedSeason, current),
       participated,
       players: seasonType === 'playoffs' && !participated ? [] : players,
     };
@@ -315,13 +319,14 @@ export class TeamsService {
 
   private emptyPlayoffStats(
     season: number,
-    currentSeason: number,
+    current: EspnSeasonMeta,
   ): TeamSeasonStatsResponse {
     return {
       season,
       seasonLabel: formatSeasonLabel(season),
       seasonType: 'playoffs',
-      currentSeason,
+      currentSeason: current.year,
+      seasonComplete: isSeasonComplete(season, current),
       participated: false,
       players: [],
     };

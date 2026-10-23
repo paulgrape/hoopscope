@@ -320,6 +320,7 @@ describe('TeamsService.findSeasonStats', () => {
       season: 2027,
       seasonLabel: '2026–27',
       currentSeason: 2027,
+      seasonComplete: false,
       participated: true,
     });
     expect(result.players).toEqual([
@@ -344,9 +345,25 @@ describe('TeamsService.findSeasonStats', () => {
     expect(espn.getAthleteOverview).not.toHaveBeenCalled();
     expect(result).toMatchObject({
       season: 2027,
+      seasonComplete: false,
       participated: false,
       players: [],
     });
+  });
+
+  it('marks a past season and the offseason complete', async () => {
+    espn.getAthleteStats.mockResolvedValue(wolvesCareerStats);
+
+    const past = await service.findSeasonStats('16', 2026);
+    expect(past.seasonComplete).toBe(true);
+
+    espn.resolveCurrentSeason.mockResolvedValue({
+      year: 2027,
+      type: 4,
+      name: 'Off Season',
+    });
+    const offseason = await service.findSeasonStats('16');
+    expect(offseason.seasonComplete).toBe(true);
   });
 
   it('uses the exact year and team career row once the season starts', async () => {
@@ -373,6 +390,7 @@ describe('TeamsService.findSeasonStats', () => {
 
     expect(espn.getAthleteOverview).not.toHaveBeenCalled();
     expect(espn.getAthleteStats).toHaveBeenCalledTimes(2);
+    expect(result.seasonComplete).toBe(false);
     expect(result.players[0]).toMatchObject({ gp: 4, pts: 28.1 });
   });
 

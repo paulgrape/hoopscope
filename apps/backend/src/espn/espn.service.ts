@@ -12,7 +12,11 @@ import {
   EspnTeamScheduleResponse,
   EspnTeamsResponse,
 } from './espn.types';
-import { EspnSeasonMeta, isUnstartedEspnSeason } from './season-year';
+import {
+  EspnSeasonMeta,
+  isUnstartedEspnSeason,
+  usesLiveStatsTtl,
+} from './season-year';
 
 export interface EspnCoreAthlete {
   id: string;
@@ -677,19 +681,19 @@ export class EspnService {
     const url = `${this.webApiBase}/athletes/${espnId(athleteId)}/stats`;
     assertEspnRequestUrl(url, this.webApiBase);
     const cacheKey = `athlete-stats:${athleteId}:${seasontype}`;
+    const current = await this.resolveCurrentSeason();
+    const ttl = usesLiveStatsTtl(current)
+      ? this.TTL_SEASON_STATS_CURRENT
+      : this.TTL_PLAYERS;
 
-    return this.fetchJson<EspnAthleteStatsResponse>(
-      cacheKey,
-      this.TTL_PLAYERS,
-      async () => {
-        this.logger.log(`ESPN fetch: ${url}?seasontype=${seasontype}`);
-        const { data } = await this.http.get<EspnAthleteStatsResponse>(url, {
-          params: { seasontype },
-          timeout: 15_000,
-        });
-        return data;
-      },
-    );
+    return this.fetchJson<EspnAthleteStatsResponse>(cacheKey, ttl, async () => {
+      this.logger.log(`ESPN fetch: ${url}?seasontype=${seasontype}`);
+      const { data } = await this.http.get<EspnAthleteStatsResponse>(url, {
+        params: { seasontype },
+        timeout: 15_000,
+      });
+      return data;
+    });
   }
 
   async getAthleteNews(
