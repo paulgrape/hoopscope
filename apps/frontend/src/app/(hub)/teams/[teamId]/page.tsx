@@ -58,7 +58,7 @@ export default async function TeamDetailsPage({params, searchParams}: TeamDetail
     <main
       id='main-content'
       tabIndex={-1}
-      className='mx-auto flex w-full max-w-7xl flex-1 flex-col gap-5 px-4 py-5 sm:gap-6 sm:px-6 sm:py-8'
+      className='mx-auto flex w-full max-w-7xl min-w-0 flex-1 flex-col gap-5 px-4 py-5 sm:gap-6 sm:px-6 sm:py-8'
     >
       <JsonLd
         data={[
@@ -77,19 +77,23 @@ export default async function TeamDetailsPage({params, searchParams}: TeamDetail
       />
       <PageBreadcrumb items={[{name: 'Teams', href: '/teams'}, {name: team.displayName}]} />
 
-      <TeamPageHeader team={team} />
-      <TeamFacts team={team} />
-      <TeamScheduleStrip
-        schedule={schedule}
-        season={regularStats.season}
-        currentSeason={regularStats.currentSeason}
-      />
+      <div className='flex min-w-0 flex-col [overflow-anchor:none] **:[overflow-anchor:none]'>
+        <TeamPageHeader team={team} />
+        <div className='mt-5 flex flex-col gap-5 sm:mt-6 sm:gap-6'>
+          <TeamFacts team={team} />
+          <TeamScheduleStrip
+            schedule={schedule}
+            season={regularStats.season}
+            currentSeason={regularStats.currentSeason}
+          />
 
-      <TeamSeasonStats
-        regularStats={regularStats}
-        playoffStats={playoffStats}
-        teamId={teamId}
-      />
+          <TeamSeasonStats
+            regularStats={regularStats}
+            playoffStats={playoffStats}
+            teamId={teamId}
+          />
+        </div>
+      </div>
     </main>
   )
 }
