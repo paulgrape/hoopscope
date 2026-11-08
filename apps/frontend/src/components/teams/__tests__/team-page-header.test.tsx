@@ -50,8 +50,8 @@ describe('TeamPageHeader', () => {
     render(<TeamPageHeader team={makeTeam()} />)
 
     expect(screen.getByRole('heading', {name: 'Minnesota Timberwolves'})).toBeInTheDocument()
-    expect(screen.getByText(/49-33/)).toBeInTheDocument()
-    expect(screen.getByText(/2025–26/)).toBeInTheDocument()
+    expect(screen.getAllByText(/49-33/)).toHaveLength(2)
+    expect(screen.getAllByText(/2025–26/)).toHaveLength(1)
     expect(screen.queryByText('1-1')).not.toBeInTheDocument()
   })
 
@@ -68,7 +68,7 @@ describe('TeamPageHeader', () => {
       />
     )
 
-    expect(screen.getByText(/N\/A/)).toBeInTheDocument()
+    expect(screen.getAllByText(/N\/A/)).toHaveLength(1)
     expect(screen.getByText(/2026–27/)).toBeInTheDocument()
   })
 })
