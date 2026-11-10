@@ -82,6 +82,17 @@ function setup() {
   return userEvent.setup({advanceTimers: vi.advanceTimersByTime})
 }
 
+function makeSlate(count: number, seasonType: ScoreboardGame['seasonType'] = null, idPrefix = 'game', hourOffset = 0) {
+  return Array.from({length: count}, (_, index) =>
+    makeGame({
+      id: `${idPrefix}-${index}`,
+      shortName: `T${index}A @ T${index}B`,
+      date: new Date(Date.UTC(2026, 0, 15, hourOffset + index, 0, 0)).toISOString(),
+      seasonType
+    })
+  )
+}
+
 describe('ScoreboardMini', () => {
   beforeEach(() => {
     replace.mockReset()
@@ -373,5 +384,93 @@ describe('ScoreboardMini', () => {
     expect(screen.queryByText('Regular')).not.toBeInTheDocument()
     expect(screen.queryByText('Playoffs')).not.toBeInTheDocument()
     expect(screen.queryByText('Play-in')).not.toBeInTheDocument()
+  })
+
+  it('shows every game when the slate fits the preview', () => {
+    render(
+      <ScoreboardMini
+        initialDate='2026-01-15'
+        initialOffsetMinutes={0}
+        initialGames={makeSlate(3)}
+      />
+    )
+
+    expect(screen.getAllByRole('listitem')).toHaveLength(3)
+    expect(screen.queryByRole('button', {name: /show \d+ more|show less/i})).not.toBeInTheDocument()
+    for (const item of screen.getAllByRole('listitem')) {
+      expect(item).not.toHaveClass('hidden')
+    }
+  })
+
+  it('collapses a short slate to three games on narrow screens', () => {
+    render(
+      <ScoreboardMini
+        initialDate='2026-01-15'
+        initialOffsetMinutes={0}
+        initialGames={makeSlate(5)}
+      />
+    )
+
+    const items = screen.getAllByRole('listitem')
+    expect(items[3]).toHaveClass('hidden', 'sm:list-item')
+    expect(items[4]).toHaveClass('hidden', 'sm:list-item')
+
+    const toggle = screen.getByRole('button', {name: /show 2 more/i})
+    expect(toggle).toHaveClass('sm:hidden')
+    expect(toggle).toHaveAttribute('aria-expanded', 'false')
+  })
+
+  it('expands and collapses games past the desktop preview', async () => {
+    const user = setup()
+    render(
+      <ScoreboardMini
+        initialDate='2026-01-15'
+        initialOffsetMinutes={0}
+        initialGames={makeSlate(8)}
+      />
+    )
+
+    const toggle = screen.getByRole('button', {name: /show 5 more/i})
+    expect(toggle).toHaveTextContent('Show 2 more')
+    expect(toggle).toHaveAttribute('aria-expanded', 'false')
+    expect(toggle).not.toHaveClass('sm:hidden')
+
+    const items = screen.getAllByRole('listitem')
+    expect(items[6]).toHaveClass('hidden')
+    expect(items[6]).not.toHaveClass('sm:list-item')
+    expect(items[7]).toHaveClass('hidden')
+
+    await user.click(toggle)
+
+    expect(toggle).toHaveAttribute('aria-expanded', 'true')
+    expect(toggle).toHaveTextContent('Show less')
+    expect(items[6]).not.toHaveClass('hidden')
+    expect(items[7]).not.toHaveClass('hidden')
+
+    await user.click(toggle)
+
+    expect(toggle).toHaveAttribute('aria-expanded', 'false')
+    expect(items[6]).toHaveClass('hidden')
+    expect(items[7]).toHaveClass('hidden')
+  })
+
+  it('hides a season group that starts past the preview until expanded', async () => {
+    const user = setup()
+    render(
+      <ScoreboardMini
+        initialDate='2026-01-15'
+        initialOffsetMinutes={0}
+        initialGames={[...makeSlate(6, 'regular', 'regular'), ...makeSlate(2, 'playoffs', 'playoff', 6)]}
+      />
+    )
+
+    const playoffs = screen.getByText('Playoffs')
+    expect(playoffs.closest('section')).toHaveClass('hidden')
+    expect(playoffs.closest('section')).not.toHaveClass('sm:flex')
+    expect(screen.getByText('Regular').closest('section')).not.toHaveClass('hidden')
+
+    await user.click(screen.getByRole('button', {name: /show 5 more/i}))
+
+    expect(playoffs.closest('section')).not.toHaveClass('hidden')
   })
 })

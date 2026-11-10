@@ -21,7 +21,7 @@ import {
   parseLocalDateKey
 } from '@/lib/games-api'
 import {cn} from '@/lib/utils'
-import {ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon} from 'lucide-react'
+import {ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon} from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import {useEffect, useState} from 'react'
@@ -29,6 +29,20 @@ import {useEffect, useState} from 'react'
 const REFRESH_INTERVAL_MS = 60_000
 const DISPLAY_LOCALE = 'en-US'
 const PLACEHOLDER_CARDS = 4
+const PREVIEW_MOBILE = 3
+const PREVIEW_DESKTOP = 6
+
+function previewItemClass(index: number, expanded: boolean) {
+  if (expanded || index < PREVIEW_MOBILE) return undefined
+  if (index < PREVIEW_DESKTOP) return 'hidden sm:list-item'
+  return 'hidden'
+}
+
+function previewGroupClass(startIndex: number, expanded: boolean) {
+  if (expanded || startIndex < PREVIEW_MOBILE) return undefined
+  if (startIndex < PREVIEW_DESKTOP) return 'hidden sm:flex'
+  return 'hidden'
+}
 
 type ScoreboardMiniProps = {
   initialDate?: string
@@ -62,6 +76,8 @@ export function ScoreboardMini({
   const [error, setError] = useState<string | null>(null)
   const [calendarOpen, setCalendarOpen] = useState(false)
   const [isFindingLastGame, setIsFindingLastGame] = useState(false)
+  const [expandedDate, setExpandedDate] = useState<string | null>(null)
+  const previewExpanded = expandedDate === selectedDate
 
   useEffect(() => {
     if (!clockReady) return
@@ -121,6 +137,9 @@ export function ScoreboardMini({
 
   const selectedDateLabel = formatCompactDateLabel(selectedDate, DISPLAY_LOCALE)
   const selectedCalendarDate = parseLocalDateKey(selectedDate)
+  const groupedGames = groupGamesBySeasonType(sortScoreboardGames(games))
+  const hiddenOnMobile = Math.max(games.length - PREVIEW_MOBILE, 0)
+  const hiddenOnDesktop = Math.max(games.length - PREVIEW_DESKTOP, 0)
 
   return (
     <div className='flex min-w-0 flex-col gap-3'>
@@ -220,29 +239,56 @@ export function ScoreboardMini({
       ) : (
         <>
           <div className='flex min-w-0 flex-col gap-4'>
-            {groupGamesBySeasonType(sortScoreboardGames(games)).map((group, index) => (
-              <section
-                key={`${group.seasonType ?? 'none'}-${index}`}
-                className='flex min-w-0 flex-col gap-2'
-              >
-                <SeasonTypeKicker seasonType={group.seasonType} />
-                <ul className='grid min-w-0 gap-3 sm:grid-cols-2'>
-                  {group.games.map(game => (
-                    <li
-                      key={game.id}
-                      className='min-w-0'
-                    >
-                      <ScoreboardMiniCard
-                        game={game}
-                        dateKey={selectedDate}
-                        timeZone={timeZone}
-                      />
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            ))}
+            {groupedGames.map((group, index) => {
+              const startIndex = groupedGames.slice(0, index).reduce((count, item) => count + item.games.length, 0)
+
+              return (
+                <section
+                  key={`${group.seasonType ?? 'none'}-${index}`}
+                  className={cn('flex min-w-0 flex-col gap-2', previewGroupClass(startIndex, previewExpanded))}
+                >
+                  <SeasonTypeKicker seasonType={group.seasonType} />
+                  <ul className='grid min-w-0 gap-3 sm:grid-cols-2'>
+                    {group.games.map((game, gameIndex) => (
+                      <li
+                        key={game.id}
+                        className={cn('min-w-0', previewItemClass(startIndex + gameIndex, previewExpanded))}
+                      >
+                        <ScoreboardMiniCard
+                          game={game}
+                          dateKey={selectedDate}
+                          timeZone={timeZone}
+                        />
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              )
+            })}
           </div>
+          {hiddenOnMobile > 0 ? (
+            <Button
+              type='button'
+              variant='ghost'
+              size='sm'
+              className={cn('w-full', hiddenOnDesktop === 0 && 'sm:hidden')}
+              aria-expanded={previewExpanded}
+              onClick={() => setExpandedDate(current => (current === selectedDate ? null : selectedDate))}
+            >
+              {previewExpanded ? (
+                <>
+                  Show less
+                  <ChevronUpIcon />
+                </>
+              ) : (
+                <>
+                  <span className='sm:hidden'>Show {hiddenOnMobile} more</span>
+                  {hiddenOnDesktop > 0 ? <span className='hidden sm:inline'>Show {hiddenOnDesktop} more</span> : null}
+                  <ChevronDownIcon />
+                </>
+              )}
+            </Button>
+          ) : null}
           {error ? (
             <p
               role='alert'
@@ -257,15 +303,7 @@ export function ScoreboardMini({
   )
 }
 
-function ScoreboardMiniCard({
-  game,
-  dateKey,
-  timeZone
-}: {
-  game: ScoreboardGame
-  dateKey: string
-  timeZone?: string
-}) {
+function ScoreboardMiniCard({game, dateKey, timeZone}: {game: ScoreboardGame; dateKey: string; timeZone?: string}) {
   const showScore = game.status !== 'scheduled'
   const awayLeads = showScore && (game.awayScore ?? 0) > (game.homeScore ?? 0)
   const homeLeads = showScore && (game.homeScore ?? 0) > (game.awayScore ?? 0)
