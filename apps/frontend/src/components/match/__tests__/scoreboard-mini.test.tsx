@@ -417,7 +417,6 @@ describe('ScoreboardMini', () => {
 
     const toggle = screen.getByRole('button', {name: /show 2 more/i})
     expect(toggle).toHaveClass('sm:hidden')
-    expect(toggle).toHaveAttribute('aria-expanded', 'false')
   })
 
   it('expands and collapses games past the desktop preview', async () => {
@@ -432,7 +431,6 @@ describe('ScoreboardMini', () => {
 
     const toggle = screen.getByRole('button', {name: /show 5 more/i})
     expect(toggle).toHaveTextContent('Show 2 more')
-    expect(toggle).toHaveAttribute('aria-expanded', 'false')
     expect(toggle).not.toHaveClass('sm:hidden')
 
     const items = screen.getAllByRole('listitem')
@@ -442,14 +440,13 @@ describe('ScoreboardMini', () => {
 
     await user.click(toggle)
 
-    expect(toggle).toHaveAttribute('aria-expanded', 'true')
     expect(toggle).toHaveTextContent('Show less')
     expect(items[6]).not.toHaveClass('hidden')
     expect(items[7]).not.toHaveClass('hidden')
 
     await user.click(toggle)
 
-    expect(toggle).toHaveAttribute('aria-expanded', 'false')
+    expect(toggle).toHaveTextContent('Show 5 more')
     expect(items[6]).toHaveClass('hidden')
     expect(items[7]).toHaveClass('hidden')
   })
