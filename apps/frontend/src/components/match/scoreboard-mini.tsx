@@ -272,7 +272,6 @@ export function ScoreboardMini({
               variant='ghost'
               size='sm'
               className={cn('w-full', hiddenOnDesktop === 0 && 'sm:hidden')}
-              aria-expanded={previewExpanded}
               onClick={() => setExpandedDate(current => (current === selectedDate ? null : selectedDate))}
             >
               {previewExpanded ? (
