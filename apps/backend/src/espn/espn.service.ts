@@ -304,6 +304,7 @@ export class EspnService {
     cacheKey: string,
     ttlMs: number,
     requester: () => Promise<T>,
+    cacheResult = true,
   ): Promise<T> {
     let lastError: unknown;
 
@@ -312,7 +313,7 @@ export class EspnService {
         const data = await this.breaker.execute(() =>
           this.withThrottle(requester),
         );
-        this.cache.set(cacheKey, data, ttlMs);
+        if (cacheResult) this.cache.set(cacheKey, data, ttlMs);
         return data;
       } catch (err) {
         lastError = err;
@@ -328,7 +329,7 @@ export class EspnService {
       }
     }
 
-    const stale = this.cache.getStale<T>(cacheKey);
+    const stale = cacheResult ? this.cache.getStale<T>(cacheKey) : null;
     if (stale !== null) {
       this.logger.warn(
         `ESPN request failed for ${cacheKey}; serving stale cache`,
@@ -585,6 +586,42 @@ export class EspnService {
       });
       return data;
     });
+  }
+
+  /** Uncached raw pages: the leaders service owns the slim season-row cache. */
+  async getLeagueByAthlete(
+    season: number,
+    seasonType: EspnSeasonType,
+  ): Promise<EspnByAthleteResponse> {
+    espnSeason(season);
+    const seasontype = this.toEspnSeasonType(seasonType);
+    const url = `${this.webApiBase}/statistics/byathlete`;
+    assertEspnRequestUrl(url, this.webApiBase);
+    const fetchPage = (page: number) =>
+      this.runWithResilience<EspnByAthleteResponse>(
+        `league-byathlete:${season}:${seasontype}:${page}`,
+        0,
+        async () => {
+          const { data } = await this.http.get<EspnByAthleteResponse>(url, {
+            params: {
+              season,
+              seasontype,
+              limit: 1000,
+              page,
+              isqualified: false,
+            },
+            timeout: 20_000,
+          });
+          return data;
+        },
+        false,
+      );
+    const first = await fetchPage(1);
+    const athletes = [...(first.athletes ?? [])];
+    for (let page = 2; page <= (first.pagination?.pages ?? 1); page++) {
+      athletes.push(...((await fetchPage(page)).athletes ?? []));
+    }
+    return { categories: first.categories, athletes };
   }
 
   async getTeamAthleteStatsFallback(

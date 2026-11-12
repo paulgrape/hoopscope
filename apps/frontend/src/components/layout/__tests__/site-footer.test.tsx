@@ -29,6 +29,7 @@ describe('SiteFooter', () => {
     expect(within(footerNav).getByRole('link', {name: 'News'})).toHaveAttribute('href', '/news')
     expect(within(footerNav).getByRole('link', {name: 'Historic Games'})).toHaveAttribute('href', '/historic-games')
     expect(within(footerNav).getByRole('link', {name: 'Teams'})).toHaveAttribute('href', '/teams')
+    expect(within(footerNav).getByRole('link', {name: 'Leaders'})).toHaveAttribute('href', '/leaders')
     expect(within(footerNav).getByRole('link', {name: 'Standings'})).toHaveAttribute('href', '/standings')
     expect(within(footerNav).getByRole('link', {name: 'About'})).toHaveAttribute('href', '/about')
     expect(within(footerNav).getByRole('link', {name: 'Privacy Policy'})).toHaveAttribute('href', '/privacy')
