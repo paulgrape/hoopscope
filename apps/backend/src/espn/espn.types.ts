@@ -200,8 +200,11 @@ export interface EspnTeamResponse {
 export interface EspnByAthleteEntry extends EspnAthleteRef {
   athlete?: EspnAthleteRef & {
     teamId?: string;
-    teams?: Array<{ name?: string; abbreviation?: string }>;
+    teamName?: string;
+    teamShortName?: string;
+    teams?: EspnTeamCore[];
   };
+  categories?: Array<{ name?: string; values?: Array<number | string | null> }>;
 }
 
 export interface EspnByAthleteResponse {
@@ -209,7 +212,11 @@ export interface EspnByAthleteResponse {
   athletes?: EspnByAthleteEntry[];
   items?: EspnByAthleteEntry[];
   leaders?: EspnByAthleteEntry[];
-  categories?: Array<{ leaders?: EspnByAthleteEntry[] }>;
+  categories?: Array<{
+    name?: string;
+    names?: string[];
+    leaders?: EspnByAthleteEntry[];
+  }>;
 }
 
 export function espnHeadshotHref(

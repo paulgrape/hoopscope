@@ -18,6 +18,18 @@ describe('TeamSeasonSelect', () => {
     searchParams = new URLSearchParams()
   })
 
+  it('keeps a directly requested season outside the recent-season list selected', () => {
+    render(
+      <TeamSeasonSelect
+        season={1996}
+        currentSeason={2027}
+      />
+    )
+
+    expect(screen.getByLabelText('Season')).toHaveValue('1996')
+    expect(screen.getByRole('option', {name: '1995–96'})).toBeInTheDocument()
+  })
+
   it('writes a past season onto the team URL', async () => {
     render(
       <TeamSeasonSelect

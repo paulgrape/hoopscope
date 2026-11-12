@@ -52,6 +52,42 @@ describe('EspnService resilience', () => {
     expect(httpGet).toHaveBeenCalledTimes(1);
   });
 
+  it('fetches all league pages without reading or storing raw cached pages', async () => {
+    const cacheSet = jest.spyOn(cache, 'set');
+    httpGet.mockImplementation(
+      (_url: string, options: { params: { page: number } }) =>
+        Promise.resolve({
+          data: {
+            pagination: { pages: 2 },
+            categories: [{ name: 'general', names: ['gamesPlayed'] }],
+            athletes: [{ athlete: { id: String(options.params.page) } }],
+          },
+        }),
+    );
+    const result = await service.getLeagueByAthlete(2026, 'playoffs');
+    expect(result.athletes?.map((entry) => entry.athlete?.id)).toEqual([
+      '1',
+      '2',
+    ]);
+    expect(result.categories?.[0].names).toEqual(['gamesPlayed']);
+    expect(httpGet).toHaveBeenCalledWith(
+      expect.stringContaining('/statistics/byathlete'),
+      {
+        params: {
+          season: 2026,
+          seasontype: 3,
+          limit: 1000,
+          page: 2,
+          isqualified: false,
+        },
+        timeout: 20_000,
+      },
+    );
+    expect(cacheSet).not.toHaveBeenCalled();
+    await service.getLeagueByAthlete(2026, 'playoffs');
+    expect(httpGet).toHaveBeenCalledTimes(4);
+  });
+
   it('filters every fallback page before returning historical roster candidates', async () => {
     httpGet.mockImplementation(
       (url: string, options?: { params?: { page?: number } }) => {

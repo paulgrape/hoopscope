@@ -9,6 +9,7 @@ import { EspnModule } from './espn/espn.module';
 import { GamesModule } from './games/games.module';
 import { HealthModule } from './health/health.module';
 import { LoggingModule } from './logging/logging.module';
+import { LeadersModule } from './leaders/leaders.module';
 import { PlayersModule } from './players/players.module';
 import { NewsModule } from './news/news.module';
 import { NbaStatsModule } from './nba-stats/nba-stats.module';
@@ -31,6 +32,7 @@ import { TeamsModule } from './teams/teams.module';
     NewsModule,
     ShotsModule,
     StandingsModule,
+    LeadersModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: ThrottlerGuard },

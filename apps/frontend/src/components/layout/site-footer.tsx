@@ -16,6 +16,7 @@ const footerLinks: FooterLink[] = [
   {href: '/news', label: 'News'},
   {href: '/historic-games', label: 'Historic Games'},
   {href: '/teams', label: 'Teams'},
+  {href: '/leaders', label: 'Leaders'},
   {href: '/standings', label: 'Standings'},
   {href: '/about', label: 'About'},
   {href: '/privacy', label: 'Privacy Policy'},

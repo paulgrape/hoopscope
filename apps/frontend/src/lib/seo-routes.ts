@@ -43,6 +43,12 @@ export const STATIC_PUBLIC_ROUTES: PublicRoute[] = [
     entityType: 'players'
   },
   {
+    path: '/leaders',
+    title: 'Leaders',
+    description: 'Qualified NBA per-game and shooting percentage leaders by season and season type.',
+    entityType: 'players'
+  },
+  {
     path: '/standings',
     title: 'Standings',
     description: 'Conference and division standings with playoff and play-in positions highlighted.',

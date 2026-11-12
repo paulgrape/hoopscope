@@ -17,6 +17,7 @@ const navLinks = [
   {href: '/historic-games', label: 'Historic Games'},
   {href: '/teams', label: 'Teams'},
   {href: '/players', label: 'Players'},
+  {href: '/leaders', label: 'Leaders'},
   {href: '/standings', label: 'Standings'}
 ]
 
@@ -93,7 +94,7 @@ export const Navbar = () => {
 
         <div
           ref={desktopNavRef}
-          className='relative hidden items-center gap-6 md:flex'
+          className='relative hidden items-center gap-3 md:flex lg:gap-6'
         >
           {navLinks.map(link => (
             <Link

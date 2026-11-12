@@ -15,7 +15,7 @@ export function TeamSeasonSelect({season, currentSeason}: TeamSeasonSelectProps)
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const [isPending, startTransition] = useTransition()
-  const seasonYears = listTeamSeasonYears(currentSeason)
+  const seasonYears = [...new Set([...listTeamSeasonYears(currentSeason), season])].sort((a, b) => b - a)
 
   function selectSeason(nextSeason: string) {
     const year = Number(nextSeason)
