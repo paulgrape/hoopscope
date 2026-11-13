@@ -52,4 +52,24 @@ describe('NewsStrip', () => {
 
     expect(screen.getByText('No NBA headlines available right now.')).toBeInTheDocument()
   })
+
+  it('hides headlines after the cutoff until the desktop layout', () => {
+    render(
+      <NewsStrip
+        desktopOnlyAfter={4}
+        articles={Array.from({length: 6}, (_, index) =>
+          makeArticle({id: index + 1, headline: `Headline ${index + 1}`})
+        )}
+      />
+    )
+
+    const items = screen.getAllByRole('listitem')
+    expect(items).toHaveLength(6)
+    for (const item of items.slice(0, 4)) {
+      expect(item).not.toHaveClass('hidden')
+    }
+    for (const item of items.slice(4)) {
+      expect(item).toHaveClass('hidden', 'lg:block')
+    }
+  })
 })

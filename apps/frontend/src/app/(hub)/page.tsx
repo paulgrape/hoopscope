@@ -1,8 +1,10 @@
+import {LeadersSnapshot} from '@/components/leaders/leaders-snapshot'
 import {ScoreboardMiniSkeleton} from '@/components/match/scoreboard-mini-skeleton'
 import {TodaysScores} from '@/components/match/todays-scores'
 import {NewsStrip} from '@/components/news/news-strip'
 import {JsonLd} from '@/components/seo/json-ld'
 import {StandingsSnapshot} from '@/components/standings/standings-snapshot'
+import {getLeaders} from '@/lib/leaders-api'
 import {getNews} from '@/lib/news-api'
 import {webPageSchema} from '@/lib/seo-schema'
 import {SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE, createPageMetadata} from '@/lib/site'
@@ -11,7 +13,8 @@ import type {Metadata} from 'next'
 import Link from 'next/link'
 import {Suspense} from 'react'
 
-const HEADLINE_COUNT = 4
+const HEADLINE_COUNT = 8
+const COMPACT_HEADLINE_COUNT = 4
 
 const HOME_DESCRIPTION = `${SITE_TAGLINE}. ${SITE_DESCRIPTION}`
 
@@ -27,11 +30,12 @@ export const metadata: Metadata = {
 }
 
 export default async function Home() {
-  const [standings, articles] = await Promise.all([
+  const [standings, articles, leaders] = await Promise.all([
     getStandings().catch(() => null),
     getNews(HEADLINE_COUNT, 0)
       .then(page => page.articles)
-      .catch(() => [])
+      .catch(() => []),
+    getLeaders({limit: 5}).catch(() => null)
   ])
 
   return (
@@ -70,18 +74,33 @@ export default async function Home() {
           href='/news'
           linkLabel='All news'
         >
-          <NewsStrip articles={articles} />
+          <NewsStrip
+            articles={articles}
+            desktopOnlyAfter={COMPACT_HEADLINE_COUNT}
+          />
         </DashboardSection>
 
-        <DashboardSection
-          id='home-standings'
-          title='Standings'
-          subtitle={standings?.season}
-          href='/standings'
-          linkLabel='Full standings'
-        >
-          <StandingsSnapshot conferences={standings?.conferences ?? []} />
-        </DashboardSection>
+        <div className='flex min-w-0 flex-col gap-5 lg:gap-6'>
+          <DashboardSection
+            id='home-standings'
+            title='Standings'
+            subtitle={standings?.season}
+            href='/standings'
+            linkLabel='Full standings'
+          >
+            <StandingsSnapshot conferences={standings?.conferences ?? []} />
+          </DashboardSection>
+
+          <DashboardSection
+            id='home-leaders'
+            title='League leaders'
+            subtitle={leaders?.seasonLabel}
+            href='/leaders'
+            linkLabel='Full leaders'
+          >
+            <LeadersSnapshot categories={leaders?.categories ?? []} />
+          </DashboardSection>
+        </div>
       </div>
     </main>
   )

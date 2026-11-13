@@ -9,7 +9,7 @@ export const STATIC_PUBLIC_ROUTES: PublicRoute[] = [
   {
     path: '/',
     title: 'Home',
-    description: 'League dashboard: games for today, a standings snapshot, and the latest headlines.',
+    description: 'League dashboard: games for today, a standings snapshot, league leaders, and the latest headlines.',
     entityType: 'dashboard'
   },
   {
