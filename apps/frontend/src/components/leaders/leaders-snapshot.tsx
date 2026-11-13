@@ -36,7 +36,7 @@ function SnapshotRow({leader, format}: {leader: Leader; format: LeaderCategory['
       <div className='flex min-w-0 flex-1 items-center gap-1.5'>
         <Link
           href={`/players/${leader.playerId}`}
-          className='hover:text-foreground flex min-w-0 items-center gap-2 text-sm font-medium transition-colors'
+          className='hover:text-foreground flex min-w-0 items-center gap-2 overflow-hidden text-sm font-medium transition-colors'
         >
           {leader.headshot ? (
             <Image
@@ -52,7 +52,7 @@ function SnapshotRow({leader, format}: {leader: Leader; format: LeaderCategory['
               className='bg-muted h-7 w-9 shrink-0 rounded-sm'
             />
           )}
-          <span className='truncate'>{leader.name}</span>
+          <span className='min-w-0 truncate'>{leader.name}</span>
         </Link>
         {team}
       </div>
