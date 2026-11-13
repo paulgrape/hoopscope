@@ -1,3 +1,4 @@
+import {getLeaders} from '@/lib/leaders-api'
 import {getNews} from '@/lib/news-api'
 import type {ConferenceStandings, StandingTeam} from '@/lib/standings-api'
 import {getStandings} from '@/lib/standings-api'
@@ -12,6 +13,10 @@ vi.mock('@/lib/standings-api', () => ({
 
 vi.mock('@/lib/news-api', () => ({
   getNews: vi.fn()
+}))
+
+vi.mock('@/lib/leaders-api', () => ({
+  getLeaders: vi.fn()
 }))
 
 vi.mock('@/components/match/todays-scores', () => ({
@@ -72,9 +77,10 @@ describe('Home', () => {
   beforeEach(() => {
     vi.mocked(getStandings).mockReset()
     vi.mocked(getNews).mockReset()
+    vi.mocked(getLeaders).mockReset()
   })
 
-  it('renders scores, a standings snapshot, and headlines with links to the full pages', async () => {
+  it('renders scores, a standings snapshot, league leaders, and headlines with links to the full pages', async () => {
     vi.mocked(getStandings).mockResolvedValue({season: '2025-26', conferences: [makeConference()]})
     vi.mocked(getNews).mockResolvedValue({
       total: 30,
@@ -93,32 +99,68 @@ describe('Home', () => {
         }
       ]
     })
+    vi.mocked(getLeaders).mockResolvedValue({
+      season: 2026,
+      seasonLabel: '2025–26',
+      seasonType: 'regular',
+      currentSeason: 2026,
+      categories: [
+        {
+          stat: 'pts',
+          label: 'Points',
+          abbreviation: 'PTS',
+          format: 'average',
+          qualification: {stat: 'gp', minimum: 7, teamGames: 10},
+          leaders: [
+            {
+              rank: 1,
+              playerId: '3945274',
+              name: 'Luka Doncic',
+              headshot: null,
+              position: 'G',
+              teamId: '13',
+              teamAbbreviation: 'LAL',
+              teamName: 'Los Angeles Lakers',
+              gamesPlayed: 10,
+              value: 33.5
+            }
+          ]
+        }
+      ]
+    })
 
     render(await Home())
 
-    expect(getNews).toHaveBeenCalledWith(4, 0)
+    expect(getNews).toHaveBeenCalledWith(8, 0)
+    expect(getLeaders).toHaveBeenCalledWith({limit: 5})
     expect(screen.getByTestId('todays-scores')).toBeInTheDocument()
     expect(screen.getByRole('heading', {level: 2, name: 'Scoreboard'})).toBeInTheDocument()
     expect(screen.getByRole('heading', {level: 2, name: 'Standings'})).toBeInTheDocument()
     expect(screen.getByRole('heading', {level: 2, name: 'Latest headlines'})).toBeInTheDocument()
+    expect(screen.getByRole('heading', {level: 2, name: 'League leaders'})).toBeInTheDocument()
     expect(screen.getByText('2025-26')).toBeInTheDocument()
+    expect(screen.getByText('2025–26')).toBeInTheDocument()
 
     expect(screen.getByRole('link', {name: /Full schedule/})).toHaveAttribute('href', '/match-center')
     expect(screen.getByRole('link', {name: /Full standings/})).toHaveAttribute('href', '/standings')
     expect(screen.getByRole('link', {name: /All news/})).toHaveAttribute('href', '/news')
+    expect(screen.getByRole('link', {name: /Full leaders/})).toHaveAttribute('href', '/leaders')
 
     expect(screen.getByRole('link', {name: 'Celtics'})).toHaveAttribute('href', '/teams/2')
+    expect(screen.getByRole('link', {name: 'Luka Doncic'})).toHaveAttribute('href', '/players/3945274')
     expect(screen.getByRole('heading', {level: 3, name: 'Celtics clinch the top seed'})).toBeInTheDocument()
   })
 
-  it('keeps the dashboard usable when standings and news fail', async () => {
+  it('keeps the dashboard usable when standings, news, and leaders fail', async () => {
     vi.mocked(getStandings).mockRejectedValue(new Error('standings down'))
     vi.mocked(getNews).mockRejectedValue(new Error('news down'))
+    vi.mocked(getLeaders).mockRejectedValue(new Error('leaders down'))
 
     render(await Home())
 
     expect(screen.getByTestId('todays-scores')).toBeInTheDocument()
     expect(screen.getByText('Standings are unavailable right now.')).toBeInTheDocument()
     expect(screen.getByText('No NBA headlines available right now.')).toBeInTheDocument()
+    expect(screen.getByText('League leaders are unavailable right now.')).toBeInTheDocument()
   })
 })

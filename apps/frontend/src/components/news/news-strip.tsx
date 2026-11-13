@@ -1,10 +1,12 @@
 import {LocalTime} from '@/components/layout/local-time'
 import type {NewsArticle} from '@/lib/news-api'
+import {cn} from '@/lib/utils'
 import Image from 'next/image'
 import Link from 'next/link'
 
 type NewsStripProps = {
   articles: NewsArticle[]
+  desktopOnlyAfter?: number
 }
 
 function StripCard({article}: {article: NewsArticle}) {
@@ -50,7 +52,7 @@ function StripCard({article}: {article: NewsArticle}) {
   )
 }
 
-export function NewsStrip({articles}: NewsStripProps) {
+export function NewsStrip({articles, desktopOnlyAfter}: NewsStripProps) {
   if (articles.length === 0) {
     return (
       <div className='bg-card border-border rounded-xl border p-6 text-center'>
@@ -61,10 +63,10 @@ export function NewsStrip({articles}: NewsStripProps) {
 
   return (
     <ul className='grid min-w-0 flex-1 auto-rows-fr gap-3 sm:grid-cols-2 sm:gap-4'>
-      {articles.map(article => (
+      {articles.map((article, index) => (
         <li
           key={article.id}
-          className='min-w-0'
+          className={cn('min-w-0', desktopOnlyAfter != null && index >= desktopOnlyAfter && 'hidden lg:block')}
         >
           <StripCard article={article} />
         </li>

@@ -1,14 +1,42 @@
 import {ScoreboardMiniSkeleton} from '@/components/match/scoreboard-mini-skeleton'
 import {Skeleton} from '@/components/ui/skeleton'
+import {cn} from '@/lib/utils'
 
 const SNAPSHOT_ROWS = 6
-const HEADLINE_CARDS = 4
+const HEADLINE_CARDS = 8
+const COMPACT_HEADLINE_CARDS = 4
+const LEADER_CATEGORIES = 3
+const LEADER_ROWS = 5
 
 function SectionHeadingSkeleton() {
   return (
     <div className='flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1'>
       <Skeleton className='h-6 w-40 sm:h-7 sm:w-48' />
       <Skeleton className='h-4 w-28' />
+    </div>
+  )
+}
+
+function LeaderCategorySkeleton() {
+  return (
+    <div className='bg-card border-border flex min-w-0 flex-col overflow-hidden rounded-xl border'>
+      <div className='border-border flex items-center justify-between gap-3 border-b px-3 py-3 sm:px-4'>
+        <Skeleton className='h-5 w-24' />
+        <Skeleton className='h-3.5 w-12' />
+      </div>
+      <div className='flex flex-col'>
+        {Array.from({length: LEADER_ROWS}).map((_, row) => (
+          <div
+            key={row}
+            className='border-border flex items-center gap-3 border-b px-3 py-2.5 last:border-b-0 sm:px-4'
+          >
+            <Skeleton className='h-4 w-4 shrink-0' />
+            <Skeleton className='h-7 w-9 shrink-0 rounded-sm' />
+            <Skeleton className='h-4 flex-1' />
+            <Skeleton className='h-4 w-10 shrink-0' />
+          </div>
+        ))}
+      </div>
     </div>
   )
 }
@@ -60,7 +88,10 @@ export default function HomeLoading() {
             {Array.from({length: HEADLINE_CARDS}).map((_, card) => (
               <div
                 key={card}
-                className='bg-card border-border flex flex-col gap-2 rounded-xl border p-3 sm:p-4'
+                className={cn(
+                  'bg-card border-border flex flex-col gap-2 rounded-xl border p-3 sm:p-4',
+                  card >= COMPACT_HEADLINE_CARDS && 'hidden lg:block'
+                )}
               >
                 <Skeleton className='aspect-3/2 w-full rounded-lg' />
                 <Skeleton className='h-4 w-full' />
@@ -71,14 +102,25 @@ export default function HomeLoading() {
           </div>
         </section>
 
-        <section className='flex min-w-0 flex-col gap-3'>
-          <SectionHeadingSkeleton />
-          <div className='flex min-w-0 flex-1 flex-col gap-4'>
-            {Array.from({length: 2}).map((_, conference) => (
-              <ConferenceSkeleton key={conference} />
-            ))}
-          </div>
-        </section>
+        <div className='flex min-w-0 flex-col gap-5 lg:gap-6'>
+          <section className='flex min-w-0 flex-col gap-3'>
+            <SectionHeadingSkeleton />
+            <div className='flex min-w-0 flex-1 flex-col gap-4'>
+              {Array.from({length: 2}).map((_, conference) => (
+                <ConferenceSkeleton key={conference} />
+              ))}
+            </div>
+          </section>
+
+          <section className='flex min-w-0 flex-col gap-3'>
+            <SectionHeadingSkeleton />
+            <div className='flex min-w-0 flex-col gap-4'>
+              {Array.from({length: LEADER_CATEGORIES}).map((_, category) => (
+                <LeaderCategorySkeleton key={category} />
+              ))}
+            </div>
+          </section>
+        </div>
       </div>
     </main>
   )
