@@ -229,6 +229,7 @@ describe('EspnService request targets', () => {
     await service.getPlayer('1966');
     await service.getAthleteOverview('1966', 2025, 'regular', 1000);
     await service.getAthleteStats('1966', 'regular');
+    await service.getAthleteGamelog('1966');
     await service.getScoreboard('20260131');
     await service.getGameSummary('401585601');
     await service.getRoster('16', 2025);
@@ -252,6 +253,10 @@ describe('EspnService request targets', () => {
         params: { seasontype: 2 },
         timeout: 15_000,
       },
+    );
+    expect(httpGet).toHaveBeenCalledWith(
+      expect.stringContaining('/athletes/1966/gamelog'),
+      { timeout: 15_000 },
     );
     expect(httpGet).toHaveBeenCalledWith('/scoreboard?dates=20260131');
     expect(httpGet).toHaveBeenCalledWith('/summary?event=401585601');

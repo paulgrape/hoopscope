@@ -2,17 +2,19 @@
 
 import {PlayerCareerStats} from '@/components/players/player-career-stats'
 import {PlayerNewsSection} from '@/components/players/player-news-section'
+import {PlayerRecentGames} from '@/components/players/player-recent-games'
 import {PlayerSeasonStats} from '@/components/players/player-season-stats'
 import {ShotHeatmapCourt} from '@/components/players/shot-heatmap-court'
 import {Tabs, TabsContent, TabsList, TabsTrigger} from '@/components/ui/tabs'
 import type {NewsArticle} from '@/lib/news-api'
-import type {PlayerCareerSeasonStats, PlayerSeasonStatsResponse} from '@/lib/players-api'
+import type {PlayerCareerSeasonStats, PlayerRecentGamesResponse, PlayerSeasonStatsResponse} from '@/lib/players-api'
 import type {ShotHeatmapResponse} from '@/lib/shots-api'
 
 type PlayerProfileTabsProps = {
   regularStats: PlayerSeasonStatsResponse
   playoffStats: PlayerSeasonStatsResponse
   careerSeasons: PlayerCareerSeasonStats[]
+  recentGames: PlayerRecentGamesResponse
   news: NewsArticle[]
   espnNewsHref: string
   heatmap?: ShotHeatmapResponse | null
@@ -22,6 +24,7 @@ export function PlayerProfileTabs({
   regularStats,
   playoffStats,
   careerSeasons,
+  recentGames,
   news,
   espnNewsHref,
   heatmap = null
@@ -58,6 +61,7 @@ export function PlayerProfileTabs({
         value='stats'
         className='flex flex-col gap-5 sm:gap-6'
       >
+        <PlayerRecentGames recentGames={recentGames} />
         <PlayerSeasonStats
           regularStats={regularStats}
           playoffStats={playoffStats}

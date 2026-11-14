@@ -9,6 +9,10 @@ import {
   parseCareerStats,
 } from '../espn/athlete-career-stats.parser';
 import {
+  type PlayerRecentGames,
+  parseRecentGames,
+} from '../espn/athlete-gamelog.parser';
+import {
   ZERO_AVERAGES,
   formatSeasonLabel,
   parseOverviewAverages,
@@ -107,6 +111,8 @@ export type PlayerCareerSeasonStats = {
 export type PlayerCareerStatsResponse = {
   seasons: PlayerCareerSeasonStats[];
 };
+
+export type PlayerRecentGamesResponse = PlayerRecentGames;
 
 export type PlayerListItem = {
   id: string;
@@ -294,6 +300,38 @@ export class PlayersService {
 
     this.cache.set(cacheKey, articles, 10 * 60 * 1000);
     return articles;
+  }
+
+  async findRecentGames(
+    id: string,
+    limit = 10,
+  ): Promise<PlayerRecentGamesResponse> {
+    const resolvedLimit = Math.min(Math.max(limit, 1), 20);
+    const cacheKey = `player-recent-games:${id}:${resolvedLimit}`;
+    const cached = this.cache.get<PlayerRecentGamesResponse>(cacheKey);
+    if (cached) return cached;
+
+    const current = await this.espn.resolveCurrentSeason();
+    const ttl = usesLiveStatsTtl(current)
+      ? this.espn.TTL_SEASON_STATS_CURRENT
+      : 24 * 60 * 60 * 1000;
+
+    try {
+      const data = await this.espn.getAthleteGamelog(id);
+      const result = parseRecentGames(data, resolvedLimit);
+      this.cache.set(cacheKey, result, ttl);
+      return result;
+    } catch (error) {
+      if (!isUpstreamNotFound(error)) throw error;
+
+      const empty: PlayerRecentGamesResponse = {
+        season: null,
+        seasonLabel: null,
+        games: [],
+      };
+      this.cache.set(cacheKey, empty, ttl);
+      return empty;
+    }
   }
 
   /**

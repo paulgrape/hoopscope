@@ -1,4 +1,7 @@
+import {getPlayer} from '@/lib/players-api'
 import {beforeEach, describe, expect, it, vi} from 'vitest'
+
+import PlayerDetailsPage from '../page'
 
 const notFound = vi.fn(() => {
   throw new Error('NEXT_NOT_FOUND')
@@ -12,6 +15,7 @@ vi.mock('@/lib/players-api', () => ({
   getPlayer: vi.fn(),
   getPlayerSeasonStats: vi.fn(),
   getPlayerCareerStats: vi.fn(),
+  getPlayerRecentGames: vi.fn(),
   getPlayerNews: vi.fn(),
   getEspnPlayerNewsHref: vi.fn()
 }))
@@ -36,9 +40,6 @@ vi.mock('@/components/players/player-profile-tabs', () => ({
 vi.mock('@/components/seo/json-ld', () => ({
   JsonLd: () => null
 }))
-
-import PlayerDetailsPage from '../page'
-import {getPlayer} from '@/lib/players-api'
 
 describe('PlayerDetailsPage', () => {
   beforeEach(() => {
