@@ -9,6 +9,7 @@ describe('PlayersController', () => {
     findCareerStats: jest.Mock;
     findSeasonStats: jest.Mock;
     findNews: jest.Mock;
+    findRecentGames: jest.Mock;
   };
 
   beforeEach(() => {
@@ -18,6 +19,7 @@ describe('PlayersController', () => {
       findCareerStats: jest.fn(),
       findSeasonStats: jest.fn(),
       findNews: jest.fn(),
+      findRecentGames: jest.fn(),
     };
     controller = new PlayersController(players as unknown as PlayersService);
   });
@@ -87,5 +89,21 @@ describe('PlayersController', () => {
     await controller.findNews('2544', { limit: 3 });
 
     expect(players.findNews).toHaveBeenCalledWith('2544', 3);
+  });
+
+  it('defaults the recent games limit to 10 when omitted', () => {
+    const payload = { season: 2027, seasonLabel: '2026–27', games: [] };
+    players.findRecentGames.mockReturnValue(payload);
+
+    expect(controller.findRecentGames('2544', {})).toBe(payload);
+    expect(players.findRecentGames).toHaveBeenCalledWith('2544', 10);
+  });
+
+  it('forwards an explicit recent games limit', async () => {
+    players.findRecentGames.mockReturnValue({ games: [] });
+
+    await controller.findRecentGames('2544', { limit: 5 });
+
+    expect(players.findRecentGames).toHaveBeenCalledWith('2544', 5);
   });
 });

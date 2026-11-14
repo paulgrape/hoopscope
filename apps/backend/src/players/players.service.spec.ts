@@ -1,3 +1,4 @@
+import axios, { AxiosResponse } from 'axios';
 import { CacheService } from '../cache/cache.service';
 import { EspnService } from '../espn/espn.service';
 import { PlayersService } from './players.service';
@@ -227,6 +228,45 @@ describe('PlayersService.findOne', () => {
       },
     });
   });
+
+  it('maps a live ESPN injury report onto the profile', async () => {
+    espn.getPlayer.mockResolvedValue({
+      id: '1966',
+      fullName: 'LeBron James',
+    });
+    espn.getLeagueInjuries.mockResolvedValue({
+      injuries: [
+        {
+          injuries: [
+            {
+              status: 'Out',
+              date: '2026-11-13T00:06Z',
+              shortComment: 'James (foot) will be re-evaluated in four weeks.',
+              athlete: {
+                links: [
+                  {
+                    rel: ['playercard', 'desktop', 'athlete'],
+                    href: 'https://www.espn.com/nba/player/_/id/1966/lebron-james',
+                  },
+                ],
+              },
+              type: { name: 'INJURY_STATUS_OUT', description: 'out' },
+              details: { type: 'Foot', returnDate: '2026-12-12' },
+            },
+          ],
+        },
+      ],
+    });
+
+    await expect(service.findOne('1966')).resolves.toMatchObject({
+      injury: {
+        status: 'Out',
+        type: 'Foot',
+        detail: 'James (foot) will be re-evaluated in four weeks.',
+        returnDate: '2026-12-12',
+      },
+    });
+  });
 });
 
 describe('PlayersService.findSeasonStats', () => {
@@ -399,5 +439,82 @@ describe('PlayersService.findCareerStats', () => {
       { seasons: [] },
       24 * 60 * 60 * 1000,
     );
+  });
+});
+
+describe('PlayersService.findRecentGames', () => {
+  function create() {
+    const cache = new CacheService();
+    const espn = {
+      resolveCurrentSeason: jest.fn().mockResolvedValue({
+        year: 2027,
+        type: 2,
+        name: 'Regular Season',
+      }),
+      getAthleteGamelog: jest.fn(),
+      TTL_SEASON_STATS_CURRENT: 30 * 60 * 1000,
+    };
+    return {
+      espn,
+      service: new PlayersService(espn as unknown as EspnService, cache),
+    };
+  }
+
+  it('returns the latest game lines', async () => {
+    const { espn, service } = create();
+    espn.getAthleteGamelog.mockResolvedValue({
+      names: ['minutes', 'points', 'totalRebounds', 'assists'],
+      filters: [{ name: 'season', value: '2027' }],
+      events: {
+        '401': {
+          atVs: '@',
+          gameDate: '2026-11-11T23:30:00.000Z',
+          score: '110-105',
+          gameResult: 'W',
+          opponent: { id: '13', abbreviation: 'LAL' },
+        },
+      },
+      seasonTypes: [
+        {
+          displayName: '2026-27 Regular Season',
+          categories: [
+            {
+              events: [{ eventId: '401', stats: ['32', '28', '8', '7'] }],
+            },
+          ],
+        },
+      ],
+    });
+
+    await expect(service.findRecentGames('1966')).resolves.toMatchObject({
+      season: 2027,
+      seasonLabel: '2026–27',
+      games: [
+        {
+          id: '401',
+          opponentAbbr: 'LAL',
+          homeAway: 'away',
+          result: 'W',
+          min: 32,
+          pts: 28,
+          reb: 8,
+          ast: 7,
+          played: true,
+        },
+      ],
+    });
+  });
+
+  it('returns an empty log when ESPN has no gamelog', async () => {
+    const { espn, service } = create();
+    const error = new axios.AxiosError('missing');
+    error.response = { status: 404 } as AxiosResponse;
+    espn.getAthleteGamelog.mockRejectedValue(error);
+
+    await expect(service.findRecentGames('1966')).resolves.toEqual({
+      season: null,
+      seasonLabel: null,
+      games: [],
+    });
   });
 });

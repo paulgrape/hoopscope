@@ -38,8 +38,24 @@ const abbrStyle: CSSProperties = {
   overflow: 'hidden'
 }
 
+const DISPLAY_LOCALE = 'en-US'
+
 const teamLinkClass =
   'text-muted-foreground hover:text-foreground focus-visible:ring-ring/50 rounded-sm text-xs tracking-wider uppercase underline-offset-4 outline-none hover:underline focus-visible:ring-3'
+
+function formatReturnDate(value: string): string {
+  const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(value)
+  if (!match) return value
+
+  const date = new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]))
+  if (Number.isNaN(date.getTime())) return value
+
+  return new Intl.DateTimeFormat(DISPLAY_LOCALE, {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric'
+  }).format(date)
+}
 
 function fade(variable: '--details-h' | '--meta-h', dimAt = '0.45'): CSSProperties {
   return {
@@ -53,7 +69,9 @@ export function PlayerPageHeader({player}: PlayerPageHeaderProps) {
   const {sentinelRef, barRef, rowRef, photoRef, nameRef, detailsInnerRef, metaInnerRef, detailsRef, metaRef, abbrRef} =
     usePlayerHeaderCollapse()
   const team = player.latestTeam
-  const hasMeta = Boolean(player.jersey || player.position || player.status || player.injury?.detail)
+  const hasMeta = Boolean(
+    player.jersey || player.position || player.status || player.injury?.detail || player.injury?.returnDate
+  )
 
   return (
     <>
@@ -169,6 +187,12 @@ export function PlayerPageHeader({player}: PlayerPageHeaderProps) {
                   ) : null}
                   {player.injury?.detail ? (
                     <p className='text-muted-foreground text-sm'>{player.injury.detail}</p>
+                  ) : null}
+                  {player.injury?.returnDate ? (
+                    <p className='text-muted-foreground text-sm'>
+                      <span className='text-foreground'>Expected return:</span>{' '}
+                      {formatReturnDate(player.injury.returnDate)}
+                    </p>
                   ) : null}
                 </div>
               </div>

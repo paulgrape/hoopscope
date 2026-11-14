@@ -1,5 +1,5 @@
 import {ApiError} from '@/lib/api-client'
-import {getPlayer, getPlayerCareerStats} from '@/lib/players-api'
+import {getPlayer, getPlayerCareerStats, getPlayerRecentGames} from '@/lib/players-api'
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
 
 describe('getPlayer', () => {
@@ -54,6 +54,29 @@ describe('getPlayerCareerStats', () => {
     await getPlayerCareerStats('1966')
 
     const [, init] = fetchMock.mock.calls[0]
+    expect(init.next).toEqual({revalidate: 1800})
+  })
+})
+
+describe('getPlayerRecentGames', () => {
+  const fetchMock = vi.fn()
+
+  beforeEach(() => {
+    vi.stubGlobal('fetch', fetchMock)
+  })
+
+  afterEach(() => {
+    vi.unstubAllGlobals()
+    fetchMock.mockReset()
+  })
+
+  it('requests the latest games and revalidates with the season stats', async () => {
+    fetchMock.mockResolvedValue(new Response(JSON.stringify({games: []}), {status: 200}))
+
+    await getPlayerRecentGames('1966')
+
+    const [url, init] = fetchMock.mock.calls[0] as [string, {next: {revalidate: number}}]
+    expect(url).toContain('/players/1966/games?limit=10')
     expect(init.next).toEqual({revalidate: 1800})
   })
 })

@@ -179,23 +179,72 @@ type EspnNowFeedResponse = {
   feed?: EspnNowFeedItem[];
 };
 
-export interface EspnInjuryReport {
-  items?: Array<{
+export interface EspnInjuryLink {
+  href?: string;
+  rel?: string[];
+}
+
+export interface EspnInjuryEntry {
+  status?: string;
+  shortComment?: string;
+  longComment?: string;
+  date?: string;
+  athlete?: {
     id?: string;
     displayName?: string;
-    injuries?: Array<{
-      status?: string;
-      shortComment?: string;
-      longComment?: string;
-      date?: string;
-      athlete?: {
+    links?: EspnInjuryLink[];
+  };
+  type?: {
+    name?: string;
+    description?: string;
+  };
+  details?: {
+    type?: string;
+    returnDate?: string;
+  };
+}
+
+export interface EspnInjuryTeam {
+  id?: string;
+  displayName?: string;
+  injuries?: EspnInjuryEntry[];
+}
+
+export interface EspnInjuryReport {
+  injuries?: EspnInjuryTeam[];
+  /** Legacy fixture shape. The live report uses `injuries`. */
+  items?: EspnInjuryTeam[];
+}
+
+export interface EspnAthleteGamelog {
+  names?: string[];
+  filters?: Array<{
+    name?: string;
+    value?: string;
+  }>;
+  events?: Record<
+    string,
+    {
+      id?: string;
+      atVs?: string;
+      gameDate?: string;
+      score?: string;
+      gameResult?: string;
+      opponent?: {
         id?: string;
+        abbreviation?: string;
         displayName?: string;
       };
-      type?: {
-        name?: string;
-        description?: string;
-      };
+    }
+  >;
+  seasonTypes?: Array<{
+    displayName?: string;
+    categories?: Array<{
+      displayName?: string;
+      events?: Array<{
+        eventId?: string;
+        stats?: string[];
+      }>;
     }>;
   }>;
 }
@@ -727,6 +776,24 @@ export class EspnService {
       this.logger.log(`ESPN fetch: ${url}?seasontype=${seasontype}`);
       const { data } = await this.http.get<EspnAthleteStatsResponse>(url, {
         params: { seasontype },
+        timeout: 15_000,
+      });
+      return data;
+    });
+  }
+
+  async getAthleteGamelog(athleteId: string): Promise<EspnAthleteGamelog> {
+    const url = `${this.webApiBase}/athletes/${espnId(athleteId)}/gamelog`;
+    assertEspnRequestUrl(url, this.webApiBase);
+    const cacheKey = `athlete-gamelog:${athleteId}`;
+    const current = await this.resolveCurrentSeason();
+    const ttl = usesLiveStatsTtl(current)
+      ? this.TTL_SEASON_STATS_CURRENT
+      : this.TTL_PLAYERS;
+
+    return this.fetchJson<EspnAthleteGamelog>(cacheKey, ttl, async () => {
+      this.logger.log(`ESPN fetch: ${url}`);
+      const { data } = await this.http.get<EspnAthleteGamelog>(url, {
         timeout: 15_000,
       });
       return data;

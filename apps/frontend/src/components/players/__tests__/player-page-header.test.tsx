@@ -48,4 +48,24 @@ describe('PlayerPageHeader', () => {
 
     expect(screen.queryByRole('link', {name: 'DEN', hidden: true})).not.toBeInTheDocument()
   })
+
+  it('shows the injury badge, comment, and expected return', () => {
+    render(
+      <PlayerPageHeader
+        player={makePlayer({
+          injury: {
+            status: 'Out',
+            type: 'Foot',
+            detail: 'James (foot) will be re-evaluated in four weeks.',
+            returnDate: '2026-12-12'
+          }
+        })}
+      />
+    )
+
+    expect(screen.getByText('Out · Foot')).toBeInTheDocument()
+    expect(screen.getByText('James (foot) will be re-evaluated in four weeks.')).toBeInTheDocument()
+    expect(screen.getByText('Expected return:')).toBeInTheDocument()
+    expect(screen.getByText('Dec 12, 2026')).toBeInTheDocument()
+  })
 })

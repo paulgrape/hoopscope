@@ -2,10 +2,12 @@ import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SeasonStatsQueryDto } from '../common/dto/season-stats-query.dto';
 import { PlayersService } from './players.service';
+import { PlayerGamesQueryDto } from './dto/player-games-query.dto';
 import { PlayerNewsQueryDto } from './dto/player-news-query.dto';
 import { PlayerSearchQueryDto } from './dto/player-search-query.dto';
 
 const DEFAULT_NEWS_LIMIT = 6;
+const DEFAULT_GAMES_LIMIT = 10;
 const DEFAULT_SEARCH_LIMIT = 60;
 
 @ApiTags('players')
@@ -52,5 +54,17 @@ export class PlayersController {
   @ApiOperation({ summary: 'Get player news articles' })
   findNews(@Param('id') id: string, @Query() query: PlayerNewsQueryDto) {
     return this.playersService.findNews(id, query.limit ?? DEFAULT_NEWS_LIMIT);
+  }
+
+  @Get(':id/games')
+  @ApiOperation({ summary: 'Get the latest game lines for a player' })
+  findRecentGames(
+    @Param('id') id: string,
+    @Query() query: PlayerGamesQueryDto,
+  ) {
+    return this.playersService.findRecentGames(
+      id,
+      query.limit ?? DEFAULT_GAMES_LIMIT,
+    );
   }
 }

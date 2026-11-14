@@ -81,6 +81,36 @@ export type PlayerCareerStatsResponse = {
   seasons: PlayerCareerSeasonStats[]
 }
 
+export type PlayerRecentGame = {
+  id: string
+  date: string
+  opponentId: string | null
+  opponentAbbr: string | null
+  homeAway: 'home' | 'away'
+  result: string | null
+  score: string | null
+  min: number | null
+  pts: number | null
+  reb: number | null
+  ast: number | null
+  stl: number | null
+  blk: number | null
+  tov: number | null
+  fg: string | null
+  fgPct: number | null
+  threePoint: string | null
+  threePointPct: number | null
+  freeThrow: string | null
+  freeThrowPct: number | null
+  played: boolean
+}
+
+export type PlayerRecentGamesResponse = {
+  season: number | null
+  seasonLabel: string | null
+  games: PlayerRecentGame[]
+}
+
 export type PlayerListItem = {
   id: string
   fullName: string
@@ -141,6 +171,12 @@ export async function getPlayerSeasonStats(
 
 export async function getPlayerCareerStats(playerId: string): Promise<PlayerCareerStatsResponse> {
   return apiFetch<PlayerCareerStatsResponse>(`/players/${playerId}/stats/career`, {
+    revalidate: 1800
+  })
+}
+
+export async function getPlayerRecentGames(playerId: string, limit = 10): Promise<PlayerRecentGamesResponse> {
+  return apiFetch<PlayerRecentGamesResponse>(`/players/${playerId}/games?limit=${limit}`, {
     revalidate: 1800
   })
 }

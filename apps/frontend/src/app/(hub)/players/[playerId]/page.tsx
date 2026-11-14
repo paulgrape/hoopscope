@@ -8,6 +8,7 @@ import {
   getPlayer,
   getPlayerCareerStats,
   getPlayerNews,
+  getPlayerRecentGames,
   getPlayerSeasonStats
 } from '@/lib/players-api'
 import {breadcrumbSchema, personSchema} from '@/lib/seo-schema'
@@ -56,10 +57,11 @@ export default async function PlayerDetailsPage({params, searchParams}: PlayerDe
     notFound()
   }
 
-  const [regularStats, playoffStats, careerStats, news, team, heatmap] = await Promise.all([
+  const [regularStats, playoffStats, careerStats, recentGames, news, team, heatmap] = await Promise.all([
     getPlayerSeasonStats(playerId, {seasonType: 'regular'}),
     getPlayerSeasonStats(playerId, {seasonType: 'playoffs'}),
     getPlayerCareerStats(playerId),
+    getPlayerRecentGames(playerId),
     getPlayerNews(playerId),
     teamId ? getTeam(teamId).catch(() => null) : Promise.resolve(null),
     getCachedShotHeatmapForEspnPlayer(playerId)
@@ -109,6 +111,7 @@ export default async function PlayerDetailsPage({params, searchParams}: PlayerDe
             regularStats={regularStats}
             playoffStats={playoffStats}
             careerSeasons={careerStats.seasons}
+            recentGames={recentGames}
             news={news}
             espnNewsHref={getEspnPlayerNewsHref(player.id, player.fullName)}
             heatmap={heatmap}
