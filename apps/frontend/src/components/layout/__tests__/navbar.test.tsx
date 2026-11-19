@@ -43,6 +43,7 @@ describe('Navbar', () => {
     expect(screen.getAllByRole('link', {name: 'Players'})[0]).toHaveAttribute('href', '/players')
     expect(screen.getAllByRole('link', {name: 'Leaders'})[0]).toHaveAttribute('href', '/leaders')
     expect(screen.getAllByRole('link', {name: 'Standings'})[0]).toHaveAttribute('href', '/standings')
+    expect(screen.getAllByRole('link', {name: 'Team Stats'})[0]).toHaveAttribute('href', '/team-stats')
   })
 
   it('keeps secondary pages out of the primary nav', () => {

@@ -88,6 +88,31 @@ describe('EspnService resilience', () => {
     expect(httpGet).toHaveBeenCalledTimes(4);
   });
 
+  it('loads the league team sheet once without caching the raw feed', async () => {
+    const cacheSet = jest.spyOn(cache, 'set');
+    httpGet.mockResolvedValue({
+      data: {
+        categories: [{ name: 'general', names: ['gamesPlayed'] }],
+        teams: [{ team: { id: '7', displayName: 'Denver Nuggets' } }],
+      },
+    });
+
+    const result = await service.getLeagueByTeam(2026, 'regular');
+
+    expect(result.teams?.[0].team?.id).toBe('7');
+    expect(httpGet).toHaveBeenCalledTimes(1);
+    expect(httpGet).toHaveBeenCalledWith(
+      expect.stringContaining('/statistics/byteam'),
+      {
+        params: { season: 2026, seasontype: 2, limit: 50 },
+        timeout: 20_000,
+      },
+    );
+    expect(cacheSet).not.toHaveBeenCalled();
+    await service.getLeagueByTeam(2026, 'regular');
+    expect(httpGet).toHaveBeenCalledTimes(2);
+  });
+
   it('filters every fallback page before returning historical roster candidates', async () => {
     httpGet.mockImplementation(
       (url: string, options?: { params?: { page?: number } }) => {

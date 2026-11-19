@@ -6,6 +6,7 @@ import { CircuitBreaker, CircuitOpenError } from '../common/circuit-breaker';
 import { isRetryableUpstreamError } from '../common/upstream-errors';
 import {
   EspnByAthleteResponse,
+  EspnByTeamResponse,
   EspnGameSummaryResponse,
   EspnScoreboardResponse,
   EspnTeamResponse,
@@ -671,6 +672,32 @@ export class EspnService {
       athletes.push(...((await fetchPage(page)).athletes ?? []));
     }
     return { categories: first.categories, athletes };
+  }
+
+  /** Uncached raw sheet: the team-stats service owns the slim season-row cache. */
+  getLeagueByTeam(
+    season: number,
+    seasonType: EspnSeasonType,
+  ): Promise<EspnByTeamResponse> {
+    espnSeason(season);
+    const seasontype = this.toEspnSeasonType(seasonType);
+    const url = `${this.webApiBase}/statistics/byteam`;
+    assertEspnRequestUrl(url, this.webApiBase);
+    return this.runWithResilience<EspnByTeamResponse>(
+      `league-byteam:${season}:${seasontype}`,
+      0,
+      async () => {
+        this.logger.log(
+          `ESPN fetch: ${url}?season=${season}&seasontype=${seasontype}`,
+        );
+        const { data } = await this.http.get<EspnByTeamResponse>(url, {
+          params: { season, seasontype, limit: 50 },
+          timeout: 20_000,
+        });
+        return data;
+      },
+      false,
+    );
   }
 
   async getTeamAthleteStatsFallback(

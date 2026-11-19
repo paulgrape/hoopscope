@@ -5,8 +5,10 @@ import {TeamScheduleStrip} from '@/components/teams/team-schedule-strip'
 import {TeamSeasonStats} from '@/components/teams/team-season-stats'
 import {breadcrumbSchema, sportsTeamSchema} from '@/lib/seo-schema'
 import {SITE_NAME, createPageMetadata} from '@/lib/site'
+import {teamStatsHref} from '@/lib/team-stats-api'
 import {getTeam, getTeamSchedule, getTeamSeasonStats, parseSeasonQuery} from '@/lib/teams-api'
 import type {Metadata} from 'next'
+import Link from 'next/link'
 import {notFound} from 'next/navigation'
 
 type TeamDetailsPageProps = {
@@ -87,6 +89,14 @@ export default async function TeamDetailsPage({params, searchParams}: TeamDetail
             currentSeason={regularStats.currentSeason}
           />
 
+          <p className='text-sm'>
+            <Link
+              href={teamStatsHref({season: regularStats.season, seasonType: 'regular'})}
+              className='text-muted-foreground hover:text-foreground underline-offset-4 hover:underline'
+            >
+              League team stats
+            </Link>
+          </p>
           <TeamSeasonStats
             regularStats={regularStats}
             playoffStats={playoffStats}

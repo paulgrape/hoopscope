@@ -55,6 +55,12 @@ export const STATIC_PUBLIC_ROUTES: PublicRoute[] = [
     entityType: 'standings'
   },
   {
+    path: '/team-stats',
+    title: 'Team Stats',
+    description: 'NBA team offensive, defensive, and differential season statistics.',
+    entityType: 'teams'
+  },
+  {
     path: '/about',
     title: 'About',
     description: 'What Hoopscope is, where the data comes from, and who builds it.',

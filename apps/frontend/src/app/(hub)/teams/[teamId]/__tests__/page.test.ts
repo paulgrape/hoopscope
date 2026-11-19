@@ -1,4 +1,5 @@
 import {getTeam, getTeamSchedule, getTeamSeasonStats} from '@/lib/teams-api'
+import {render, screen} from '@testing-library/react'
 import {beforeEach, describe, expect, it, vi} from 'vitest'
 
 import TeamDetailsPage from '../page'
@@ -31,6 +32,11 @@ vi.mock('@/components/teams/team-season-stats', () => ({
 
 vi.mock('@/components/seo/json-ld', () => ({
   JsonLd: () => null
+}))
+
+vi.mock('@/components/teams/team-page-header', () => ({
+  TeamPageHeader: () => null,
+  TeamFacts: () => null
 }))
 
 const team = {
@@ -127,5 +133,21 @@ describe('TeamDetailsPage', () => {
     expect(getTeamSeasonStats).toHaveBeenCalledWith('16', {season: 2026, seasonType: 'regular'})
     expect(getTeamSeasonStats).toHaveBeenCalledWith('16', {season: 2026, seasonType: 'playoffs'})
     expect(getTeamSchedule).toHaveBeenCalledWith('16', {season: 2026})
+  })
+
+  it('links to the league stat sheet for the selected season', async () => {
+    vi.mocked(getTeam).mockResolvedValue(team)
+    vi.mocked(getTeamSeasonStats).mockImplementation(async (_teamId, options) => emptyStats(options?.season ?? 2026))
+
+    const page = await TeamDetailsPage({
+      params: Promise.resolve({teamId: '16'}),
+      searchParams: Promise.resolve({season: '2026'})
+    })
+    render(page)
+
+    expect(screen.getByRole('link', {name: 'League team stats'})).toHaveAttribute(
+      'href',
+      '/team-stats?season=2026&seasonType=regular'
+    )
   })
 })
