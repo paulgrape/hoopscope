@@ -32,7 +32,7 @@
     "@commitlint/config-conventional": "^21.2.0",
     "audit-ci": "7.1.0",
     "husky": "^9.1.7",
-    "lint-staged": "^17.5.1"
+    "lint-staged": "^17.6.1"
   },
   "overrides": {
     "shell-quote": "1.12.0"
