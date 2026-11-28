@@ -18,6 +18,7 @@ const footerLinks: FooterLink[] = [
   {href: '/teams', label: 'Teams'},
   {href: '/leaders', label: 'Leaders'},
   {href: '/standings', label: 'Standings'},
+  {href: '/team-stats', label: 'Team Stats'},
   {href: '/about', label: 'About'},
   {href: '/privacy', label: 'Privacy Policy'},
   {href: MAINTAINER_URL, label: 'GitHub', external: true}

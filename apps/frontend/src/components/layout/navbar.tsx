@@ -18,7 +18,8 @@ const navLinks = [
   {href: '/teams', label: 'Teams'},
   {href: '/players', label: 'Players'},
   {href: '/leaders', label: 'Leaders'},
-  {href: '/standings', label: 'Standings'}
+  {href: '/standings', label: 'Standings'},
+  {href: '/team-stats', label: 'Team Stats'}
 ]
 
 const isActivePath = (pathname: string, href: string) =>

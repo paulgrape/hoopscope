@@ -15,6 +15,7 @@ import { NewsModule } from './news/news.module';
 import { NbaStatsModule } from './nba-stats/nba-stats.module';
 import { ShotsModule } from './shots/shots.module';
 import { StandingsModule } from './standings/standings.module';
+import { TeamStatsModule } from './team-stats/team-stats.module';
 import { TeamsModule } from './teams/teams.module';
 
 @Module({
@@ -27,6 +28,7 @@ import { TeamsModule } from './teams/teams.module';
     NbaStatsModule,
     HealthModule,
     TeamsModule,
+    TeamStatsModule,
     PlayersModule,
     GamesModule,
     NewsModule,

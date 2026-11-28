@@ -219,6 +219,29 @@ export interface EspnByAthleteResponse {
   }>;
 }
 
+/** One team row of the `statistics/byteam` feed. */
+export interface EspnByTeamEntry {
+  team?: {
+    id?: string | number;
+    displayName?: string;
+    abbreviation?: string;
+    logos?: Array<{ href?: string; rel?: string[] }>;
+  };
+  categories?: Array<{
+    name?: string;
+    values?: Array<number | string | null>;
+  }>;
+}
+
+export interface EspnByTeamResponse {
+  categories?: Array<{
+    name?: string;
+    names?: string[];
+    labels?: string[];
+  }>;
+  teams?: EspnByTeamEntry[];
+}
+
 export function espnHeadshotHref(
   headshot: EspnAthleteRef['headshot'],
 ): string | null {
